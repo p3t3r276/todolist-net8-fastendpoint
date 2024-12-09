@@ -1,3 +1,5 @@
+using FastTodo.SQLite;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +9,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
+
+builder.Services.AddEFPersistences(builder.Configuration);
 
 var app = builder.Build();
 
