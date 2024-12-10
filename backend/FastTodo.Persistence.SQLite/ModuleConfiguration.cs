@@ -1,9 +1,9 @@
-using FastTodo.SQLite.DbContexts.FastTodoDbContext;
+using FastTodo.Persistence.SQLite.DbContexts.FastTodoDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FastTodo.SQLite;
+namespace FastTodo.Persistence.SQLite;
 
 public static partial class ModuleConfiguration
 {

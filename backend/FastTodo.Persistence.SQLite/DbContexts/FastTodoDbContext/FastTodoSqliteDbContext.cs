@@ -1,10 +1,10 @@
 using System.Reflection;
 using FastTodo.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using FastTodo.SQLite.DbContexts.FastTodoDbContext.Configurations;
+using FastTodo.Persistence.SQLite.DbContexts.FastTodoDbContext.Configurations;
 using Microsoft.Extensions.Configuration;
 
-namespace FastTodo.SQLite.DbContexts.FastTodoDbContext;
+namespace FastTodo.Persistence.SQLite.DbContexts.FastTodoDbContext;
 
 public class FastTodoSqliteDbContext (DbContextOptions<FastTodoSqliteDbContext> options, IConfiguration configuration) 
     : BaseDbContext<FastTodoSqliteDbContext>(options)

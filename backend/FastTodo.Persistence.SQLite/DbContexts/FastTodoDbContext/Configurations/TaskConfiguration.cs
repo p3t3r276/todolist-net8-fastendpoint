@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskEntity = FastTodo.Domain.Entities.Task;
 
-namespace FastTodo.SQLite.DbContexts.FastTodoDbContext.Configurations;
+namespace FastTodo.Persistence.SQLite.DbContexts.FastTodoDbContext.Configurations;
 
 public class TaskConfiguration : IEntityTypeConfiguration<TaskEntity>
 {
@@ -10,7 +10,9 @@ public class TaskConfiguration : IEntityTypeConfiguration<TaskEntity>
     {
         builder.ToTable("Tasks");
 
-        builder.Property(x => x.Id).ValueGeneratedOnAdd();
+        builder.Property(x => x.Id)
+            .HasColumnType("uniqueidentifier")
+            .ValueGeneratedOnAdd();
 
         builder.HasKey(x => x.Id);
 
