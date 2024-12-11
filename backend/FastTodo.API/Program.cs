@@ -1,3 +1,4 @@
+using FastTodo.Application;
 using FastTodo.Persistence.SQLite;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
 
-builder.Services.AddEFPersistences(builder.Configuration);
+builder.Services
+    .AddApplication(builder.Configuration)
+    .AddEFPersistences(builder.Configuration);
 
 var app = builder.Build();
 

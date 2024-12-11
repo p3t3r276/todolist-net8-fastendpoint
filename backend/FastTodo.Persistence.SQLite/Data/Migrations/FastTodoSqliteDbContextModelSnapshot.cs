@@ -17,7 +17,7 @@ namespace FastTodo.Persistence.SQLite.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
-            modelBuilder.Entity("FastTodo.Domain.Entities.Task", b =>
+            modelBuilder.Entity("FastTodo.Domain.Entities.TodoItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
