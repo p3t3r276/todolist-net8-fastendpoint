@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FastTodo.Domain\FastTodo.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
