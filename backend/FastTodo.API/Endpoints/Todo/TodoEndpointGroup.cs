@@ -12,6 +12,8 @@ public class TodoEndpointGroup : Group
             {
                 ep.Description(
                     x => x.Produces(401)
+                        .AllowAnonymous()
+                        .ProducesProblemDetails()
                         .WithTags("todos"));
             });
     }

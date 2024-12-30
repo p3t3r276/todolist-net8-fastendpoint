@@ -14,9 +14,9 @@ builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
 
 builder.Services
+    .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly))
     .AddApplication(builder.Configuration)
     .AddEFPersistences(builder.Configuration)
-    .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly))
     .AddFastEndpoints()
     .SwaggerDocument(o => o.AutoTagPathSegmentIndex = 0);
 
@@ -30,7 +30,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseDefaultExceptionHandler();
 app.UseFastEndpoints();
 
 app.Run();
