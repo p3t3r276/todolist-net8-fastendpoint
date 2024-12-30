@@ -1,3 +1,5 @@
+using FastEndpoints;
+using FastEndpoints.Swagger;
 using FastTodo.Application;
 using FastTodo.Persistence.SQLite;
 
@@ -13,7 +15,9 @@ builder.Services.AddAuthentication();
 
 builder.Services
     .AddApplication(builder.Configuration)
-    .AddEFPersistences(builder.Configuration);
+    .AddEFPersistences(builder.Configuration)
+    .AddFastEndpoints()
+    .SwaggerDocument(o => o.AutoTagPathSegmentIndex = 0);
 
 var app = builder.Build();
 
@@ -45,6 +49,8 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+app.UseFastEndpoints();
 
 app.Run();
 

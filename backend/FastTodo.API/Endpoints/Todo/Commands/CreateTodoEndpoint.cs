@@ -1,16 +1,18 @@
 using FastEndpoints;
 
-namespace FastTodo.API.Endpoints.Tasks;
+namespace FastTodo.API.Endpoints.Todo;
 
 public class CreateTodoEndpoint : Endpoint<string, string>
 {
     public override void Configure()
     {
-        base.Configure();
+        Post("/to-dos");
+        AllowAnonymous();
+        Group<TodoEndpointGroup>();
     }
 
-    public override Task HandleAsync(string req, CancellationToken ct)
+    public override async Task HandleAsync(string req, CancellationToken ct)
     {
-        return base.HandleAsync(req, ct);
+        await SendAsync("hahah");
     }
 }
