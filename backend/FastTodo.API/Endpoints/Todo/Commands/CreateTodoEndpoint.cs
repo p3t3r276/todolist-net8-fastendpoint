@@ -21,7 +21,6 @@ public class CreateTodoEndpoint : Endpoint<CreateTodoRequest, TodoItemDto>
 
     public override async Task<TodoItemDto> HandleAsync(CreateTodoRequest req, CancellationToken ct)
     {
-        var result = await _mediator.Send(req, ct);
-        return result;
+        return await _mediator.Send(req, ct);
     }
 }
