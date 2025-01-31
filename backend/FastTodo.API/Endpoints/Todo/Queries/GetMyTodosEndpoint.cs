@@ -1,21 +1,21 @@
 using FastEndpoints;
 using FastTodo.Application.Features.Todos;
+using FastTodo.Domain.Entities;
 using MediatR;
 
 namespace FastTodo.API.Endpoints.Todo;
 
-public class CreateTodoEndpoint(IMediator mediator)
-    : Endpoint<CreateTodoRequest, TodoItemDto>
+public class GetMyTodosEndpoint (IMediator mediator) : Endpoint<GetMyTodosRequest, List<TodoItem>>
 {
     public override void Configure()
     {
-        Post("/");
+        Get("/");
         AllowAnonymous();
         Group<TodoEndpointGroup>();
     }
 
-    public override async Task<TodoItemDto> HandleAsync(CreateTodoRequest req, CancellationToken ct)
+    public async Task<List<TodoItemDto>> HandleAsync(GetMyTodosRequest req, CancellationToken ct)
     {
         return await mediator.Send(req, ct);
     }
-}   
+}
