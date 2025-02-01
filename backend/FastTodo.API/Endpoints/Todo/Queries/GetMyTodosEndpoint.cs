@@ -14,7 +14,7 @@ public class GetMyTodosEndpoint (IMediator mediator) : Endpoint<GetMyTodosReques
         Group<TodoEndpointGroup>();
     }
 
-    public async Task<List<TodoItemDto>> HandleAsync(GetMyTodosRequest req, CancellationToken ct)
+    public override async Task<List<TodoItemDto>> HandleAsync(GetMyTodosRequest req, CancellationToken ct)
     {
         return await mediator.Send(req, ct);
     }
