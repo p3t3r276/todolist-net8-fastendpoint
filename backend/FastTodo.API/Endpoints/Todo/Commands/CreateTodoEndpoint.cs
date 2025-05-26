@@ -13,7 +13,7 @@ public class CreateTodoEndpoint(IMediator mediator) : Endpoint<CreateTodoRequest
         Group<TodoEndpointGroup>();
     }
 
-    public override async Task<TodoItemDto> HandleAsync(CreateTodoRequest req, CancellationToken ct)
+    public override async Task<TodoItemDto> ExecuteAsync(CreateTodoRequest req, CancellationToken ct)
     {
         return await mediator.Send(req, ct);
     }

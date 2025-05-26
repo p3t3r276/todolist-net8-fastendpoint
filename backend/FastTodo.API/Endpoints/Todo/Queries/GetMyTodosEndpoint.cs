@@ -1,11 +1,11 @@
 using FastEndpoints;
 using FastTodo.Application.Features.Todos;
-using FastTodo.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FastTodo.API.Endpoints.Todo;
 
-public class GetMyTodosEndpoint (IMediator mediator) : Endpoint<GetMyTodosRequest, List<TodoItem>>
+public class GetMyTodosEndpoint(IMediator mediator) : Endpoint<GetMyTodosRequest, List<TodoItemDto>>
 {
     public override void Configure()
     {
@@ -14,7 +14,7 @@ public class GetMyTodosEndpoint (IMediator mediator) : Endpoint<GetMyTodosReques
         Group<TodoEndpointGroup>();
     }
 
-    public override async Task<List<TodoItemDto>> HandleAsync(GetMyTodosRequest req, CancellationToken ct)
+    public override async Task<List<TodoItemDto>> ExecuteAsync(GetMyTodosRequest req, CancellationToken ct)
     {
         return await mediator.Send(req, ct);
     }

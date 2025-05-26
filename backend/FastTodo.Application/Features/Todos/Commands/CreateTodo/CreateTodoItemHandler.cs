@@ -7,7 +7,7 @@ namespace FastTodo.Application.Features.Todos;
 
 public class CreateTodoItemHandler(
     FastTodoSqliteDbContext dbContext
-    ) : IRequestHandler<CreateTodoRequest, TodoItemDto>
+) : IRequestHandler<CreateTodoRequest, TodoItemDto>
 {
     public async Task<TodoItemDto> Handle(CreateTodoRequest request, CancellationToken cancellationToken)
     {
@@ -18,7 +18,6 @@ public class CreateTodoItemHandler(
             IsDone = false
         };
 
-        // collection
         _ = await dbContext.Set<TodoItem>().AddAsync(newTodo, cancellationToken);
         _ = await dbContext.SaveChangesAsync(cancellationToken);
         return newTodo.Adapt<TodoItemDto>();
