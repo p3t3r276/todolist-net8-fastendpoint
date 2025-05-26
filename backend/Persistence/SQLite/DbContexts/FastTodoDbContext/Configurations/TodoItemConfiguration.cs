@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TaskEntity = FastTodo.Domain.Entities.Task;
+using FastTodo.Domain.Entities;
 
 namespace FastTodo.Persistence.SQLite.DbContexts.FastTodoDbContext.Configurations;
 
-public class TaskConfiguration : IEntityTypeConfiguration<TaskEntity>
+public class TaskConfiguration : IEntityTypeConfiguration<TodoItem>
 {
-    public void Configure(EntityTypeBuilder<TaskEntity> builder)
+    public void Configure(EntityTypeBuilder<TodoItem> builder)
     {
         builder.ToTable("Tasks");
 

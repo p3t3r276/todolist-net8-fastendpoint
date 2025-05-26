@@ -11,8 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FastTodo.Domain\FastTodo.Domain.csproj" />
-      <ProjectReference Include="..\FastTodo.Infrastructure\FastTodo.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\FastTodo.Domain\FastTodo.Domain.csproj" />
+      <ProjectReference Include="..\..\FastTodo.Infrastructure\FastTodo.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
