@@ -4,8 +4,7 @@ using MediatR;
 
 namespace FastTodo.API.Endpoints.Todo;
 
-public class CreateTodoEndpoint(IMediator mediator)
-    : Endpoint<CreateTodoRequest, TodoItemDto>
+public class CreateTodoEndpoint(IMediator mediator) : Endpoint<CreateTodoRequest, TodoItemDto>
 {
     public override void Configure()
     {
