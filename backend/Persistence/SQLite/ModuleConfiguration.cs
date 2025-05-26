@@ -7,7 +7,7 @@ namespace FastTodo.Persistence.SQLite;
 
 public static partial class ModuleConfiguration
 {
-    public static IServiceCollection AddEFPersistences(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddSQLiteEFPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddFrameworkDbContexts(configuration);
 
