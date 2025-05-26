@@ -1,8 +1,7 @@
 using FastTodo.Domain.Entities;
-using FastTodo.Persistence.SQLite.DbContexts.FastTodoDbContext;
+using FastTodo.Persistence.SQLite;
 using Mapster;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace FastTodo.Application.Features.Todos;
 
@@ -12,17 +11,16 @@ public class CreateTodoItemHandler(
 {
     public async Task<TodoItemDto> Handle(CreateTodoRequest request, CancellationToken cancellationToken)
     {
-        var newTodo = (new TodoItem()
+        var newTodo = new TodoItem()
         {
             Id = Guid.NewGuid(),
             Name = request.Name,
             IsDone = false
-        });
-        
+        };
+
         // collection
-        DbSet<TodoItem> collection = dbContext.Set<TodoItem>();
-        await collection.AddAsync(newTodo);
-        await dbContext.SaveChangesAsync();
+        _ = await dbContext.Set<TodoItem>().AddAsync(newTodo, cancellationToken);
+        _ = await dbContext.SaveChangesAsync(cancellationToken);
         return newTodo.Adapt<TodoItemDto>();
     }
 }

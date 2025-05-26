@@ -13,7 +13,7 @@ builder.Services.AddAuthentication();
 
 builder.Services
     .AddApplication(builder.Configuration)
-    .AddEFPersistences(builder.Configuration)
+    .AddSQLiteEFPersistence(builder.Configuration)
     .AddFastEndpoints()
     .SwaggerDocument(o => o.AutoTagPathSegmentIndex = 0);
 

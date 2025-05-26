@@ -11,9 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Domain", "FastTodo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Infrastructure", "FastTodo.Infrastructure\FastTodo.Infrastructure.csproj", "{27863A03-7002-43E1-9BA1-D05CDB284A5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.EF", "FastTodo.Persistence.EF\FastTodo.Persistence.EF.csproj", "{BAF524E2-2BAB-4B6F-B143-A3AF4778E366}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.EF", "Persistence\EF\FastTodo.Persistence.EF.csproj", "{BAF524E2-2BAB-4B6F-B143-A3AF4778E366}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.SQLite", "FastTodo.Persistence.SQLite\FastTodo.Persistence.SQLite.csproj", "{796AFC2E-6FDE-49F2-80A1-86785E38B1FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.SQLite", "Persistence\SQLite\FastTodo.Persistence.SQLite.csproj", "{796AFC2E-6FDE-49F2-80A1-86785E38B1FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

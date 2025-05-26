@@ -1,5 +1,5 @@
 using FastTodo.Domain.Entities;
-using FastTodo.Persistence.SQLite.DbContexts.FastTodoDbContext;
+using FastTodo.Persistence.SQLite;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

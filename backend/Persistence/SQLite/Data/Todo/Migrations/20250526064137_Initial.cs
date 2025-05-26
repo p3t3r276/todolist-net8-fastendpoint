@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace FastTodo.Persistence.SQLite.Data.Migrations
+namespace FastTodo.Persistence.SQLite.Data.Todo.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
