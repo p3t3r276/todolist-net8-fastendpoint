@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace FastTodo.Application.Features.Todos;
+namespace FastTodo.Application.Features.Todo;
 
 public class CreateTodoRequest : IRequest<TodoItemDto>
 {

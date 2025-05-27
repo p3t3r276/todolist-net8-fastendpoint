@@ -1,5 +1,5 @@
 using FastEndpoints;
-using FastTodo.Application.Features.Todos;
+using FastTodo.Application.Features.Todo;
 using MediatR;
 
 namespace FastTodo.API.Endpoints.Todo;
@@ -17,4 +17,4 @@ public class CreateTodoEndpoint(IMediator mediator) : Endpoint<CreateTodoRequest
     {
         return await mediator.Send(req, ct);
     }
-}   
+}

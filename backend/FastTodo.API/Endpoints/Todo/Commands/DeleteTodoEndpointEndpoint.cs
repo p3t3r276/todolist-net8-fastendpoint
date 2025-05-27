@@ -1,5 +1,5 @@
 using FastEndpoints;
-using FastTodo.Application.Features.Todos;
+using FastTodo.Application.Features.Todo;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -18,4 +18,4 @@ public class DeleteTodoEndpoint(IMediator mediator) : Endpoint<DeleteTodoRequest
     {
         return await mediator.Send(req, ct);
     }
-}   
+}

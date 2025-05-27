@@ -1,7 +1,7 @@
 using MediatR;
 using FastEndpoints;
 
-namespace FastTodo.Application.Features.Todos;
+namespace FastTodo.Application.Features.Todo;
 
 public class GetMyTodosRequest : IRequest<List<TodoItemDto>>
 { 
