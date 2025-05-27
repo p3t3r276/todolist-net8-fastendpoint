@@ -79,9 +79,18 @@ dotnet ef migrations add Initial \
 ```
 
 ### Update database
+#### SQLite
 ```
 dotnet ef database update \
-    --project ./Persistent/EF/EFCoreTest.Persistent.EF.csproj \ 
-    --startup-project ./EFCoreTest.API/EFCoreTest.API.csproj  \
-    --context TodoDbContext
+    --project .\backend\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj \
+    --startup-project .\backend\FastTodo.API\FastTodo.API.csproj \
+    --context FastTodoSqliteDbContext 
+```
+
+#### SQL Server
+```
+dotnet ef database update \
+    --project ./backend/Persistence/EF/FastTodo.Persistence.EF.csproj \
+    --startup-project ./backend/FastTodo.API/FastTodo.API.csproj \
+    --context FastTodoSQLDbContext
 ```
