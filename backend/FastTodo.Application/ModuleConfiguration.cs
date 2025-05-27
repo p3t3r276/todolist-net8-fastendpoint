@@ -1,4 +1,5 @@
 using System.Reflection;
+using FluentValidation;
 using Mapster;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +10,13 @@ public static partial class ModuleConfiguration
 {
     public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
-        TypeAdapterConfig.GlobalSettings.Scan(typeof(FastTodo.Application.ModuleConfiguration).Assembly, Assembly.GetExecutingAssembly());
+        TypeAdapterConfig.GlobalSettings.Scan(typeof(ModuleConfiguration).Assembly, Assembly.GetExecutingAssembly());
+
+        ValidatorOptions.Global.DefaultClassLevelCascadeMode = CascadeMode.Stop;
+        ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), 
+        includeInternalTypes: true);
+
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ModuleConfiguration).Assembly));
         return services;
     }
