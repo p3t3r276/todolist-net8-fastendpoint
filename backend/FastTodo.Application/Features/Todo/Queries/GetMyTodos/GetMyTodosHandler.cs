@@ -4,7 +4,7 @@ using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace FastTodo.Application.Features.Todos;
+namespace FastTodo.Application.Features.Todo;
 
 public class GetMyTodosHandler (
     FastTodoSqliteDbContext dbContext

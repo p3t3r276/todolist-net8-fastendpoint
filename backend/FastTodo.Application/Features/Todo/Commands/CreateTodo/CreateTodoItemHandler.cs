@@ -3,7 +3,7 @@ using FastTodo.Persistence.SQLite;
 using Mapster;
 using MediatR;
 
-namespace FastTodo.Application.Features.Todos;
+namespace FastTodo.Application.Features.Todo;
 
 public class CreateTodoItemHandler(
     FastTodoSqliteDbContext dbContext

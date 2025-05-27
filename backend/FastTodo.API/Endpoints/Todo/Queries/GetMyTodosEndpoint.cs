@@ -1,7 +1,6 @@
 using FastEndpoints;
-using FastTodo.Application.Features.Todos;
+using FastTodo.Application.Features.Todo;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FastTodo.API.Endpoints.Todo;
 

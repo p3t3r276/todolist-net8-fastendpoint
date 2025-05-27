@@ -1,4 +1,4 @@
-namespace FastTodo.Application.Features.Todos;
+namespace FastTodo.Application.Features.Todo;
 
 public class TodoItemDto
 {
