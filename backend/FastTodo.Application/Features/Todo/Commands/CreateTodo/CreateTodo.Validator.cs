@@ -8,6 +8,8 @@ public class CreateTodoValidator : AbstractValidator<CreateTodoRequest>
     {
         RuleFor(m => m.Name)
             .NotEmpty()
-            .WithMessage(m => $"{nameof(m.Name)} is required");
+            .WithMessage(m => $"{nameof(m.Name)} is required")
+            .MaximumLength(250)
+            .WithMessage(m => $"{nameof(m.Name)} must be less than 250 characters");;
     }
 }

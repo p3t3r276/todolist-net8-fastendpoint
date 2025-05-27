@@ -1,4 +1,5 @@
 using FastTodo.Domain.Entities;
+using FastTodo.Infrastructure.Repositories;
 using FastTodo.Persistence.SQLite;
 using Mapster;
 using MediatR;
@@ -9,22 +10,19 @@ using Microsoft.EntityFrameworkCore;
 namespace FastTodo.Application.Features.Todo;
 
 public class UpdateTodoHandler(
-    FastTodoSqliteDbContext dbContext
+    IRepository<TodoItem> repository
 ) : IRequestHandler<UpdateTodoRequest, Results<NoContent, Ok<TodoItemDto>>>
 {
     public async Task<Results<NoContent, Ok<TodoItemDto>>> Handle(UpdateTodoRequest request, CancellationToken cancellationToken)
     {
-        var item = await dbContext.Set<TodoItem>()
-            .FirstOrDefaultAsync(item => item.Id == request.Id, cancellationToken: cancellationToken);
-
+        var item = await repository.GetByIdAsync(request.Id!, cancellationToken);
         if (item is null)
         {
             return TypedResults.NoContent();
         }
-
         item.Name = request.Name;
-
-        _ = await dbContext.SaveChangesAsync(cancellationToken);
+        await repository.UpdateAsync(item, cancellationToken);
+        await repository.SaveChangesAsync(cancellationToken);
         return TypedResults.Ok(item.Adapt<TodoItemDto>());
     }
 }

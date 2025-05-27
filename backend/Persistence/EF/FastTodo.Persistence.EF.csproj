@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\FastTodo.Infrastructure\FastTodo.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Domain\FastTodo.Infrastructure.Domain.csproj" />
   </ItemGroup>
 
 </Project>

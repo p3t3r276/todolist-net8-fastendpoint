@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
-namespace FastTodo.Infrastructure;
+namespace FastTodo.Infrastructure.Domain;
 
 public abstract class BaseDbContext<TDbContext> : DbContext where TDbContext : DbContext
 {

@@ -13,4 +13,10 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Persistence\EF\FastTodo.Persistence.EF.csproj" />
+    <ProjectReference Include="..\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj" />
+    <ProjectReference Include="..\Infrastructure\Domain\FastTodo.Infrastructure.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -2,6 +2,7 @@ using FastEndpoints;
 using FastEndpoints.Swagger;
 using FastTodo.Application;
 using FastTodo.Persistence.SQLite;
+using FastTodo.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,7 @@ builder.Services.AddAuthentication();
 
 builder.Services
     .AddApplication(builder.Configuration)
-    .AddSQLiteEFPersistence(builder.Configuration)
+    .AddDatabaseProvider(builder.Configuration) // Register the correct DbContext and repository
     .AddFastEndpoints()
     .SwaggerDocument(o => o.AutoTagPathSegmentIndex = 0);
 

@@ -94,3 +94,8 @@ dotnet ef database update \
     --startup-project ./backend/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSQLDbContext
 ```
+
+### Run
+```
+dotnet run --project FastTodo.API/FastTodo.API.csproj
+```
