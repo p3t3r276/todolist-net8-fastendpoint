@@ -1,4 +1,5 @@
 using System.Reflection;
+using FastTodo.Infrastructure;
 using FluentValidation;
 using Mapster;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,8 @@ public static partial class ModuleConfiguration
         includeInternalTypes: true);
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ModuleConfiguration).Assembly));
+
+        services.AddInfrastructure(configuration);
         return services;
     }
 }
