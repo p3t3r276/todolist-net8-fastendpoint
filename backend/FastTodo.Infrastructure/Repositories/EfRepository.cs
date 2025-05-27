@@ -1,19 +1,15 @@
+using FastTodo.Infrastructure.Domain;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace FastTodo.Infrastructure.Repositories;
 
 public class EfRepository<T> : IRepository<T> where T : class
 {
-    private readonly DbContext _dbContext;
+    private readonly BaseDbContext _dbContext;
     private readonly DbSet<T> _dbSet;
 
-    public EfRepository(DbContext dbContext)
+    public EfRepository(BaseDbContext dbContext)
     {
         _dbContext = dbContext;
         _dbSet = dbContext.Set<T>();

@@ -31,7 +31,6 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                 var message = string.Join(@"\r\n", failures.Select(x => x.ErrorMessage));
 
                 throw new ValidationException(message);
-
             }
         }
         return await next();

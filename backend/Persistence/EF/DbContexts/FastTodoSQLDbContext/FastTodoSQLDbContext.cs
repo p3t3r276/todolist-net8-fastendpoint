@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 namespace FastTodo.Persistence.EF;
 
 public class FastTodoSQLDbContext(DbContextOptions<FastTodoSQLDbContext> options, IConfiguration configuration)
-    : BaseDbContext<FastTodoSQLDbContext>(options), ITodoDbContext
+    : BaseDbContext(options)
 {
     protected override Assembly ExecutingAssembly => typeof(FastTodoApplyFilterConfiguration).Assembly;
 

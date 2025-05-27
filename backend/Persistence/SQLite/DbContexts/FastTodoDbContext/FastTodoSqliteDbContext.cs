@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 namespace FastTodo.Persistence.SQLite;
 
 public class FastTodoSqliteDbContext (DbContextOptions<FastTodoSqliteDbContext> options, IConfiguration configuration) 
-    : BaseDbContext<FastTodoSqliteDbContext>(options), ITodoDbContext
+    : BaseDbContext(options), ITodoDbContext
 {
     protected override Assembly ExecutingAssembly => typeof(FastTodoApplyFilterConfiguration).Assembly;
 

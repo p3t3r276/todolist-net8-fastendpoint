@@ -1,3 +1,4 @@
+using FastTodo.Infrastructure.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,9 +20,8 @@ public static partial class ModuleConfiguration
     private static IServiceCollection AddFrameworkDbContexts(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<FastTodoSQLDbContext>(
-            options => options.UseSqlServer(configuration.GetConnectionString("Sql")));
-
+        services.AddDbContext<FastTodoSQLDbContext>();
+        services.AddScoped<BaseDbContext, FastTodoSQLDbContext>();
         return services;
     }
 }

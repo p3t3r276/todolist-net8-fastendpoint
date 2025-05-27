@@ -1,4 +1,4 @@
-using FastTodo.Persistence.SQLite.DbContexts.FastTodoDbContext;
+using FastTodo.Infrastructure.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,9 +20,8 @@ public static partial class ModuleConfiguration
     private static IServiceCollection AddFrameworkDbContexts(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<FastTodoSqliteDbContext>(
-            options => options.UseSqlite(configuration.GetConnectionString("Sqlite")));
-
+        services.AddDbContext<FastTodoSqliteDbContext>();
+        services.AddScoped<BaseDbContext, FastTodoSqliteDbContext>();
         return services;
     }
 }

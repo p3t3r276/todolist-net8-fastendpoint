@@ -5,14 +5,17 @@ using Microsoft.Extensions.DependencyInjection;
 using FastTodo.Infrastructure.Repositories;
 using FastTodo.Persistence.EF;
 using FastTodo.Persistence.SQLite;
-using FastTodo.Infrastructure.Domain;
+using System.Reflection;
 
 namespace FastTodo.Infrastructure;
 
 public static partial class ModuleConfiguration
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, Assembly applicationAssembly)
     {
+        var currentAss = Assembly.GetExecutingAssembly();
+        // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        // services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies([applicationAssembly, Assembly.GetExecutingAssembly()]));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddDatabaseProvider(configuration);
         return services;
@@ -33,17 +36,15 @@ public static partial class ModuleConfiguration
         switch (provider)
         {
             case DatabaseProviderType.Sqlite:
-                services.AddDbContext<FastTodoSqliteDbContext>();
-                services.AddScoped<ITodoDbContext, FastTodoSqliteDbContext>();
+                services.AddSQLiteEFPersistence(configuration);
                 break;
             case DatabaseProviderType.SqlServer:
-                services.AddDbContext<FastTodoSQLDbContext>();
-                services.AddScoped<ITodoDbContext, FastTodoSQLDbContext>();
+                services.AddSQLEFPersistence(configuration);
                 break;
             default:
                 throw new Exception($"Unsupported DatabaseProvider: {provider}");
         }
-        services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+        services.AddTransient(typeof(IRepository<>), typeof(EfRepository<>));
         return services;
     }
 }

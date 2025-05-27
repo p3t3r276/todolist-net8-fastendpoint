@@ -1,9 +1,7 @@
 using FastTodo.Domain.Entities;
-using FastTodo.Persistence.SQLite;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 using FastTodo.Infrastructure.Repositories;
 
 namespace FastTodo.Application.Features.Todo;
