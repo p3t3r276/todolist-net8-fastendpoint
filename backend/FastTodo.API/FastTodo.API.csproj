@@ -22,8 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\FastTodo.Application\FastTodo.Application.csproj" />
     <ProjectReference Include="..\FastTodo.Infrastructure\FastTodo.Infrastructure.csproj" />
-    <ProjectReference Include="..\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj" />
-    <ProjectReference Include="..\Persistence\EF\FastTodo.Persistence.EF.csproj" />
   </ItemGroup>
 
 </Project>

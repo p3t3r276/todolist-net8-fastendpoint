@@ -12,7 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\FastTodo.Domain\FastTodo.Domain.csproj" />
-      <ProjectReference Include="..\..\FastTodo.Infrastructure\FastTodo.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\Domain\FastTodo.Infrastructure.Domain.csproj" />
     </ItemGroup>
 
 </Project>

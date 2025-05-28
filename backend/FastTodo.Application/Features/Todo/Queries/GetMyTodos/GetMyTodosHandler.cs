@@ -1,20 +1,17 @@
 using FastTodo.Domain.Entities;
-using FastTodo.Persistence.SQLite;
 using Mapster;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using FastTodo.Infrastructure.Repositories;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class GetMyTodosHandler (
-    FastTodoSqliteDbContext dbContext
+    IRepository<TodoItem, Guid> repository
 ): IRequestHandler<GetMyTodosRequest, List<TodoItemDto>>
 {
     public async Task<List<TodoItemDto>> Handle(GetMyTodosRequest request, CancellationToken cancellationToken)
     {
-        return await dbContext.Set<TodoItem>()
-            .AsNoTracking()
-            .ProjectToType<TodoItemDto>()
-            .ToListAsync(cancellationToken: cancellationToken);
+        var items = await repository.ListAsync(predicate: null, enableTracking: false, cancellationToken: cancellationToken);
+        return items.Select(x => x.Adapt<TodoItemDto>()).ToList();
     }
 }

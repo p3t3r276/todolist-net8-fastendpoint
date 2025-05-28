@@ -1,18 +1,13 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
-namespace FastTodo.Infrastructure;
+namespace FastTodo.Infrastructure.Domain;
 
-public abstract class BaseDbContext<TDbContext> : DbContext where TDbContext : DbContext
+public abstract class BaseDbContext(DbContextOptions options) : DbContext(options)
 {
     protected virtual Assembly ExecutingAssembly => Assembly.GetExecutingAssembly();
 
     protected abstract Func<Type, bool> RegisterConfigurationsPredicate { get; }
-
-    protected BaseDbContext(DbContextOptions<TDbContext> options)
-        : base(options)
-    {
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

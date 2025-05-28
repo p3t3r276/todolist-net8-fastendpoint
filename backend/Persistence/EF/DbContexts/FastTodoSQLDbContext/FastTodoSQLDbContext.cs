@@ -1,5 +1,5 @@
 using System.Reflection;
-using FastTodo.Infrastructure;
+using FastTodo.Infrastructure.Domain;
 using FastTodo.Persistence.EF.DbContexts.FastTodoDbContext.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 namespace FastTodo.Persistence.EF;
 
 public class FastTodoSQLDbContext(DbContextOptions<FastTodoSQLDbContext> options, IConfiguration configuration)
-    : BaseDbContext<FastTodoSQLDbContext>(options)
+    : BaseDbContext(options)
 {
     protected override Assembly ExecutingAssembly => typeof(FastTodoApplyFilterConfiguration).Assembly;
 

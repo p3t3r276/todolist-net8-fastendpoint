@@ -1,25 +1,20 @@
 using FastTodo.Domain.Entities;
-using FastTodo.Persistence.SQLite;
+using FastTodo.Infrastructure.Repositories;
 using Mapster;
 using MediatR;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class CreateTodoItemHandler(
-    FastTodoSqliteDbContext dbContext
+    IRepository<TodoItem, Guid> repository
 ) : IRequestHandler<CreateTodoRequest, TodoItemDto>
 {
     public async Task<TodoItemDto> Handle(CreateTodoRequest request, CancellationToken cancellationToken)
     {
-        var newTodo = new TodoItem()
-        {
-            Id = Guid.NewGuid(),
-            Name = request.Name,
-            IsDone = false
-        };
+        var newTodo = request.Adapt<TodoItem>();
 
-        _ = await dbContext.Set<TodoItem>().AddAsync(newTodo, cancellationToken);
-        _ = await dbContext.SaveChangesAsync(cancellationToken);
+        await repository.AddAsync(newTodo, cancellationToken);
+        await repository.SaveChangesAsync(cancellationToken);
         return newTodo.Adapt<TodoItemDto>();
     }
 }
