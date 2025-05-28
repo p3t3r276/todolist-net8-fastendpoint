@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLite", "SQLite", "{B89D9D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Infrastructure.Domain", "Infrastructure\Domain\FastTodo.Infrastructure.Domain.csproj", "{356FF29A-0B60-47BB-A25A-368976707B9D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.SeedData", "FastTodo.SeedData\FastTodo.SeedData.csproj", "{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,18 @@ Global
 		{356FF29A-0B60-47BB-A25A-368976707B9D}.Release|x64.Build.0 = Release|Any CPU
 		{356FF29A-0B60-47BB-A25A-368976707B9D}.Release|x86.ActiveCfg = Release|Any CPU
 		{356FF29A-0B60-47BB-A25A-368976707B9D}.Release|x86.Build.0 = Release|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Debug|x64.Build.0 = Debug|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Debug|x86.Build.0 = Debug|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Release|x64.ActiveCfg = Release|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Release|x64.Build.0 = Release|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Release|x86.ActiveCfg = Release|Any CPU
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,5 +136,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B89D9DC0-7E25-DCC1-FEAB-D996AD256237} = {31D0B0DA-3F70-8AAB-D4B2-B98572D1139C}
 		{356FF29A-0B60-47BB-A25A-368976707B9D} = {B89D9DC0-7E25-DCC1-FEAB-D996AD256237}
+		{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF} = {B89D9DC0-7E25-DCC1-FEAB-D996AD256237}
 	EndGlobalSection
 EndGlobal

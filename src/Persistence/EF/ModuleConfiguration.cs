@@ -1,12 +1,11 @@
 using FastTodo.Infrastructure.Domain;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FastTodo.Persistence.EF;
 
 public static partial class ModuleConfiguration
 {
-    public static IServiceCollection AddSQLEFPersistence(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddSQLEFPersistence(this IServiceCollection services)
     {
         services.AddFrameworkDbContexts();
 
