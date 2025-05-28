@@ -13,11 +13,11 @@ A project to test the capacity of EF Core and integrating to ASP.NET Core projec
     - FastEndpoints `5.34.0`
     - Entity Framework Core `9.0.0`
     - MediatR `12.4.1`
-    - [Coming] FluentValidation `12.0.0`
+    - FluentValidation `12.0.0`
     - [Coming] Docker
     - [Coming] ASP.NET Core Identity
 - Frontend
-    - Angular
+    - [Coming] Angular
 
 ## Features Checklist
 1. Basic todo list functions ✅
@@ -36,6 +36,16 @@ A project to test the capacity of EF Core and integrating to ASP.NET Core projec
 6. Todo item assignments
 7. Implement ASP.NET Core Identity
 8. [Testing microcservice] move Identity tables to another database
+
+## API Endpoints
+
+| Method | Endpoint        | Description                                  |
+|--------|-----------------|----------------------------------------------|
+| GET    | /api/todos      | Get all todos with optional filtering        |
+| GET    | /api/todos/{id} | Get a specific todo by ID                    |
+| POST   | /api/todos      | Create a new todo                            |
+| PUT    | /api/todos/{id} | Update an existing todo                      |
+| DELETE | /api/todos/{id} | Delete a todo                                |
 
 ## Getting started
 ### Set up environments 
