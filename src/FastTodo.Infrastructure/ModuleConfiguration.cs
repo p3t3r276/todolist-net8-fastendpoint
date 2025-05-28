@@ -19,20 +19,20 @@ public static partial class ModuleConfiguration
 
     public static IServiceCollection AddDatabaseProvider(this IServiceCollection services, IConfiguration configuration)
     {
-        var providerString = configuration["DatabaseProvider"];
+        var providerString = configuration["SqlProvider"];
         if (!Enum.TryParse<DatabaseProviderType>(providerString, true, out var provider))
-            throw new Exception($"Invalid DatabaseProvider configuration: {providerString}");
+            throw new Exception($"Invalid SqlProvider configuration: {providerString}");
 
         switch (provider)
         {
             case DatabaseProviderType.Sqlite:
-                services.AddSQLiteEFPersistence(configuration);
+                services.AddSQLiteEFPersistence();
                 break;
             case DatabaseProviderType.SqlServer:
-                services.AddSQLEFPersistence(configuration);
+                services.AddSQLEFPersistence();
                 break;
             default:
-                throw new Exception($"Unsupported DatabaseProvider: {provider}");
+                throw new Exception($"Unsupported SqlProvider: {provider}");
         }
         services.AddTransient(typeof(IRepository<,>), typeof(EfRepository<,>));
         return services;

@@ -17,9 +17,7 @@ public class FastTodoSQLDbContext(DbContextOptions<FastTodoSQLDbContext> options
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("sql"));
-        }
+
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString("sql"));
     }
 }

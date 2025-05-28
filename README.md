@@ -7,17 +7,17 @@ A project to test the capacity of EF Core and integrating to ASP.NET Core projec
     - SQLite
     - [Coming] MongoDB
 
-- BackEnd
+- Backend
     - .NET `8.0`
     - Minimal API
     - FastEndpoints `5.34.0`
     - Entity Framework Core `9.0.0`
     - MediatR `12.4.1`
-    - [Coming] FluentValidation `12.0.0`
+    - FluentValidation `12.0.0`
     - [Coming] Docker
     - [Coming] ASP.NET Core Identity
 - Frontend
-    - Angular
+    - [Coming] Angular
 
 ## Features Checklist
 1. Basic todo list functions ✅
@@ -27,15 +27,25 @@ A project to test the capacity of EF Core and integrating to ASP.NET Core projec
     - Get item by id
     - Delete item by id
 2. Add validations ✅
-3. Console App: Todo data seeding ⚡
+3. Console App: Todo data seeding ✅
 3. Dockerization
-4. Implement generic repotory pattern
+4. Implement generic repotory pattern ✅
 5. Feature: Implement User function
     - User table
     - Link Users with TodoItems
 6. Todo item assignments
 7. Implement ASP.NET Core Identity
 8. [Testing microcservice] move Identity tables to another database
+
+## API Endpoints
+
+| Method | Endpoint        | Description                                  |
+|--------|-----------------|----------------------------------------------|
+| GET    | /api/todos      | Get all todos with optional filtering        |
+| GET    | /api/todos/{id} | Get a specific todo by ID                    |
+| POST   | /api/todos      | Create a new todo                            |
+| PUT    | /api/todos/{id} | Update an existing todo                      |
+| DELETE | /api/todos/{id} | Delete a todo                                |
 
 ## Getting started
 ### Set up environments 
@@ -65,16 +75,16 @@ podman run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=MyPass@word" \
 #### SQLite
 ```
 dotnet ef migrations add Initial \
-    --project .\backend\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj \ 
-    --startup-project .\backend\FastTodo.API\FastTodo.API.csproj \
+    --project .\src\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj \ 
+    --startup-project .\src\FastTodo.API\FastTodo.API.csproj \
     --context FastTodoSqliteDbContext -o "Data/Todo/Migrations" 
 ```
 
 #### SQL Server
 ```
 dotnet ef migrations add Initial \
-    --project ./backend/Persistence/EF/FastTodo.Persistence.EF.csproj \ 
-    --startup-project ./backend/FastTodo.API/FastTodo.API.csproj \
+    --project ./src/Persistence/EF/FastTodo.Persistence.EF.csproj \ 
+    --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSQLDbContext -o "Data/Todo/Migrations" 
 ```
 
@@ -82,16 +92,16 @@ dotnet ef migrations add Initial \
 #### SQLite
 ```
 dotnet ef database update \
-    --project .\backend\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj \
-    --startup-project .\backend\FastTodo.API\FastTodo.API.csproj \
+    --project .\src\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj \
+    --startup-project .\src\FastTodo.API\FastTodo.API.csproj \
     --context FastTodoSqliteDbContext 
 ```
 
 #### SQL Server
 ```
 dotnet ef database update \
-    --project ./backend/Persistence/EF/FastTodo.Persistence.EF.csproj \
-    --startup-project ./backend/FastTodo.API/FastTodo.API.csproj \
+    --project ./src/Persistence/EF/FastTodo.Persistence.EF.csproj \
+    --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSQLDbContext
 ```
 

@@ -1,12 +1,11 @@
 using FastTodo.Infrastructure.Domain;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FastTodo.Persistence.SQLite;
 
 public static partial class ModuleConfiguration
 {
-    public static IServiceCollection AddSQLiteEFPersistence(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddSQLiteEFPersistence(this IServiceCollection services)
     {
         services.AddFrameworkDbContexts();
 
