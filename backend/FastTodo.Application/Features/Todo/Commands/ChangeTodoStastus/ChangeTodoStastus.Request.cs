@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FastTodo.Application.Features.Todo;
 
-public class MarkTodoRequest : IRequest<Results<NoContent, Ok<TodoItemDto>>>
+public class ChangeTodoStastusRequest : IRequest<Results<NoContent, Ok<TodoItemDto>>>
 {
     [RouteParam]
     public Guid? Id { get; set; }

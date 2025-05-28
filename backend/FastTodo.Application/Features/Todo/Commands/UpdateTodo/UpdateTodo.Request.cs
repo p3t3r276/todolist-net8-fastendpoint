@@ -10,5 +10,9 @@ public class UpdateTodoRequest : IRequest<Results<NoContent, Ok<TodoItemDto>>>
     public Guid? Id { get; set; }
 
     [FromBody]
-    public string? Name { get; set; }
+    public UpdateTodoBody? Body { get; set; }
 }
+
+public record UpdateTodoBody(
+    string? Name
+);

@@ -18,6 +18,7 @@ public class DeleteTodoHandler(
             return TypedResults.NoContent();
         }
         await repository.DeleteAsync(item, cancellationToken);
+        await repository.SaveChangesAsync(cancellationToken);
         return TypedResults.Ok();
     }
 }

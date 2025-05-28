@@ -18,7 +18,7 @@ public class UpdateTodoHandler(
         {
             return TypedResults.NoContent();
         }
-        item.Name = request.Name;
+        item.Name = request.Body!.Name;
         await repository.UpdateAsync(item, cancellationToken);
         return TypedResults.Ok(item.Adapt<TodoItemDto>());
     }
