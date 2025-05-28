@@ -20,14 +20,14 @@ A project to test the capacity of EF Core and integrating to ASP.NET Core projec
     - Angular
 
 ## Features Checklist
-1. Basic todo list functions 
+1. Basic todo list functions ✅
     - New item
     - Edit item by id
     - Get all items
     - Get item by id
     - Delete item by id
-2. Add validations
-3. Console App: Todo data seeding
+2. Add validations ✅
+3. Console App: Todo data seeding ⚡
 3. Dockerization
 4. Implement generic repotory pattern
 5. Feature: Implement User function
