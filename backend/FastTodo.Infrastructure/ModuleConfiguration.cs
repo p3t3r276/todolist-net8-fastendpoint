@@ -5,26 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 using FastTodo.Infrastructure.Repositories;
 using FastTodo.Persistence.EF;
 using FastTodo.Persistence.SQLite;
-using System.Reflection;
 
 namespace FastTodo.Infrastructure;
 
 public static partial class ModuleConfiguration
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, Assembly applicationAssembly)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var currentAss = Assembly.GetExecutingAssembly();
-        // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-        // services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies([applicationAssembly, Assembly.GetExecutingAssembly()]));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddDatabaseProvider(configuration);
         return services;
-    }
-
-    public enum DatabaseProviderType
-    {
-        Sqlite,
-        SqlServer
     }
 
     public static IServiceCollection AddDatabaseProvider(this IServiceCollection services, IConfiguration configuration)

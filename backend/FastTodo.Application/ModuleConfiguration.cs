@@ -4,7 +4,6 @@ using FluentValidation;
 using Mapster;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using static System.Reflection.Assembly;
 
 namespace FastTodo.Application;
 
@@ -19,8 +18,8 @@ public static partial class ModuleConfiguration
         services.AddValidatorsFromAssemblies([Assembly.GetExecutingAssembly(), typeof(ModuleConfiguration).Assembly], 
         includeInternalTypes: true);
 
-services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-        services.AddInfrastructure(configuration, typeof(ModuleConfiguration).Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddInfrastructure(configuration);
         return services;
     }
 }
