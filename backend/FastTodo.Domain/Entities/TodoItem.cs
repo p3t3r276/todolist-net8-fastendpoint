@@ -1,9 +1,9 @@
+using FastTodo.Domain.Common;
+
 namespace FastTodo.Domain.Entities;
 
-public sealed class TodoItem
+public sealed class TodoItem : BaseEntity<Guid>
 {
-    public Guid Id { get; set; }
-
     public string? Name { get; set; }
 
     public bool IsDone { get; set; }

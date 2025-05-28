@@ -34,7 +34,7 @@ public static partial class ModuleConfiguration
             default:
                 throw new Exception($"Unsupported DatabaseProvider: {provider}");
         }
-        services.AddTransient(typeof(IRepository<>), typeof(EfRepository<>));
+        services.AddTransient(typeof(IRepository<,>), typeof(EfRepository<,>));
         return services;
     }
 }
