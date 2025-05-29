@@ -5,7 +5,7 @@ A project to test the capacity of EF Core and integrating to ASP.NET Core projec
 - Databases
     - SQL Server
     - SQLite
-    - [Coming] MongoDB
+    - [Upcoming] MongoDB
 
 - Backend
     - .NET `8.0`
@@ -14,10 +14,11 @@ A project to test the capacity of EF Core and integrating to ASP.NET Core projec
     - Entity Framework Core `9.0.0`
     - MediatR `12.4.1`
     - FluentValidation `12.0.0`
-    - [Coming] Docker
-    - [Coming] ASP.NET Core Identity
+    - [Upcoming] Docker
+    - [Upcoming] ASP.NET Core Identity\
+
 - Frontend
-    - [Coming] Angular
+    - [Upcoming] Angular
 
 ## Features Checklist
 1. Basic todo list functions ✅
@@ -30,12 +31,13 @@ A project to test the capacity of EF Core and integrating to ASP.NET Core projec
 3. Console App: Todo data seeding ✅
 3. Dockerization
 4. Implement generic repotory pattern ✅
-5. Feature: Implement User function
+5. Verionsing
+6. Feature: Implement User function
     - User table
     - Link Users with TodoItems
-6. Todo item assignments
-7. Implement ASP.NET Core Identity
-8. [Testing microcservice] move Identity tables to another database
+7. Todo item assignments
+8. Implement ASP.NET Core Identity
+9. [Testing microcservice] move Identity tables to another database
 
 ## API Endpoints
 

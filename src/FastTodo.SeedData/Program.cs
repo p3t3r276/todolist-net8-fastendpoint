@@ -2,7 +2,6 @@
 using FastTodo.Domain.Entities;
 using FastTodo.Infrastructure;
 using FastTodo.Infrastructure.Domain;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
