@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Application", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Domain", "src\FastTodo.Domain\FastTodo.Domain.csproj", "{D504E7ED-BA02-4291-BB15-F33D40EE3EFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Infrastructure", "src\FastTodo.Infrastructure\FastTodo.Infrastructure.csproj", "{27863A03-7002-43E1-9BA1-D05CDB284A5E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Infrastructure", "src\Infrastructure\Services\FastTodo.Infrastructure.csproj", "{27863A03-7002-43E1-9BA1-D05CDB284A5E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.EF", "src\Persistence\EF\FastTodo.Persistence.EF.csproj", "{BAF524E2-2BAB-4B6F-B143-A3AF4778E366}"
 EndProject

@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FastTodo.Application\FastTodo.Application.csproj" />
-    <ProjectReference Include="..\FastTodo.Infrastructure\FastTodo.Infrastructure.csproj" />
+    <ProjectReference Include="..\Infrastructure\Services\FastTodo.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
