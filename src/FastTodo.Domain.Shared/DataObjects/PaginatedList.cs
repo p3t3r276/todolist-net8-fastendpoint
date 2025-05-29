@@ -1,4 +1,4 @@
-namespace FastTodo.Domain.Common;
+namespace FastTodo.Domain.Shared;
 
 public class PaginatedList<T>
 {

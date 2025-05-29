@@ -1,4 +1,5 @@
-using FastTodo.Domain.Common;
+using FastTodo.Domain.Shared;
+using FastTodo.Infrastructure.Domain.Entities;
 using FastTodo.Infrastructure.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;

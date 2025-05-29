@@ -1,5 +1,7 @@
-using FastTodo.Domain.Common;
+using FastTodo.Domain.Shared;
 using System.Linq.Expressions;
+using FastTodo.Infrastructure.Domain.Entities;
+using FastTodo.Infrastructure.Domain;
 
 namespace FastTodo.Infrastructure.Repositories;
 

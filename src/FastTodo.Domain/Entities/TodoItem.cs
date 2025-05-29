@@ -1,4 +1,4 @@
-using FastTodo.Domain.Common;
+using FastTodo.Infrastructure.Domain.Entities;
 
 namespace FastTodo.Domain.Entities;
 
