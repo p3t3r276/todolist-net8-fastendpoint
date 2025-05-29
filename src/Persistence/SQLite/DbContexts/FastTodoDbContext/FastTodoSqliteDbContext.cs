@@ -17,6 +17,7 @@ public class FastTodoSqliteDbContext (DbContextOptions<FastTodoSqliteDbContext> 
         
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(DateTimeOffset)

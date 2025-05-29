@@ -19,20 +19,14 @@ public class TaskConfiguration : IEntityTypeConfiguration<TodoItem>
 
         builder.Property(x => x.Name).HasMaxLength(250).IsRequired();
         
-        builder.Property(x => x.DueDate)
-            .HasColumnType("datetimeoffset");
+        builder.Property(x => x.DueDate);
 
-        builder.Property(x => x.StartDate)
-            .HasColumnType("datetimeoffset");
+        builder.Property(x => x.StartDate);
 
-        builder.Property(x => x.EndDate)
-            .HasColumnType("datetimeoffset");
+        builder.Property(x => x.EndDate);
 
-        builder.Property(x => x.CreatedAt)
-            .HasColumnType("datetimeoffset");
+        builder.Property(x => x.CreatedAt);
 
-        builder.Property(x => x.ModifiedAt)
-            .HasColumnType("datetimeoffset")
-            .HasConversion(new DateTimeOffsetToBinaryConverter());
+        builder.Property(x => x.ModifiedAt);
     }
 }

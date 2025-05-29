@@ -77,9 +77,9 @@ podman run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=MyPass@word" \
 #### SQLite
 ```
 dotnet ef migrations add Initial \
-    --project .\src\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj \ 
-    --startup-project .\src\FastTodo.API\FastTodo.API.csproj \
-    --context FastTodoSqliteDbContext -o "Data/Todo/Migrations" 
+    --project ./src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj \
+    --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
+    --context FastTodoSqliteDbContext -o "Data/Todo/Migrations"
 ```
 
 #### SQL Server
@@ -94,9 +94,9 @@ dotnet ef migrations add Initial \
 #### SQLite
 ```
 dotnet ef database update \
-    --project .\src\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj \
-    --startup-project .\src\FastTodo.API\FastTodo.API.csproj \
-    --context FastTodoSqliteDbContext 
+    --project ./src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj \
+    --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
+    --context FastTodoSqliteDbContext
 ```
 
 #### SQL Server
