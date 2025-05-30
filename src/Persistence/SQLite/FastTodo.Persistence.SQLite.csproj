@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\FastTodo.Domain\FastTodo.Domain.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\Domain\FastTodo.Infrastructure.Domain.csproj" />
+      <ProjectReference Include="..\..\FastTodo.Domain.Shared\FastTodo.Domain.Shared.csproj" />
+    </ItemGroup>
+
+</Project>
