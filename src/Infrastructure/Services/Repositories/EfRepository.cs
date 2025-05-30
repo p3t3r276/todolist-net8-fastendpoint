@@ -1,7 +1,9 @@
-using FastTodo.Domain.Common;
+using FastTodo.Domain.Shared;
+using FastTodo.Infrastructure.Domain.Entities;
 using FastTodo.Infrastructure.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using Mapster;
 
 namespace FastTodo.Infrastructure.Repositories;
 
@@ -65,7 +67,11 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         return await query.ToListAsync(cancellationToken);
     }
 
-    public async Task<PaginatedList<TEntity>> ListAsync(int pageIndex, int pageSize, Expression<Func<TEntity, bool>>? predicate = null, bool enableTracking = true, CancellationToken cancellationToken = default)
+    public async Task<PaginatedList<TEntity>> ListAsync(
+        int pageIndex, int pageSize,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        bool enableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
         if (!enableTracking)
@@ -80,6 +86,29 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
             .ToListAsync(cancellationToken);
 
         return new PaginatedList<TEntity>(items, totalCount, pageIndex, pageSize);
+    }
+
+    public async Task<PaginatedList<TProjector>> ListAsync<TProjector>(
+        int pageIndex, 
+        int pageSize, 
+        Expression<Func<TEntity, bool>>? predicate = null, 
+        bool enableTracking = true, 
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<TEntity> query = _dbSet;
+        if (!enableTracking)
+            query = query.AsNoTracking();
+        if (predicate != null)
+            query = query.Where(predicate);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .ProjectToType<TProjector>()
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedList<TProjector>(items, totalCount, pageIndex, pageSize);
     }
 
     public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)

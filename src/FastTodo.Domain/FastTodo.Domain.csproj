@@ -10,4 +10,8 @@
     <PackageReference Include="Mapster" Version="7.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Infrastructure\Domain\FastTodo.Infrastructure.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

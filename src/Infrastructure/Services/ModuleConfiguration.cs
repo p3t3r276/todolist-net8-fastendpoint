@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using FastTodo.Infrastructure.Repositories;
 using FastTodo.Persistence.EF;
 using FastTodo.Persistence.SQLite;
+using FastTodo.Domain.Constants;
 
 namespace FastTodo.Infrastructure;
 
@@ -25,10 +26,10 @@ public static partial class ModuleConfiguration
 
         switch (provider)
         {
-            case DatabaseProviderType.Sqlite:
+            case DatabaseProviderType.SQLite:
                 services.AddSQLiteEFPersistence();
                 break;
-            case DatabaseProviderType.SqlServer:
+            case DatabaseProviderType.SQLServer:
                 services.AddSQLEFPersistence();
                 break;
             default:

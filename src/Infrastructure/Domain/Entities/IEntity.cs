@@ -1,4 +1,4 @@
-namespace FastTodo.Domain.Common;
+namespace FastTodo.Infrastructure.Domain.Entities;
 
 public interface IEntity<TKey>
 {

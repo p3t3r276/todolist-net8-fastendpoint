@@ -1,17 +1,22 @@
 using FastTodo.Domain.Entities;
-using Mapster;
 using MediatR;
 using FastTodo.Infrastructure.Repositories;
+using FastTodo.Domain.Shared;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class GetMyTodosHandler (
     IRepository<TodoItem, Guid> repository
-): IRequestHandler<GetMyTodosRequest, List<TodoItemDto>>
+): IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
 {
-    public async Task<List<TodoItemDto>> Handle(GetMyTodosRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<TodoItemDto>> Handle(GetMyTodosRequest request, CancellationToken cancellationToken)
     {
-        var items = await repository.ListAsync(predicate: null, enableTracking: false, cancellationToken: cancellationToken);
-        return items.Select(x => x.Adapt<TodoItemDto>()).ToList();
+        var items = await repository.ListAsync<TodoItemDto>(
+            request.PageIndex,
+            request.PageSize,
+            enableTracking: false,
+            cancellationToken: cancellationToken);
+
+        return items;
     }
 }

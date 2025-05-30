@@ -1,4 +1,5 @@
 using System.Reflection;
+using FastTodo.Domain.Constants;
 using FastTodo.Infrastructure.Domain;
 using FastTodo.Persistence.EF.DbContexts.FastTodoDbContext.Configurations;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,6 @@ public class FastTodoSQLDbContext(DbContextOptions<FastTodoSQLDbContext> options
     {
         base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder.UseSqlServer(configuration.GetConnectionString("sql"));
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseProviderType.SQLServer)));
     }
 }

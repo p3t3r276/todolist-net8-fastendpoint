@@ -23,13 +23,28 @@ namespace FastTodo.Persistence.SQLite.Data.Todo.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<long>("CreatedAt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("DueDate")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("EndDate")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsDone")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("ModifiedAt")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("TEXT");
+
+                    b.Property<long?>("StartDate")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
