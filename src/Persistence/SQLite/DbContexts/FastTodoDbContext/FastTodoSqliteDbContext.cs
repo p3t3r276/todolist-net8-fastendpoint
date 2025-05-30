@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using FastTodo.Persistence.SQLite.DbContexts.FastTodoDbContext.Configurations;
 using Microsoft.Extensions.Configuration;
 using FastTodo.Infrastructure.Domain.ValueConverion;
+using FastTodo.Domain.Constants;
 
 namespace FastTodo.Persistence.SQLite;
 
@@ -37,6 +38,6 @@ public class FastTodoSqliteDbContext (DbContextOptions<FastTodoSqliteDbContext> 
     {
         base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder.UseSqlite(configuration.GetConnectionString("Sqlite"));
+        optionsBuilder.UseSqlite(configuration.GetConnectionString(nameof(DatabaseProviderType.SQLite)));
     }
 }

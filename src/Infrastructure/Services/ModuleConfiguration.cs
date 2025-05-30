@@ -26,10 +26,10 @@ public static partial class ModuleConfiguration
 
         switch (provider)
         {
-            case DatabaseProviderType.Sqlite:
+            case DatabaseProviderType.SQLite:
                 services.AddSQLiteEFPersistence();
                 break;
-            case DatabaseProviderType.SqlServer:
+            case DatabaseProviderType.SQLServer:
                 services.AddSQLEFPersistence();
                 break;
             default:

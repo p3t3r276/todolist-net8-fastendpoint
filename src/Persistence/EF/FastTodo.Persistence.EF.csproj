@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\Domain\FastTodo.Infrastructure.Domain.csproj" />
+    <ProjectReference Include="..\..\FastTodo.Domain.Shared\FastTodo.Domain.Shared.csproj" />
   </ItemGroup>
 
 </Project>

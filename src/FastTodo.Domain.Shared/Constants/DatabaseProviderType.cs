@@ -2,9 +2,9 @@ namespace FastTodo.Domain.Constants;
 
 public enum DatabaseProviderType
 {
-    Sqlite,
+    SQLite,
 
-    SqlServer,
+    SQLServer,
 
     MySql,
 
