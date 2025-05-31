@@ -1,113 +1,113 @@
 # todolist-net8-fastendpoint
-A project to test the capacity of EF Core and integrating to ASP.NET Core project
+A project demonstrating Clean Architecture with EF Core and ASP.NET Core using FastEndpoints
 
-### Technologies
-- Databases
-    - SQL Server
-    - SQLite
-    - [Upcoming] MongoDB
+## Technologies & Patterns
+### Database Providers
+- SQL Server
+- SQLite
+- [Upcoming] MongoDB
 
-- Backend
-    - .NET `8.0`
-    - Minimal API
-    - FastEndpoints `5.34.0`
-    - Entity Framework Core `9.0.0`
-    - MediatR `12.4.1`
-    - FluentValidation `12.0.0`
-    - [Upcoming] Docker
-    - [Upcoming] ASP.NET Core Identity\
+### Backend Stack
+- .NET `8.0`
+- FastEndpoints `5.34.0`
+- Entity Framework Core `9.0.0`
+- MediatR `12.4.1`
+- FluentValidation `12.0.0`
+- Generic Repository Pattern
+- CQRS Pattern with MediatR
 
-- Frontend
-    - [Upcoming] Angular
+## Features
+### Completed ✅
+1. Basic Todo Operations
+    - Create, Read, Update, Delete (CRUD)
+    - List all items with filtering
+    - Get item by ID
+2. Input Validation using FluentValidation
+3. Data Seeding Console Application
+4. Generic Repository Pattern Implementation
+5. Multiple Database Provider Support (SQL Server, SQLite)
 
-## Features Checklist
-1. Basic todo list functions ✅
-    - New item
-    - Edit item by id
-    - Get all items
-    - Get item by id
-    - Delete item by id
-2. Add validations ✅
-3. Console App: Todo data seeding ✅
-3. Dockerization
-4. Implement generic repotory pattern ✅
-5. Verionsing
-6. Feature: Implement User function
-    - User table
-    - Link Users with TodoItems
-7. Todo item assignments
-8. Implement ASP.NET Core Identity
-9. [Testing microcservice] move Identity tables to another database
+### In Progress 🚧
+1. Dockerization
+2. Unit of Work Pattern
+3. API Versioning
+
+### Planning 📋
+1. User Management
+    - User Authentication
+    - Todo Item Ownership
+2. Todo Item Assignments
+3. ASP.NET Core Identity Integration
 
 ## API Endpoints
 
-| Method | Endpoint        | Description                                  |
-|--------|-----------------|----------------------------------------------|
-| GET    | /api/todos      | Get all todos with optional filtering        |
-| GET    | /api/todos/{id} | Get a specific todo by ID                    |
-| POST   | /api/todos      | Create a new todo                            |
-| PUT    | /api/todos/{id} | Update an existing todo                      |
-| DELETE | /api/todos/{id} | Delete a todo                                |
+| Method | Endpoint        | Description                           |
+|--------|----------------|---------------------------------------|
+| GET    | /api/todos     | Get all todos with optional filtering |
+| GET    | /api/todos/{id}| Get a specific todo by ID            |
+| POST   | /api/todos     | Create a new todo                    |
+| PUT    | /api/todos/{id}| Update an existing todo             |
+| DELETE | /api/todos/{id}| Delete a todo                       |
 
-## Getting started
-### Set up environments 
-#### ```Docker```:
-```
-docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=MyPass@word' \
-    -p 1433:1433 \
-    -d mcr.microsoft.com/mssql/server:2022-latest
+## Getting Started
 
+### Prerequisites
+- .NET 8.0 SDK
+- Docker or Podman (optional, for SQL Server)
+- Visual Studio Code or Visual Studio 2022
+
+### Database Setup
+#### Option 1: SQL Server with Docker
+```bash
 docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=MyPass@word" \
    -p 1433:1433 --name sql2022 --hostname sql2022 --platform linux/amd64 \
    -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
-#### ```Podman```:
-```
-podman run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=MyPass@word' \
-    -p 1433:1433 \
-    -d mcr.microsoft.com/mssql/server:2022-latest
+#### Option 2: SQLite
+No additional setup required. The database file will be created automatically.
 
-podman run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=MyPass@word" \
-   -p 1433:1433 --name sql2022 --hostname sql2022 --platform linux/amd64 \
-   -d mcr.microsoft.com/mssql/server:2022-latest
-```
+### Database Migrations
 
-### Run Migrations
-#### SQLite
-```
+#### For SQLite
+```bash
 dotnet ef migrations add Initial \
     --project ./src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj \
     --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSqliteDbContext -o "Data/Todo/Migrations"
-```
 
-#### SQL Server
-```
-dotnet ef migrations add Initial \
-    --project ./src/Persistence/EF/FastTodo.Persistence.EF.csproj \ 
-    --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
-    --context FastTodoSQLDbContext -o "Data/Todo/Migrations" 
-```
-
-### Update database
-#### SQLite
-```
 dotnet ef database update \
     --project ./src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj \
     --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSqliteDbContext
 ```
 
-#### SQL Server
-```
+#### For SQL Server
+```bash
+dotnet ef migrations add Initial \
+    --project ./src/Persistence/EF/FastTodo.Persistence.EF.csproj \
+    --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
+    --context FastTodoSQLDbContext -o "Data/Todo/Migrations"
+
 dotnet ef database update \
     --project ./src/Persistence/EF/FastTodo.Persistence.EF.csproj \
     --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSQLDbContext
 ```
 
-### Run
+### Running the Application
+```bash
+dotnet run --project src/FastTodo.API/FastTodo.API.csproj
 ```
-dotnet run --project FastTodo.API/FastTodo.API.csproj
+
+### Configuration
+The database provider can be configured in `appsettings.json`:
+```json
+{
+  "DatabaseProvider": "Sqlite", // or "SqlServer"
+  "ConnectionStrings": {
+    "Sqlite": "Data Source=FastTodo.db",
+    "SqlServer": ""
+  }
+}
 ```
