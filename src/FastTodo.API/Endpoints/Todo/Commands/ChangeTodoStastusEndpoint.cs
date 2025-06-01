@@ -10,7 +10,7 @@ public class ChangeTodoStastusEndpoint(IMediator mediator)
 {
     public override void Configure()
     {
-        Patch("/{id:guid}/status");
+        Patch("/{id:guid}");
         Description(x => x.Accepts<ChangeTodoStastusRequest>());
         Group<TodoEndpointGroup>();
     }

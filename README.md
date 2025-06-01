@@ -47,6 +47,7 @@ A project demonstrating Clean Architecture with EF Core and ASP.NET Core using F
 | GET    | /api/todos/{id}| Get a specific todo by ID            |
 | POST   | /api/todos     | Create a new todo                    |
 | PUT    | /api/todos/{id}| Update an existing todo             |
+| PATCH  | /api/todos/{id}| Update todo status             |
 | DELETE | /api/todos/{id}| Delete a todo                       |
 
 ## Getting Started

@@ -28,10 +28,12 @@ var services = new ServiceCollection();
 services.AddSingleton<IConfiguration>(configuration);
 
 services.AddInfrastructure(configuration);
-services.AddInfrastructure(configuration);
 
 var serviceProvider = services.BuildServiceProvider();
 var dbContext = serviceProvider.GetService<BaseDbContext>() ?? throw new Exception("BaseDbContext not available");
+
+// Check which dbcontext is being initalized
+Console.WriteLine(dbContext.GetType());
 
 Console.WriteLine("Starting bulk insert...");
 var watch2 = System.Diagnostics.Stopwatch.StartNew();

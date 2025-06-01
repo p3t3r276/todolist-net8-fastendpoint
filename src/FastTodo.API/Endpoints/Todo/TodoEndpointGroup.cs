@@ -7,7 +7,7 @@ public class TodoEndpointGroup : Group
     public TodoEndpointGroup()
     {
         Configure(
-            "todos",
+            "api/todos",
             ep =>
             {
                 ep.Description(
