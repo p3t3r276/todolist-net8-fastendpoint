@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FastEndpoints.AspVersioning;
 using FastTodo.Application.Features.Todo;
 using FastTodo.Domain.Shared;
 using MediatR;
@@ -12,6 +13,9 @@ public class GetMyTodosEndpoint(IMediator mediator) : Endpoint<GetMyTodosRequest
         Get("/");
         AllowAnonymous();
         Group<TodoEndpointGroup>();
+        Options(x => x
+            .WithVersionSet(">>Todos<<")
+            .MapToApiVersion(1.0));
     }
 
     public override async Task<PaginatedList<TodoItemDto>> ExecuteAsync(GetMyTodosRequest req, CancellationToken ct)
