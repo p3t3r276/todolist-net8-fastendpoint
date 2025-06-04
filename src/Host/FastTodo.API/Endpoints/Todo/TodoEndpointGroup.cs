@@ -14,7 +14,7 @@ public class TodoEndpointGroup : Group
                     x => x.Produces(401)
                         .AllowAnonymous()
                         .ProducesProblemDetails()
-                        .WithTags("todos"));
+                        .WithTags("Todos"));
             });
     }
 }

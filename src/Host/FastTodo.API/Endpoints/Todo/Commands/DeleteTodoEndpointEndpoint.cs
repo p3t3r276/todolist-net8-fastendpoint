@@ -11,6 +11,7 @@ public class DeleteTodoEndpoint(IMediator mediator) : Endpoint<DeleteTodoRequest
     {
         Delete("/{id:guid}");
         Group<TodoEndpointGroup>();
+        Version(1);
     }
 
     public override async Task<Results<NoContent, Ok>> ExecuteAsync(DeleteTodoRequest req, CancellationToken ct)

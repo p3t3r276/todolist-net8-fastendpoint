@@ -11,6 +11,7 @@ public class GetTodoByIdEndpoint(IMediator mediator) : Endpoint<GetTodoByIdReque
     {
         Get("/{id:guid}");
         Group<TodoEndpointGroup>();
+        Version(1);
     }
 
     public override async Task<Results<NoContent, Ok<TodoItemDto>>> ExecuteAsync(GetTodoByIdRequest req, CancellationToken ct)

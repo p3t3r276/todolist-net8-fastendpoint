@@ -11,6 +11,7 @@ public class UpdateTodoEndpoint(IMediator mediator) : Endpoint<UpdateTodoRequest
     {
         Put("/{id:guid}");
         Group<TodoEndpointGroup>();
+        Version(1);
     }
 
     public override async Task<Results<NoContent, Ok<TodoItemDto>>> ExecuteAsync(UpdateTodoRequest req, CancellationToken ct)

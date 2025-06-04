@@ -13,6 +13,7 @@ public class ChangeTodoStastusEndpoint(IMediator mediator)
         Patch("/{id:guid}");
         Description(x => x.Accepts<ChangeTodoStastusRequest>());
         Group<TodoEndpointGroup>();
+        Version(1);
     }
 
     public override async Task<Results<NoContent, Ok<TodoItemDto>>> ExecuteAsync(
