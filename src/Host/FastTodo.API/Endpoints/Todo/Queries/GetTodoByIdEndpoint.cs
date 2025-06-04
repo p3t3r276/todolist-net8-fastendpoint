@@ -10,7 +10,6 @@ public class GetTodoByIdEndpoint(IMediator mediator) : Endpoint<GetTodoByIdReque
     public override void Configure()
     {
         Get("/{id:guid}");
-        AllowAnonymous();
         Group<TodoEndpointGroup>();
     }
 

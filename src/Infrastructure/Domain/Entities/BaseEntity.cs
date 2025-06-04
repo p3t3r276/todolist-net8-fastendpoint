@@ -1,10 +1,6 @@
 namespace FastTodo.Infrastructure.Domain.Entities;
 
-public abstract class BaseEntity<TKey> : IEntity<TKey>
+public abstract class BaseEntity<TKey> : TrackedEntity, IEntity<TKey>
 {
-    public TKey Id { get; set; }
-
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-
-    public DateTimeOffset ModifiedAt { get; set; } = DateTimeOffset.UtcNow;
+    public TKey Id { get; set; } = default!;
 }

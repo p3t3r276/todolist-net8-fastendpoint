@@ -9,7 +9,6 @@ public class CreateTodoEndpoint(IMediator mediator) : Endpoint<CreateTodoRequest
     public override void Configure()
     {
         Post("/");
-        AllowAnonymous();
         Group<TodoEndpointGroup>();
     }
 

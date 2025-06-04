@@ -10,7 +10,6 @@ public class UpdateTodoEndpoint(IMediator mediator) : Endpoint<UpdateTodoRequest
     public override void Configure()
     {
         Put("/{id:guid}");
-        AllowAnonymous();
         Group<TodoEndpointGroup>();
     }
 

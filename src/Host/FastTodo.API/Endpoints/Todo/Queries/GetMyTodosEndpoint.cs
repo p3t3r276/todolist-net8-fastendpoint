@@ -11,8 +11,8 @@ public class GetMyTodosEndpoint(IMediator mediator) : Endpoint<GetMyTodosRequest
     public override void Configure()
     {
         Get("/");
-        AllowAnonymous();
         Group<TodoEndpointGroup>();
+        Version(new ());
         Options(x => x
             .WithVersionSet(">>Todos<<")
             .MapToApiVersion(1.0));

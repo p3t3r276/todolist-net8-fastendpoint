@@ -10,7 +10,6 @@ public class DeleteTodoEndpoint(IMediator mediator) : Endpoint<DeleteTodoRequest
     public override void Configure()
     {
         Delete("/{id:guid}");
-        AllowAnonymous();
         Group<TodoEndpointGroup>();
     }
 
