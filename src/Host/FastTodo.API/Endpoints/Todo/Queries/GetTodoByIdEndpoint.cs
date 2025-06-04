@@ -10,8 +10,8 @@ public class GetTodoByIdEndpoint(IMediator mediator) : Endpoint<GetTodoByIdReque
     public override void Configure()
     {
         Get("/{id:guid}");
-        AllowAnonymous();
         Group<TodoEndpointGroup>();
+        Version(1);
     }
 
     public override async Task<Results<NoContent, Ok<TodoItemDto>>> ExecuteAsync(GetTodoByIdRequest req, CancellationToken ct)

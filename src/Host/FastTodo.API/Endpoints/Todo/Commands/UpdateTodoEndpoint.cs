@@ -10,8 +10,8 @@ public class UpdateTodoEndpoint(IMediator mediator) : Endpoint<UpdateTodoRequest
     public override void Configure()
     {
         Put("/{id:guid}");
-        AllowAnonymous();
         Group<TodoEndpointGroup>();
+        Version(1);
     }
 
     public override async Task<Results<NoContent, Ok<TodoItemDto>>> ExecuteAsync(UpdateTodoRequest req, CancellationToken ct)

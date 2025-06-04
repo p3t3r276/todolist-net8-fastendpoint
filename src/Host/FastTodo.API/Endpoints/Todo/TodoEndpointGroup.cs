@@ -7,14 +7,14 @@ public class TodoEndpointGroup : Group
     public TodoEndpointGroup()
     {
         Configure(
-            "api/todos",
+            "todos",
             ep =>
             {
                 ep.Description(
                     x => x.Produces(401)
                         .AllowAnonymous()
                         .ProducesProblemDetails()
-                        .WithTags("todos"));
+                        .WithTags("Todos"));
             });
     }
 }

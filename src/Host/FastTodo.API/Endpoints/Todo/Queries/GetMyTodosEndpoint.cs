@@ -10,8 +10,8 @@ public class GetMyTodosEndpoint(IMediator mediator) : Endpoint<GetMyTodosRequest
     public override void Configure()
     {
         Get("/");
-        AllowAnonymous();
         Group<TodoEndpointGroup>();
+        Version(1);
     }
 
     public override async Task<PaginatedList<TodoItemDto>> ExecuteAsync(GetMyTodosRequest req, CancellationToken ct)

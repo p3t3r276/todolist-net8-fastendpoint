@@ -9,8 +9,8 @@ public class CreateTodoEndpoint(IMediator mediator) : Endpoint<CreateTodoRequest
     public override void Configure()
     {
         Post("/");
-        AllowAnonymous();
         Group<TodoEndpointGroup>();
+        Version(1);
     }
 
     public override async Task<TodoItemDto> ExecuteAsync(CreateTodoRequest req, CancellationToken ct)
