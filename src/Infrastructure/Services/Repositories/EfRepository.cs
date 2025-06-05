@@ -38,7 +38,10 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         return await query.FirstOrDefaultAsync(lambda, cancellationToken);
     }
 
-    public async Task<List<TEntity>> GetByIdsAsync(TKey[] ids, bool enableTracking = true, CancellationToken cancellationToken = default)
+    public async Task<List<TEntity>> GetByIdsAsync(
+        TKey[] ids,
+        bool enableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
         if (!enableTracking)
@@ -57,7 +60,10 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         return await query.Where(lambda).ToListAsync(cancellationToken);
     }
 
-    public async Task<List<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? predicate = null, bool enableTracking = true, CancellationToken cancellationToken = default)
+    public async Task<List<TEntity>> ListAsync(
+        Expression<Func<TEntity, bool>>? predicate = null,
+        bool enableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
         if (!enableTracking)
