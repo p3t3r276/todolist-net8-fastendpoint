@@ -26,11 +26,11 @@ A project demonstrating Clean Architecture with EF Core and ASP.NET Core using F
 3. Data Seeding Console Application
 4. Generic Repository Pattern Implementation
 5. Multiple Database Provider Support (SQL Server, SQLite)
+6. API Versioning
 
 ### In Progress 🚧
 1. Dockerization
 2. Unit of Work Pattern
-3. API Versioning
 
 ### Planning 📋
 1. User Management
