@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.SQLite
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Infrastructure.Domain", "src\Infrastructure\Domain\FastTodo.Infrastructure.Domain.csproj", "{356FF29A-0B60-47BB-A25A-368976707B9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.SeedData", "src\FastTodo.SeedData\FastTodo.SeedData.csproj", "{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.SeedData", "src\Host\FastTodo.SeedData\FastTodo.SeedData.csproj", "{4A8BD502-39D7-45D0-B1B9-E00F5DCC7FCF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
