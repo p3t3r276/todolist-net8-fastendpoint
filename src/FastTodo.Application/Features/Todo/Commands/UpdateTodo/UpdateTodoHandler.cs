@@ -1,5 +1,5 @@
 using FastTodo.Domain.Entities;
-using FastTodo.Infrastructure.Repositories;
+using FastTodo.Infrastructure.Domain.Repositories;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Http;

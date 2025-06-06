@@ -4,6 +4,7 @@ using FastTodo.Infrastructure.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Mapster;
+using FastTodo.Infrastructure.Domain.Repositories;
 
 namespace FastTodo.Infrastructure.Repositories;
 

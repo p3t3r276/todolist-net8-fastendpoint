@@ -1,7 +1,7 @@
 using FastTodo.Domain.Entities;
 using MediatR;
-using FastTodo.Infrastructure.Repositories;
 using FastTodo.Domain.Shared;
+using FastTodo.Infrastructure.Domain.Repositories;
 
 namespace FastTodo.Application.Features.Todo;
 

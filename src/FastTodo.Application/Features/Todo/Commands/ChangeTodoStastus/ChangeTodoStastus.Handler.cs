@@ -3,7 +3,7 @@ using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using FastTodo.Infrastructure.Repositories;
+using FastTodo.Infrastructure.Domain.Repositories;
 
 namespace FastTodo.Application.Features.Todo;
 

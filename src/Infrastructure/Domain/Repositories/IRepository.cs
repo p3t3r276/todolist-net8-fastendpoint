@@ -2,7 +2,7 @@ using FastTodo.Domain.Shared;
 using System.Linq.Expressions;
 using FastTodo.Infrastructure.Domain.Entities;
 
-namespace FastTodo.Infrastructure.Repositories;
+namespace FastTodo.Infrastructure.Domain.Repositories;
 
 public interface IRepository<TEntity, TKey> where TEntity : class, IEntity<TKey>
 {
