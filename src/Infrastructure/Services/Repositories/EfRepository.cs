@@ -117,26 +117,4 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
 
         return new PaginatedList<TProjector>(items, totalCount, pageIndex, pageSize);
     }
-
-    public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
-    {
-        await _dbSet.AddAsync(entity, cancellationToken);
-    }
-
-    public Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
-    {
-        _dbSet.Update(entity);
-        return Task.CompletedTask;
-    }
-
-    public Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
-    {
-        _dbSet.Remove(entity);
-        return Task.CompletedTask;
-    }
-
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.SaveChangesAsync(cancellationToken);
-    }
 }

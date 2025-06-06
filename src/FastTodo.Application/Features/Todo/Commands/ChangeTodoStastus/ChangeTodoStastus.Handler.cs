@@ -1,14 +1,18 @@
 using FastTodo.Domain.Entities;
+using FastTodo.Domain.Shared.Constants;
+using FastTodo.Infrastructure.Domain.Repositories;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using FastTodo.Infrastructure.Domain.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class MarkTodoHandler(
-    IRepository<TodoItem, Guid> repository
+    IRepository<TodoItem, Guid> repository,
+    [FromKeyedServices(ServiceKeys.FastTodoEFUnitOfWork)]
+    IUnitOfWork unitOfWork
 ) : IRequestHandler<ChangeTodoStastusRequest, Results<NoContent, Ok<TodoItemDto>>>
 {
     public async Task<Results<NoContent, Ok<TodoItemDto>>> Handle(ChangeTodoStastusRequest request, CancellationToken cancellationToken)
@@ -19,7 +23,7 @@ public class MarkTodoHandler(
             return TypedResults.NoContent();
         }
         item.IsDone = !item.IsDone;
-        await repository.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangeAsync(cancellationToken);
         return TypedResults.Ok(item.Adapt<TodoItemDto>());
     }
 }

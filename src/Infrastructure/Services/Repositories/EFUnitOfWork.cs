@@ -20,18 +20,18 @@ public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) :
         return context.Database.CommitTransactionAsync();
     }
 
-    public async Task SaveChangeAsync()
+    public async Task SaveChangeAsync(CancellationToken cancellation = default)
     {
         try
         {
-            var rowAffected = await context.SaveChangesAsync();
+            var rowAffected = await context.SaveChangesAsync(cancellation);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, ex.Message);
             if (context.Database.CurrentTransaction is not null)
             {
-                await context.Database.CurrentTransaction.RollbackAsync();
+                await context.Database.CurrentTransaction.RollbackAsync(cancellation);
             }
             throw new Exception(ex.Message, ex);
         }
