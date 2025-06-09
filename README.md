@@ -1,6 +1,15 @@
 # todolist-net8-fastendpoint
 A project demonstrating Clean Architecture with EF Core and ASP.NET Core using FastEndpoints
 
+Table of Contents
+=======
+
+* [Technologies & Patterns](#technologies--patterns)
+* [Features](#features)
+* [API Endpoints](#api-endpoints)
+* [Getting Started](#getting-started)
+* [Configuration](#configuration)
+
 ## Technologies & Patterns
 ### Database Providers
 - SQL Server

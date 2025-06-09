@@ -5,6 +5,7 @@ using FastTodo.Infrastructure.Repositories;
 using FastTodo.Infrastructure.Services.MediaR.Behaviors;
 using FastTodo.Persistence.EF;
 using FastTodo.Persistence.SQLite;
+using FastTodo.Persistence.Postgres;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,14 +29,15 @@ public static partial class ModuleConfiguration
 
         switch (provider)
         {
-            case DatabaseProviderType.SQLite:
-                services.AddSQLiteEFPersistence();
+            case DatabaseProviderType.Postgres:
+                services.AddPostgresPersistence();
                 break;
             case DatabaseProviderType.SQLServer:
                 services.AddSQLEFPersistence();
                 break;
             default:
-                throw new Exception($"Unsupported SqlProvider: {provider}");
+                services.AddSQLiteEFPersistence();
+                break;
         }
 
         services.AddKeyedScoped<IUnitOfWork, EFUnitOfWork>(ServiceKeys.FastTodoEFUnitOfWork);
