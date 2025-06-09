@@ -1,11 +1,13 @@
+using FastTodo.Domain.Constants;
+using FastTodo.Domain.Shared.Constants;
+using FastTodo.Infrastructure.Domain.Repositories;
+using FastTodo.Infrastructure.Repositories;
 using FastTodo.Infrastructure.Services.MediaR.Behaviors;
+using FastTodo.Persistence.EF;
+using FastTodo.Persistence.SQLite;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using FastTodo.Infrastructure.Repositories;
-using FastTodo.Persistence.EF;
-using FastTodo.Persistence.SQLite;
-using FastTodo.Domain.Constants;
 
 namespace FastTodo.Infrastructure;
 
@@ -35,6 +37,8 @@ public static partial class ModuleConfiguration
             default:
                 throw new Exception($"Unsupported SqlProvider: {provider}");
         }
+
+        services.AddKeyedScoped<IUnitOfWork, EFUnitOfWork>(ServiceKeys.FastTodoEFUnitOfWork);
         services.AddTransient(typeof(IRepository<,>), typeof(EfRepository<,>));
         return services;
     }

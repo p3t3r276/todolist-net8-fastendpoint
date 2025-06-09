@@ -1,6 +1,6 @@
 namespace FastTodo.Domain.Shared;
 
-public class PaginatedList<T>
+public struct PaginatedList<T>
 {
     public List<T> Data { get; }
 

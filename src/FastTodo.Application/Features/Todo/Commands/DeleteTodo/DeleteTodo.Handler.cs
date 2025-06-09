@@ -1,13 +1,17 @@
 using FastTodo.Domain.Entities;
+using FastTodo.Domain.Shared.Constants;
+using FastTodo.Infrastructure.Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using FastTodo.Infrastructure.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class DeleteTodoHandler(
-    IRepository<TodoItem, Guid> repository
+    IRepository<TodoItem, Guid> repository,
+    [FromKeyedServices(ServiceKeys.FastTodoEFUnitOfWork)]
+    IUnitOfWork unitOfWork
 ) : IRequestHandler<DeleteTodoRequest, Results<NoContent, Ok>>
 {
     public async Task<Results<NoContent, Ok>> Handle(DeleteTodoRequest request, CancellationToken cancellationToken)
@@ -17,8 +21,8 @@ public class DeleteTodoHandler(
         {
             return TypedResults.NoContent();
         }
-        await repository.DeleteAsync(item, cancellationToken);
-        await repository.SaveChangesAsync(cancellationToken);
+        unitOfWork.Remove(item);
+        await unitOfWork.SaveChangeAsync(cancellationToken);
         return TypedResults.Ok();
     }
 }

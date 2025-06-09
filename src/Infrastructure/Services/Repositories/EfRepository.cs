@@ -4,6 +4,7 @@ using FastTodo.Infrastructure.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Mapster;
+using FastTodo.Infrastructure.Domain.Repositories;
 
 namespace FastTodo.Infrastructure.Repositories;
 
@@ -38,7 +39,10 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         return await query.FirstOrDefaultAsync(lambda, cancellationToken);
     }
 
-    public async Task<List<TEntity>> GetByIdsAsync(TKey[] ids, bool enableTracking = true, CancellationToken cancellationToken = default)
+    public async Task<List<TEntity>> GetByIdsAsync(
+        TKey[] ids,
+        bool enableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
         if (!enableTracking)
@@ -57,7 +61,10 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         return await query.Where(lambda).ToListAsync(cancellationToken);
     }
 
-    public async Task<List<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? predicate = null, bool enableTracking = true, CancellationToken cancellationToken = default)
+    public async Task<List<TEntity>> ListAsync(
+        Expression<Func<TEntity, bool>>? predicate = null,
+        bool enableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
         if (!enableTracking)
@@ -109,27 +116,5 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
             .ToListAsync(cancellationToken);
 
         return new PaginatedList<TProjector>(items, totalCount, pageIndex, pageSize);
-    }
-
-    public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
-    {
-        await _dbSet.AddAsync(entity, cancellationToken);
-    }
-
-    public Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
-    {
-        _dbSet.Update(entity);
-        return Task.CompletedTask;
-    }
-
-    public Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
-    {
-        _dbSet.Remove(entity);
-        return Task.CompletedTask;
-    }
-
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

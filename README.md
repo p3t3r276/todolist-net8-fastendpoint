@@ -27,10 +27,10 @@ A project demonstrating Clean Architecture with EF Core and ASP.NET Core using F
 4. Generic Repository Pattern Implementation
 5. Multiple Database Provider Support (SQL Server, SQLite)
 6. API Versioning
+7. Unit of Work Pattern
 
 ### In Progress 🚧
 1. Dockerization
-2. Unit of Work Pattern
 
 ### Planning 📋
 1. User Management
@@ -38,6 +38,7 @@ A project demonstrating Clean Architecture with EF Core and ASP.NET Core using F
     - Todo Item Ownership
 2. Todo Item Assignments
 3. ASP.NET Core Identity Integration
+4. Logging
 
 ## API Endpoints
 
