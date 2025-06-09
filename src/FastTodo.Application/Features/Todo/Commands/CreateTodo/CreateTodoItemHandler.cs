@@ -17,7 +17,7 @@ public class CreateTodoItemHandler(
         var newTodo = request.Adapt<TodoItem>();
 
         await unitOfWork.AddAsync(newTodo);
-        await unitOfWork.SaveChangeAsync();
+        await unitOfWork.SaveChangeAsync(cancellationToken);
         return newTodo.Adapt<TodoItemDto>();
     }
 }

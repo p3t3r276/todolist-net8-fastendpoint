@@ -1,7 +1,9 @@
 ﻿using FastTodo.Infrastructure.Domain;
 using FastTodo.Infrastructure.Domain.Entities;
 using FastTodo.Infrastructure.Domain.Repositories;
+using FastTodo.Infrastructure.Domain.Repositories.Builder;
 using FastTodo.Infrastructure.Extensions;
+using FastTodo.Infrastructure.Repositories.Builder;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -51,9 +53,9 @@ public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) :
         return entities;
     }
 
-    public void Update<TEntity>(TEntity entity) where TEntity : class
+    public void Update<TEntity>(TEntity entity, Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class
     {
-        UpdateEntryValueAndState(entity);
+        UpdateEntryValueAndState(entity, setter);
     }
 
     public void UpdateRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
@@ -78,7 +80,8 @@ public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) :
     }
 
     private void UpdateEntryValueAndState<TEntity>(TEntity item,
-        object? actor = null) 
+        object? actor = null,
+        Action<IEntitySetter<TEntity>>? setter = default) 
         where TEntity : class
     {
         var dbEntry = context.Entry(item);
@@ -95,11 +98,22 @@ public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) :
             // TODO: Set actor here
         }
 
-        context.Update(item);
-        return;
+        if (setter is null)
+        {
+            context.Update(item);
+            return;
+        }
 
-        #if DEBUG
+        var entitySetter = new EntitySetter<TEntity>(item);
+        setter.Invoke(entitySetter);
+
+        foreach (var updatedProperty in entitySetter.UpdateProperties)
+        {
+            dbEntry.Property(updatedProperty).IsModified = true;
+        }
+
+#if DEBUG
         logger.LogInformation("Update Value with new state - Type: {Type} - Updated Data: {Data}", typeof(TEntity).FullName, item.Serialize());
-        #endif
+#endif
     }
 }

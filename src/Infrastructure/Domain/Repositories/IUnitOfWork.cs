@@ -1,3 +1,5 @@
+using FastTodo.Infrastructure.Domain.Repositories.Builder;
+
 namespace FastTodo.Infrastructure.Domain.Repositories;
 
 public interface IUnitOfWork
@@ -6,7 +8,7 @@ public interface IUnitOfWork
 
     Task<IEnumerable<TEntity>> AddRangeAsync<TEntity>(IEnumerable<TEntity> entity) where TEntity : class;
 
-    void Update<TEntity>(TEntity entity) where TEntity : class;
+    void Update<TEntity>(TEntity entit, Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class;
 
     void UpdateRange<TEntity>(
         IEnumerable<TEntity> entities) where TEntity : class;
