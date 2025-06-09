@@ -22,7 +22,7 @@ public class MarkTodoHandler(
         {
             return TypedResults.NoContent();
         }
-        item.IsDone = !item.IsDone;
+        unitOfWork.Update(item, e => e.Set(i => i.IsDone, !item.IsDone));
         await unitOfWork.SaveChangeAsync(cancellationToken);
         return TypedResults.Ok(item.Adapt<TodoItemDto>());
     }

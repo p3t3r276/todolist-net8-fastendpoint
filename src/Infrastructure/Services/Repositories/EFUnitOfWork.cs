@@ -7,6 +7,7 @@ using FastTodo.Infrastructure.Repositories.Builder;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace FastTodo.Infrastructure.Repositories;
 
@@ -55,8 +56,25 @@ public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) :
 
     public void Update<TEntity>(TEntity entity, Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class
     {
-        UpdateEntryValueAndState(entity, setter);
+        UpdateEntryValueAndState(entity, actor: null, setter);
     }
+
+    public async Task UpdateAsync<TEntity>(Expression<Func<TEntity, bool>> predicate,
+        Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class
+    {
+        var item = await context
+            .Set<TEntity>()
+            .FirstOrDefaultAsync(predicate);
+
+        if (item is null)
+        {
+            string errorMsg = $"{typeof(TEntity).Name} - Update Error: Not Found ";
+
+            logger.LogError("{ErrorMsg}", errorMsg);
+        }
+
+        UpdateEntryValueAndState(item!, actor: null, setter);
+    }    
 
     public void UpdateRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
     {
