@@ -1,4 +1,5 @@
 using FastTodo.Domain.Entities;
+using FastTodo.Infrastructure.Domain.ValueConverion;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -42,26 +43,14 @@ public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
 
         builder.Property(x => x.EndDate)
             .HasColumnType("timestamp with time zone")
-            .HasConversion(
-                v => v.HasValue ? v.Value.UtcDateTime : (DateTime?)null,
-                v =>
-                    v.HasValue
-                        ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc)
-                        : (DateTimeOffset?)null
-            );
+            .HasConversion(new DateTimeToDateTimeOffsetConverter());
 
         builder.Property(x => x.CreatedAt)
             .HasColumnType("timestamp with time zone")
-            .HasConversion(
-                v => v.UtcDateTime,
-                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
-            );
+            .HasConversion(new DateTimeToDateTimeOffsetConverter());
 
         builder.Property(x => x.ModifiedAt)
             .HasColumnType("timestamp with time zone")
-            .HasConversion(
-                v => v.UtcDateTime,
-                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
-            );
+            .HasConversion(new DateTimeToDateTimeOffsetConverter());
     }
 }
