@@ -3,7 +3,6 @@ A project demonstrating Clean Architecture with EF Core and ASP.NET Core using F
 
 Table of Contents
 =======
-
 * [Technologies & Patterns](#technologies--patterns)
 * [Features](#features)
 * [API Endpoints](#api-endpoints)
@@ -14,7 +13,7 @@ Table of Contents
 ### Database Providers
 - SQL Server
 - SQLite
-- [Upcoming] Postgres
+- Postgres
 - [Upcoming] MongoDB
 
 ### Backend Stack
@@ -23,7 +22,7 @@ Table of Contents
 - Entity Framework Core `9.0.0`
 - MediatR `12.4.1`
 - FluentValidation `12.0.0`
-- Generic Repository Pattern
+- Generic Repository Pattern with Unit of Work
 - CQRS Pattern with MediatR
 
 ## Features
@@ -65,7 +64,7 @@ Table of Contents
 
 ### Prerequisites
 - .NET 8.0 SDK
-- Docker or Podman (optional, for SQL Server)
+- Docker or Podman
 - Visual Studio Code or Visual Studio 2022
 
 ### Database Setup
