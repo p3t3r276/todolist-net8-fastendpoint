@@ -1,10 +1,19 @@
 # todolist-net8-fastendpoint
 A project demonstrating Clean Architecture with EF Core and ASP.NET Core using FastEndpoints
 
+Table of Contents
+=======
+* [Technologies & Patterns](#technologies--patterns)
+* [Features](#features)
+* [API Endpoints](#api-endpoints)
+* [Getting Started](#getting-started)
+* [Configuration](#configuration)
+
 ## Technologies & Patterns
 ### Database Providers
 - SQL Server
 - SQLite
+- Postgres
 - [Upcoming] MongoDB
 
 ### Backend Stack
@@ -13,7 +22,7 @@ A project demonstrating Clean Architecture with EF Core and ASP.NET Core using F
 - Entity Framework Core `9.0.0`
 - MediatR `12.4.1`
 - FluentValidation `12.0.0`
-- Generic Repository Pattern
+- Generic Repository Pattern with Unit of Work
 - CQRS Pattern with MediatR
 
 ## Features
@@ -55,7 +64,7 @@ A project demonstrating Clean Architecture with EF Core and ASP.NET Core using F
 
 ### Prerequisites
 - .NET 8.0 SDK
-- Docker or Podman (optional, for SQL Server)
+- Docker or Podman
 - Visual Studio Code or Visual Studio 2022
 
 ### Database Setup

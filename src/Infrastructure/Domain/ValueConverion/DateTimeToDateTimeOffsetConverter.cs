@@ -2,11 +2,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FastTodo.Infrastructure.Domain.ValueConverion;
 
-public class DateTimeToDateTimeOffsetConverter : ValueConverter<DateTime, DateTimeOffset>
+public class DateTimeToDateTimeOffsetConverter : ValueConverter<DateTimeOffset, DateTime>
 {
     public DateTimeToDateTimeOffsetConverter() : base(
-        dateTime => new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)),     // Convert to DateTimeOffset
-        dateTimeOffset => dateTimeOffset.UtcDateTime     // Convert back to DateTime
+        dateTimeOffset => dateTimeOffset.UtcDateTime,     // Convert back to DateTime
+        dateTime => new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc))     // Convert to DateTimeOffset
     )
     { }
 }
