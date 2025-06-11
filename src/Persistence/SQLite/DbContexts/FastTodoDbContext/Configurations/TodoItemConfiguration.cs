@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using FastTodo.Domain.Entities;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FastTodo.Persistence.SQLite.DbContexts.FastTodoDbContext.Configurations;
 

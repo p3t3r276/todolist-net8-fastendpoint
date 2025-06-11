@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\FastTodo.Domain\FastTodo.Domain.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Domain\FastTodo.Infrastructure.Domain.csproj" />
     <ProjectReference Include="..\..\FastTodo.Domain.Shared\FastTodo.Domain.Shared.csproj" />
   </ItemGroup>
