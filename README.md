@@ -10,6 +10,12 @@ Table of Contents
 * [Configuration](#configuration)
 
 ## Technologies & Patterns
+### Architecture
+
+<p align='center'>
+   <img src='/docs/Architecture.png' />
+</p>
+
 ### Database Providers
 - SQL Server
 - SQLite
