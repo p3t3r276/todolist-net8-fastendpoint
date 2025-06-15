@@ -10,13 +10,25 @@ services:
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydb
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - pg-network
 
   adminer:
-    image: adminer:5.3.0
-    restart: always
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: catsarecool
     ports:
-      - 8080:8080
+      - 5050:80
+    networks:
+      - pg-network
 
 volumes:
-  db_data:
+  pgdata:
+
+networks:
+  pg-network:
