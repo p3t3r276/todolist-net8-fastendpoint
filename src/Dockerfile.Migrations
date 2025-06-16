@@ -1,0 +1,32 @@
+# Use the SDK image as we need dotnet-ef tool and build capabilities
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS migrator
+
+WORKDIR /app
+
+# Copy necessary project files first to leverage Docker's build cache
+# Adjust paths based on where your FastTodo.API.csproj and FastTodo.Persistence.EF.csproj are relative to 'src'
+# Assuming the Dockerfile is in `src/` and context is `../src`
+# Example for relative paths from /src:
+COPY ["Host/FastTodo.API/FastTodo.API.csproj", "Host/FastTodo.API/"]
+COPY ["Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
+COPY ["FastTodo.Domain.Shared/FastTodo.Domain.Shared.csproj", "FastTodo.Domain.Shared/"]
+COPY ["FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
+# Add any other project references needed by Persistence.EF or FastTodo.API to build
+# Example: If Persistence.EF references Infrastructure/Domain, copy that too.
+COPY ["Infrastructure/Domain/FastTodo.Infrastructure.Domain.csproj", "Infrastructure/Domain/"]
+# ... (add more COPY lines for any other project dependencies needed for dotnet restore)
+
+# Restore project dependencies
+RUN dotnet restore "Host/FastTodo.API/FastTodo.API.csproj"
+
+# Copy the rest of the application code
+COPY . .
+
+# Install dotnet-ef tool (if not already globally available in the sdk image, though usually it is)
+RUN dotnet tool install --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json || dotnet tool update --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+
+ENTRYPOINT /root/.dotnet/tools/dotnet-ef database update \
+    --project ./Persistence/EF/FastTodo.Persistence.EF.csproj \
+    --startup-project ./Host/FastTodo.API/FastTodo.API.csproj \
+    --context FastTodoSQLDbContext \
+    --connection "$DB_CONNECTION_STRING"

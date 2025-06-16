@@ -1,33 +1,61 @@
 services:
    db:
-      image: mcr.microsoft.com/mssql/server:2022-latest
+      image: mcr.microsoft.com/azure-sql-edge
+      platform: linux/amd64
       container_name: mssql
-      restart: on-failure
+      restart: always
       environment:
          ACCEPT_EULA: Y
          MSSQL_SA_PASSWORD: MyPass@word
-         MSSQL_PID: Developer
+         # MSSQL_PID: Developer
       ports:
          - 1433:1433
       volumes:
          - mssql_data:/var/opt/mssql
+      healthcheck: # Add this section
+         test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "SA", "-P", "MyPass@word", "-Q", "SELECT 1"]
+         interval: 5s
+         timeout: 5s
+         retries: 10
       networks:
          - fasttodo-network
+   
+   migrator:
+      container_name: fasttodo-migrator
+      build:
+         context: ../src # Assuming Dockerfile.Migrations is in src/
+         dockerfile: Dockerfile.Migrations
+      environment:
+         # Local connection string for the docker compose network
+         DB_CONNECTION_STRING: Server=db,1433;Database=FastTodo;User ID=SA;Password=MyPass@word;Encrypt=True;TrustServerCertificate=true
+      depends_on:
+         db:
+            condition: service_healthy # Ensure DB is truly ready for connections
+      networks:
+         - fasttodo-network
+      restart: "no" # This is important: the job should exit after completion
 
    api:
       container_name: fasttodo-api
       build:
-      context: ../src
-      dockerfile: Dockerfile.dev
+         context: ../src
+         dockerfile: Dockerfile.dev
       ports:
-         - "5001:5001"
+         - "5001:80"
       environment:
          - ASPNETCORE_ENVIRONMENT=Development
-      restart: on-failure
+         - ASPNETCORE_CONNECTIONSTRINGS__SQLServer=Server=db,1433;Database=FastTodo;User ID=SA;Password=MyPass@word;Encrypt=True;TrustServerCertificate=true
+      restart: always
       depends_on:
-         - db
+         db:
+            condition: service_healthy # Wait for DB to be healthy
+         migrator: # Make API depend on migrator, so migrator runs first
+            condition: service_completed_successfully
       networks:
          - fasttodo-network
 
 volumes:
    mssql_data:
+
+networks:
+   fasttodo-network:
