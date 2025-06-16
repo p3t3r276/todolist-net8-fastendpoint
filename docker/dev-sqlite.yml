@@ -10,4 +10,4 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     restart: on-failure
     volumes:
-      - ../src/Host/FastTodo.API/FastTodo.db:/app/publish/Host/FastTodo.API/FastTodo.db
+      - ../src/Host/FastTodo.API/FastTodo.db:/app/publish/FastTodo.db

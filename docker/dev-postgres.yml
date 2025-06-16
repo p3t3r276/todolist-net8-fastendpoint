@@ -12,7 +12,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - pg-network
+      - fasttodo-network
 
   adminer:
     image: dpage/pgadmin4
@@ -25,7 +25,7 @@ services:
     ports:
       - 5050:80
     networks:
-      - pg-network
+      - fasttodo-network
 
   api:
     container_name: fasttodo-api
@@ -40,10 +40,10 @@ services:
     depends_on:
       - db
     networks:
-      - pg-network
+      - fasttodo-network
 
 volumes:
   pgdata:
 
 networks:
-  pg-network:
+  fasttodo-network:

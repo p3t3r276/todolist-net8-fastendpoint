@@ -2,7 +2,7 @@ services:
    db:
       image: mcr.microsoft.com/mssql/server:2022-latest
       container_name: mssql
-      restart: always
+      restart: on-failure
       environment:
          ACCEPT_EULA: Y
          MSSQL_SA_PASSWORD: MyPass@word
@@ -11,6 +11,21 @@ services:
          - 1433:1433
       volumes:
          - mssql_data:/var/opt/mssql
+      networks:
+         - fasttodo-network
+
+   api:
+      container_name: fasttodo-api
+      build:
+      context: ../src
+      dockerfile: Dockerfile.dev
+      ports:
+         - "5001:5001"
+      environment:
+         - ASPNETCORE_ENVIRONMENT=Development
+      restart: on-failure
+      depends_on:
+         - db
       networks:
          - fasttodo-network
 
