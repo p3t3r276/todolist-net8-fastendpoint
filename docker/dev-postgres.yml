@@ -27,6 +27,21 @@ services:
     networks:
       - pg-network
 
+  api:
+    container_name: fasttodo-api
+    build:
+      context: ../src
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: on-failure
+    depends_on:
+      - db
+    networks:
+      - pg-network
+
 volumes:
   pgdata:
 

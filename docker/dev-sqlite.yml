@@ -1,0 +1,13 @@
+services:
+  fasttodo:
+    container_name: fasttodo_api
+    build:
+      context: ../src
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: on-failure
+    volumes:
+      - ../src/Host/FastTodo.API/FastTodo.db:/app/publish/Host/FastTodo.API/FastTodo.db
