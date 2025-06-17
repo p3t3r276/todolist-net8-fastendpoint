@@ -7,12 +7,11 @@ services:
       environment:
          ACCEPT_EULA: Y
          MSSQL_SA_PASSWORD: MyPass@word
-         # MSSQL_PID: Developer
       ports:
          - 1433:1433
       volumes:
          - mssql_data:/var/opt/mssql
-      healthcheck: # Add this section
+      healthcheck:
          test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "SA", "-P", "MyPass@word", "-Q", "SELECT 1"]
          interval: 5s
          timeout: 5s
@@ -23,17 +22,16 @@ services:
    migrator:
       container_name: fasttodo-migrator
       build:
-         context: ../src # Assuming Dockerfile.Migrations is in src/
+         context: ../src
          dockerfile: Dockerfile.Migrations
       environment:
-         # Local connection string for the docker compose network
          DB_CONNECTION_STRING: Server=db,1433;Database=FastTodo;User ID=SA;Password=MyPass@word;Encrypt=True;TrustServerCertificate=true
       depends_on:
          db:
-            condition: service_healthy # Ensure DB is truly ready for connections
+            condition: service_healthy
       networks:
          - fasttodo-network
-      restart: "no" # This is important: the job should exit after completion
+      restart: "no"
 
    api:
       container_name: fasttodo-api
@@ -48,8 +46,8 @@ services:
       restart: always
       depends_on:
          db:
-            condition: service_healthy # Wait for DB to be healthy
-         migrator: # Make API depend on migrator, so migrator runs first
+            condition: service_healthy
+         migrator:
             condition: service_completed_successfully
       networks:
          - fasttodo-network
