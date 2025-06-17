@@ -11,13 +11,14 @@ services:
          - 1433:1433
       volumes:
          - mssql_data:/var/opt/mssql
-      healthcheck:
-         test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "SA", "-P", "MyPass@word", "-Q", "SELECT 1"]
-         interval: 5s
-         timeout: 5s
-         retries: 10
       networks:
          - fasttodo-network
+      healthcheck:
+         test: ["CMD-SHELL", "/opt/mssql/bin/sqlservr --force-setup --accept-eula --health-check"]
+         interval: 10s
+         timeout: 5s
+         retries: 10
+         start_period: 60s
    
    migrator:
       container_name: fasttodo-migrator
@@ -26,6 +27,9 @@ services:
          dockerfile: Dockerfile.Migrations
       environment:
          DB_CONNECTION_STRING: Server=db,1433;Database=FastTodo;User ID=SA;Password=MyPass@word;Encrypt=True;TrustServerCertificate=true
+         PROJECT: ./Persistence/EF/FastTodo.Persistence.EF.csproj
+         CONTEXT: FastTodoSQLDbContext
+         SqlProvider: SQLServer
       depends_on:
          db:
             condition: service_healthy
@@ -42,7 +46,8 @@ services:
          - "5001:8080"
       environment:
          - ASPNETCORE_ENVIRONMENT=Development
-         - ASPNETCORE_CONNECTIONSTRINGS__SQLServer=Server=db,1433;Database=FastTodo;User ID=SA;Password=MyPass@word;Encrypt=True;TrustServerCertificate=true
+         - ConnectionStrings__SQLServer=Server=db,1433;Database=FastTodo;User ID=SA;Password=MyPass@word;Encrypt=True;TrustServerCertificate=true
+         - SqlProvider=SQLServer
       restart: always
       depends_on:
          db:

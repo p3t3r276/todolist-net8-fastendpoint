@@ -40,6 +40,8 @@ services:
       dockerfile: Dockerfile.Migrations
     environment:
       - DB_CONNECTION_STRING=Server=db;Port=5432;Database=fasttodo;User Id=myuser;Password=mypassword;
+      - PROJECT=./Persistence/Postgres/FastTodo.Persistence.Postgres.csproj
+      - CONTEXT=FastTodoPostgresContext
       - SqlProvider=Postgres
     depends_on:
       db:

@@ -16,7 +16,7 @@ COPY . .
 RUN dotnet tool install --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json || dotnet tool update --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
 
 ENTRYPOINT /root/.dotnet/tools/dotnet-ef database update --verbose \
-    --project ./Persistence/Postgres/FastTodo.Persistence.Postgres.csproj \
+    --project $PROJECT \
     --startup-project ./Host/FastTodo.API/FastTodo.API.csproj \
-    --context FastTodoPostgresContext \
+    --context $CONTEXT \
     --connection "$DB_CONNECTION_STRING"
