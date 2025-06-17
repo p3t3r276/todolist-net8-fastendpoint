@@ -44,10 +44,10 @@ Table of Contents
 5. Multiple Database Provider Support (SQL Server, SQLite)
 6. API Versioning
 7. Unit of Work Pattern
+8. Dockerization
 
 ### In Progress 🚧
-1. Dockerization
-2. Logging
+1. Logging
 
 ### Planning 📋
 1. User Management

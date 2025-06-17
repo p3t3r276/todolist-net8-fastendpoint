@@ -1,0 +1,22 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS migrator
+
+WORKDIR /app
+
+COPY ["Host/FastTodo.API/FastTodo.API.csproj", "Host/FastTodo.API/"]
+COPY ["Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
+COPY ["Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
+COPY ["FastTodo.Domain.Shared/FastTodo.Domain.Shared.csproj", "FastTodo.Domain.Shared/"]
+COPY ["FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
+COPY ["Infrastructure/Domain/FastTodo.Infrastructure.Domain.csproj", "Infrastructure/Domain/"]
+COPY ["Infrastructure/Services/FastTodo.Infrastructure.csproj", "Infrastructure/Services/"]
+RUN dotnet restore "Host/FastTodo.API/FastTodo.API.csproj"
+
+COPY . .
+
+RUN dotnet tool install --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json || dotnet tool update --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+
+ENTRYPOINT /root/.dotnet/tools/dotnet-ef database update --verbose \
+    --project $PROJECT \
+    --startup-project ./Host/FastTodo.API/FastTodo.API.csproj \
+    --context $CONTEXT \
+    --connection "$DB_CONNECTION_STRING"
