@@ -14,11 +14,10 @@ services:
       networks:
          - fasttodo-network
       healthcheck:
-         test: ["CMD-SHELL", "/opt/mssql/bin/sqlservr --force-setup --accept-eula --health-check"]
-         interval: 10s
+         test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "SA", "-P", "MyPass@word", "-C", "-Q", "SELECT 1"]
+         interval: 5s
          timeout: 5s
          retries: 10
-         start_period: 60s
    
    migrator:
       container_name: fasttodo-migrator
@@ -51,7 +50,7 @@ services:
       restart: always
       depends_on:
          db:
-            condition: service_healthy
+            condition: service_started
          migrator:
             condition: service_completed_successfully
       networks:
