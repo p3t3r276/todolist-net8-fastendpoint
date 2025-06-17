@@ -18,14 +18,7 @@ COPY ["Host/FastTodo.API/FastTodo.API.csproj", "Host/FastTodo.API/"]
 
 RUN dotnet restore --disable-parallel "Host/FastTodo.API/FastTodo.API.csproj"
 
-# Copy the rest of the code
 COPY . .
-
-# RUN dotnet tool install --global dotnet-ef --version 9.0.0
-# RUN /root/.dotnet/tools/dotnet-ef database update \
-#     --project ./Persistence/EF/FastTodo.Persistence.EF.csproj \
-#     --startup-project ./Host/FastTodo.API/FastTodo.API.csproj \
-#     --context FastTodoSQLDbContext
 
 WORKDIR "/src/."
 # Build the application

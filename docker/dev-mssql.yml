@@ -1,6 +1,6 @@
 services:
    db:
-      image: mcr.microsoft.com/azure-sql-edge
+      image: mcr.microsoft.com/mssql/server:2022-latest
       platform: linux/amd64
       container_name: mssql
       restart: always
@@ -39,7 +39,7 @@ services:
          context: ../src
          dockerfile: Dockerfile.dev
       ports:
-         - "5001:80"
+         - "5001:8080"
       environment:
          - ASPNETCORE_ENVIRONMENT=Development
          - ASPNETCORE_CONNECTIONSTRINGS__SQLServer=Server=db,1433;Database=FastTodo;User ID=SA;Password=MyPass@word;Encrypt=True;TrustServerCertificate=true
