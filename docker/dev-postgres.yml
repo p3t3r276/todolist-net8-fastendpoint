@@ -57,7 +57,7 @@ services:
         - "5001:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_CONNECTIONSTRINGS__Postgres=Host=db;Port=5432;Database=fasttodo;User Id=myuser;Password=mypassword;
+      - ConnectionStrings__Postgres=Host=db;Port=5432;Database=fasttodo;User Id=myuser;Password=mypassword;
       - SqlProvider=Postgres
     restart: always
     depends_on:

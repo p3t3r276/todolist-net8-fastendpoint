@@ -500,3 +500,5 @@ README.md
 **/global.json
 **/.dockerignore*
 **/*.user
+**/Properties/launchSettings.json
+**/appsettings.*.json
