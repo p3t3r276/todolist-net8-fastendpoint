@@ -1,0 +1,11 @@
+@FastTodo.API_HostAddress = http://localhost:5231
+
+GET {{FastTodo.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+GET http://localhost:5231/todos/?Name=Khoa
+Accept: application/json
+
+###
