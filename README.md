@@ -20,8 +20,8 @@ Table of Contents
 - SQL Server
 - SQLite
 - Postgres
-- [UpComing] MariaDB
-- [Upcoming] MongoDB
+- [Coming soon] MariaDB
+- [Coming soon] MongoDB
 
 ### Backend Stack
 - .NET `8.0`
@@ -80,7 +80,7 @@ Table of Contents
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - [Docker](https://www.docker.com/) or [Podman](https://podman.io/)
 
-Setup `docker containers` in [Getting started](./docker/readme.md)
+Setup `docker containers` in [Getting started](https://github.com/p3t3r276/todolist-net8-fastendpoint/blob/dev/docker/Readme.md)
 
 ### Configuration
 The database provider can be configured in `appsettings.json`:
