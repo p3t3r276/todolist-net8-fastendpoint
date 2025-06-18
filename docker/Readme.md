@@ -1,7 +1,15 @@
 # Run Docker Containers
 
 ## For developement
+### Setup SQLite
+```bash
+dotnet ef database update \
+    --project ./src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj \
+    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj \
+    --context FastTodoSqliteDbContext
+```
 
+## Deploy database with API
 1. Update .env file
 ```env
 DB_CONNECTION_STRING=
