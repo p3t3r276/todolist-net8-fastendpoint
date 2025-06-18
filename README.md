@@ -13,13 +13,14 @@ Table of Contents
 ### Architecture
 
 <p align='center'>
-   <img src='/docs/Architecture.png' />
+   <img src='./docs/Architecture.png' />
 </p>
 
 ### Database Providers
 - SQL Server
 - SQLite
 - Postgres
+- [UpComing] MariaDB
 - [Upcoming] MongoDB
 
 ### Backend Stack
@@ -43,17 +44,20 @@ Table of Contents
 5. Multiple Database Provider Support (SQL Server, SQLite)
 6. API Versioning
 7. Unit of Work Pattern
+8. Dockerization
 
 ### In Progress 🚧
-1. Dockerization
+1. Logging
 
 ### Planning 📋
 1. User Management
+    - Implement ASP.NET Core Identity login using JWT
     - User Authentication
     - Todo Item Ownership
 2. Todo Item Assignments
 3. ASP.NET Core Identity Integration
-4. Logging
+4. Testing
+5. Azure Container integration
 
 ## API Endpoints
 
@@ -69,9 +73,8 @@ Table of Contents
 ## Getting Started
 
 ### Prerequisites
-- .NET 8.0 SDK
-- Docker or Podman
-- Visual Studio Code or Visual Studio 2022
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [Docker](https://www.docker.com/) or [Podman](https://podman.io/)
 
 ### Database Setup
 #### Option 1: SQL Server with Docker
@@ -90,12 +93,12 @@ No additional setup required. The database file will be created automatically.
 ```bash
 dotnet ef migrations add Initial \
     --project ./src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj \
-    --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
+    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSqliteDbContext -o "Data/Todo/Migrations"
 
 dotnet ef database update \
     --project ./src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj \
-    --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
+    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSqliteDbContext
 ```
 
@@ -103,18 +106,18 @@ dotnet ef database update \
 ```bash
 dotnet ef migrations add Initial \
     --project ./src/Persistence/EF/FastTodo.Persistence.EF.csproj \
-    --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
+    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSQLDbContext -o "Data/Todo/Migrations"
 
 dotnet ef database update \
     --project ./src/Persistence/EF/FastTodo.Persistence.EF.csproj \
-    --startup-project ./src/FastTodo.API/FastTodo.API.csproj \
+    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSQLDbContext
 ```
 
 ### Running the Application
 ```bash
-dotnet run --project src/FastTodo.API/FastTodo.API.csproj
+dotnet run --project src/Host/FastTodo.API/FastTodo.API.csproj
 ```
 
 ### Configuration
@@ -124,7 +127,8 @@ The database provider can be configured in `appsettings.json`:
   "DatabaseProvider": "Sqlite", // or "SqlServer"
   "ConnectionStrings": {
     "Sqlite": "Data Source=FastTodo.db",
-    "SqlServer": ""
+    "SqlServer": "",
+    "Postgres": ""
   }
 }
 ```

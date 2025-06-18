@@ -1,0 +1,35 @@
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY ["FastTodo.Domain.Shared/FastTodo.Domain.Shared.csproj", "FastTodo.Domain.Shared/"]
+COPY ["Infrastructure/Domain/FastTodo.Infrastructure.Domain.csproj", "Infrastructure/Domain/"]
+COPY ["FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
+COPY ["Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
+COPY ["Persistence/SQLite/FastTodo.Persistence.SQLite.csproj", "Persistence/SQLite/"]
+COPY ["Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
+COPY ["Infrastructure/Services/FastTodo.Infrastructure.csproj", "Infrastructure/Services/"]
+COPY ["FastTodo.Application/FastTodo.Application.csproj", "FastTodo.Application/"]
+COPY ["Host/FastTodo.API/FastTodo.API.csproj", "Host/FastTodo.API/"]
+
+RUN dotnet restore --disable-parallel "Host/FastTodo.API/FastTodo.API.csproj"
+
+COPY . .
+
+WORKDIR "/src/."
+# Build the application
+RUN dotnet build "Host/FastTodo.API/FastTodo.API.csproj" -c Release --no-restore -o app/build
+
+# Stage 2: Publish (Optional, but recommended)
+FROM build AS publish
+RUN dotnet publish "Host/FastTodo.API/FastTodo.API.csproj" -c Release --no-restore -o app/publish
+
+# Stage 3: Final (Runtime)
+FROM base AS runtime
+WORKDIR /app
+COPY --from=publish /src/app/publish .
+ENTRYPOINT ["dotnet", "FastTodo.API.dll"]
