@@ -31,20 +31,6 @@ public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
                         : (DateTimeOffset?)null
             );
 
-        builder.Property(x => x.StartDate)
-            .HasColumnType("timestamp with time zone")
-            .HasConversion(
-                v => v.HasValue ? v.Value.UtcDateTime : (DateTime?)null,
-                v =>
-                    v.HasValue
-                        ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc)
-                        : (DateTimeOffset?)null
-            );
-
-        builder.Property(x => x.EndDate)
-            .HasColumnType("timestamp with time zone")
-            .HasConversion(new DateTimeToDateTimeOffsetConverter());
-
         builder.Property(x => x.CreatedAt)
             .HasColumnType("timestamp with time zone")
             .HasConversion(new DateTimeToDateTimeOffsetConverter());
