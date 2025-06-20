@@ -26,8 +26,8 @@ Table of Contents
 ### Backend Stack
 - .NET `8.0`
 - [FastEndpoints](https://fast-endpoints.com/) `5.34.0`
-- Entity Framework Core `9.0.0`
-- MediatR `12.4.1`
+- [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) `9.0.0`
+- [MediatR](https://github.com/jbogard/MediatR) `12.4.1`
 - [FluentValidation](https://docs.fluentvalidation.net/en/latest/) `12.0.0`
 
 ### Patterns
