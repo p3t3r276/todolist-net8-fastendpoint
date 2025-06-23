@@ -4,9 +4,6 @@ using FastTodo.Application;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-#if DEBUG
-    .MinimumLevel.Debug()
-#endif
     .WriteTo.Console()
     .CreateLogger();
 
@@ -18,7 +15,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
 
-builder.Host.UseSerilog();
+builder.Host.UseSerilog((context, services, configuration) => 
+{
+    configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext();
+});
 
 builder.Services
     .AddApplication(builder.Configuration)
