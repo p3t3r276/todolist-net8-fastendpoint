@@ -48,20 +48,20 @@ Table of Contents
 6. API Versioning
 7. Unit of Work Pattern
 8. Dockerization
+9. Logging
 
 ### In Progress 🚧
-1. Logging
-2. User Management
+1. Options Pattern
+2. ASP.NET Core Identity Integration
+3. User Management
     - Implement ASP.NET Core Identity login using JWT
     - User Authentication
     - Todo Item Ownership
     - Todo Item Assignment
 
 ### Planning 📋
-3. ASP.NET Core Identity Integration
 4. Testing
 5. Azure Container integration
-6. Options Pattern
 
 ## API Endpoints
 
