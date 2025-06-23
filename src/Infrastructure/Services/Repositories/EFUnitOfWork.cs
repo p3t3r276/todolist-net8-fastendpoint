@@ -27,14 +27,14 @@ public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) :
     {
         try
         {
-            var rowAffected = await context.SaveChangesAsync(cancellation);
+            _ = await context.SaveChangesAsync(cancellation);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
+            logger.LogError(ex, "ex.Message");
             if (context.Database.CurrentTransaction is not null)
             {
-                await context.Database.CurrentTransaction.RollbackAsync(cancellation);
+                await context.Database.RollbackTransactionAsync(cancellation);
             }
             throw new Exception(ex.Message, ex);
         }
@@ -93,7 +93,7 @@ public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) :
 
     public Task<int> ExecuteRawQuery(string sqlQuery, object? param = null)
     {
-        SqlParameter[] sqlParameters = param.ToSqlParmeterArray();
+        SqlParameter[] sqlParameters = param.ToSqlParameterArray();
         return param != null ? context.Database.ExecuteSqlRawAsync(sqlQuery, sqlParameters) : context.Database.ExecuteSqlRawAsync(sqlQuery);
     }
 
