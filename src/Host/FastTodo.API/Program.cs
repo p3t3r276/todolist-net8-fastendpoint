@@ -1,6 +1,14 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using FastTodo.Application;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+#if DEBUG
+    .MinimumLevel.Debug()
+#endif
+    .WriteTo.Console()
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +17,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
+
+builder.Host.UseSerilog();
 
 builder.Services
     .AddApplication(builder.Configuration)
