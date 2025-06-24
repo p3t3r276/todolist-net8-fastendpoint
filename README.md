@@ -51,17 +51,18 @@ Table of Contents
 9. Logging
 
 ### In Progress 🚧
-1. Options Pattern
-2. ASP.NET Core Identity Integration
-3. User Management
+1. ASP.NET Core Identity Integration
+2. User Management
     - Implement ASP.NET Core Identity login using JWT
     - User Authentication
     - Todo Item Ownership
     - Todo Item Assignment
 
 ### Planning 📋
-4. Testing
-5. Azure Container integration
+1. Options Pattern
+2. Allow multiple database connection from multiple database providers
+2. Testing
+3. Azure Container integration
 
 ## API Endpoints
 
