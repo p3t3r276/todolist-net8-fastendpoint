@@ -1,11 +1,8 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using FastTodo.API.Processors;
 using FastTodo.Application;
 using Serilog;
-
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +16,7 @@ builder.Host.UseSerilog((context, services, configuration) =>
 {
     configuration
     .ReadFrom.Configuration(context.Configuration)
-    .ReadFrom.Services(services)
-    .Enrich.FromLogContext();
+    .ReadFrom.Services(services);
 });
 
 builder.Services
@@ -42,11 +38,18 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseDefaultExceptionHandler();
+
+app.UseSerilogRequestLogging();
+
 app.UseFastEndpoints(c =>
 {
     c.Endpoints.RoutePrefix = "api";
     c.Versioning.Prefix = "v";
     c.Versioning.PrependToRoute = true;
+    //c.Endpoints.Configurator = ep =>
+    //{
+    //    ep.PreProcessor<RequestLoggerProcessor>(Order.Before);
+    //};
 });
 
 // Configure the HTTP request pipeline.
@@ -56,3 +59,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.Run();
+
+Log.CloseAndFlush();
