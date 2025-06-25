@@ -9,6 +9,7 @@ using FastTodo.Persistence.Postgres;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using FastTodo.Infrastructure.Domain.Options;
 
 namespace FastTodo.Infrastructure;
 
@@ -23,7 +24,7 @@ public static partial class ModuleConfiguration
 
     public static IServiceCollection AddDatabaseProvider(this IServiceCollection services, IConfiguration configuration)
     {
-        var providerString = configuration["SqlProvider"];
+        var providerString = configuration.GetSection(nameof(FastTodoOption.SqlProvider)).Value;
         if (!Enum.TryParse<DatabaseProviderType>(providerString, true, out var provider))
             throw new Exception($"Invalid SqlProvider configuration: {providerString}");
 
