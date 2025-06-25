@@ -1,63 +1,81 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using FastTodo.API.Processors;
 using FastTodo.Application;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication();
-
-builder.Host.UseSerilog((context, services, configuration) => 
+try
 {
-    configuration
-    .ReadFrom.Configuration(context.Configuration)
-    .ReadFrom.Services(services);
-});
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services
-    .AddApplication(builder.Configuration)
-    .AddFastEndpoints()
-    .SwaggerDocument(o =>
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    builder.Services.AddAuthorization();
+    builder.Services.AddAuthentication();
+
+    builder.Host.UseSerilog((context, services, configuration) =>
     {
-        o.AutoTagPathSegmentIndex = 0;
-        o.MaxEndpointVersion = 1;
-        o.DocumentSettings = x =>
-        {
-            x.DocumentName = "v1";
-            x.Version = "v1";
-            x.Title = "Fast Todo API v1";
-        };
+        configuration
+#if DEBUG
+        .MinimumLevel.Debug()
+#else
+        .MinimumLevel.Information()
+#endif
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services);
     });
 
-var app = builder.Build();
+    builder.Services
+        .AddApplication(builder.Configuration)
+        .AddFastEndpoints()
+        .SwaggerDocument(o =>
+        {
+            o.AutoTagPathSegmentIndex = 0;
+            o.MaxEndpointVersion = 1;
+            o.DocumentSettings = x =>
+            {
+                x.DocumentName = "v1";
+                x.Version = "v1";
+                x.Title = "Fast Todo API v1";
+            };
+        });
 
-app.UseHttpsRedirection();
-app.UseDefaultExceptionHandler();
+    var app = builder.Build();
 
-app.UseSerilogRequestLogging();
+    app.UseHttpsRedirection();
+    app.UseDefaultExceptionHandler();
 
-app.UseFastEndpoints(c =>
-{
-    c.Endpoints.RoutePrefix = "api";
-    c.Versioning.Prefix = "v";
-    c.Versioning.PrependToRoute = true;
-    //c.Endpoints.Configurator = ep =>
-    //{
-    //    ep.PreProcessor<RequestLoggerProcessor>(Order.Before);
-    //};
-});
+    app.UseSerilogRequestLogging();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwaggerGen();
+    app.UseFastEndpoints(c =>
+    {
+        c.Endpoints.RoutePrefix = "api";
+        c.Versioning.Prefix = "v";
+        c.Versioning.PrependToRoute = true;
+        //c.Endpoints.Configurator = ep =>
+        //{
+        //    ep.PreProcessor<RequestLoggerProcessor>(Order.Before);
+        //};
+    });
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwaggerGen();
+    }
+
+    Log.Information("Starting FastTodo...");
+
+    app.Run();
 }
-
-app.Run();
-
-Log.CloseAndFlush();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly.");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

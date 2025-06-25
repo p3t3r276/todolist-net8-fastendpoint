@@ -60,6 +60,8 @@ Table of Contents
 
 ### Planning 📋
 1. Options Pattern
+  - Allow choosing database providers
+  - Swagger vs Scalar
 2. Allow multiple database connection from multiple database providers
 2. Testing
 3. Azure Container integration
