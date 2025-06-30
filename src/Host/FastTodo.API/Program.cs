@@ -35,14 +35,23 @@ try
         .SwaggerDocument(o =>
         {
             o.AutoTagPathSegmentIndex = 0;
-            o.MaxEndpointVersion = 1;
+            o.DocumentSettings = x =>
+            {
+                x.DocumentName = "User managmenet";
+                x.Title = "User";
+            };
+        })
+        .SwaggerDocument(o =>
+        {
+            o.AutoTagPathSegmentIndex = 0;
             o.DocumentSettings = x =>
             {
                 x.DocumentName = "v1";
                 x.Version = "v1";
                 x.Title = "Fast Todo API v1";
             };
-        });
+        })
+        ;
 
     var app = builder.Build();
 
@@ -51,11 +60,14 @@ try
 
     app.UseSerilogRequestLogging();
 
+    app.UseApplication();
+
     app.UseFastEndpoints(c =>
     {
         c.Endpoints.RoutePrefix = "api";
         c.Versioning.Prefix = "v";
         c.Versioning.PrependToRoute = true;
+
         //c.Endpoints.Configurator = ep =>
         //{
         //    ep.PreProcessor<RequestLoggerProcessor>(Order.Before);

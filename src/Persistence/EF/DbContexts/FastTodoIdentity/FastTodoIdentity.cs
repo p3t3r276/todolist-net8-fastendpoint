@@ -1,13 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FastTodo.Domain.Constants;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace FastTodo.Persistence.EF;
 
-public sealed class FastTodoIdentity : IdentityDbContext<AppUser>
+public sealed class FastTodoIdentity(DbContextOptions<FastTodoIdentity> options, IConfiguration configuration) : IdentityDbContext<AppUser>(options)
 {
-    public FastTodoIdentity(DbContextOptions<FastTodoIdentity> options)
-        : base(options) {}
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseProviderType.Identity)));
+    }
 }
 
 public class AppUser : IdentityUser

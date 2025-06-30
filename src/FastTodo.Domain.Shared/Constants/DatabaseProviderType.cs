@@ -6,6 +6,8 @@ public enum DatabaseProviderType
 
     SQLServer,
 
+    Identity,
+
     MySql,
 
     Postgres
