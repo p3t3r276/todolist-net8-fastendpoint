@@ -1,5 +1,6 @@
 using FastTodo.Infrastructure.Domain;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace FastTodo.Persistence.EF;
 
@@ -19,6 +20,10 @@ public static partial class ModuleConfiguration
     {
         services.AddDbContext<FastTodoSQLDbContext>();
         services.AddScoped<BaseDbContext, FastTodoSQLDbContext>();
+
+        services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<FastTodoIdentity>()
+            .AddDefaultTokenProviders();
         return services;
     }
 }
