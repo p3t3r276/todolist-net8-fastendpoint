@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FastEndpoints.AspVersioning;
 
 namespace FastTodo.API.Endpoints.Todo;
 

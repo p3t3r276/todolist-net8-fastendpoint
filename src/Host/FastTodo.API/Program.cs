@@ -1,4 +1,7 @@
+using Asp.Versioning;
+using Asp.Versioning.Conventions;
 using FastEndpoints;
+using FastEndpoints.AspVersioning;
 using FastEndpoints.Swagger;
 using FastTodo.Application;
 using Serilog;
@@ -28,17 +31,28 @@ try
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services);
     });
+    
+    VersionSets.CreateApi("Todos", v => v
+        .HasApiVersion(1.0));
 
     builder.Services
         .AddApplication(builder.Configuration)
         .AddFastEndpoints()
+        .AddVersioning(o =>
+        {
+            o.DefaultApiVersion = new(1.0);
+            o.AssumeDefaultVersionWhenUnspecified = true;
+            o.ApiVersionReader = new HeaderApiVersionReader("X-Api-Version");
+        })
         .SwaggerDocument(o =>
         {
             o.AutoTagPathSegmentIndex = 0;
+            o.EndpointFilter = ep => ep.EndpointTags?.Contains("Account") is true;
             o.DocumentSettings = x =>
             {
                 x.DocumentName = "User managmenet";
                 x.Title = "User";
+                
             };
         })
         .SwaggerDocument(o =>
@@ -48,7 +62,7 @@ try
             o.DocumentSettings = x =>
             {
                 x.DocumentName = "v1";
-                x.Version = "v1";
+                x.ApiVersion(new(1.0));
                 x.Title = "Fast Todo API v1";
             };
         });
@@ -62,8 +76,6 @@ try
     app.UseFastEndpoints(c =>
     {
         c.Endpoints.RoutePrefix = "api";
-        c.Versioning.Prefix = "v";
-        c.Versioning.PrependToRoute = true;
 
         //c.Endpoints.Configurator = ep =>
         //{
