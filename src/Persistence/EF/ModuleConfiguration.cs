@@ -38,7 +38,7 @@ public static partial class ModuleConfiguration
 
     public static WebApplication UseEFPersistence(this WebApplication application)
     {
-        application.MapGroup("/api/accounts").MapIdentityApi<AppUser>().WithTags("accounts");
+        application.MapGroup("/api/accounts").MapIdentityApi<AppUser>().WithTags("Accounts");
         return application;
     }
 }
