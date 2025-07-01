@@ -44,23 +44,20 @@ try
         .SwaggerDocument(o =>
         {
             o.AutoTagPathSegmentIndex = 0;
+            o.MaxEndpointVersion = 1;
             o.DocumentSettings = x =>
             {
                 x.DocumentName = "v1";
                 x.Version = "v1";
                 x.Title = "Fast Todo API v1";
             };
-        })
-        ;
+        });
 
     var app = builder.Build();
 
-    app.UseHttpsRedirection();
-    app.UseDefaultExceptionHandler();
+    app.UseApplication();
 
     app.UseSerilogRequestLogging();
-
-    app.UseApplication();
 
     app.UseFastEndpoints(c =>
     {
