@@ -3,7 +3,7 @@
 ## For developement
 ### Setup SQLite
 ```bash
-dotnet ef migrations add Remove_StartEndDate `
+dotnet ef migrations add Remove_StartEndDate \
     --project ./src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj \
     --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj \
     --context FastTodoSqliteDbContext -o "Data/Todo/Migrations"

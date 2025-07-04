@@ -6,7 +6,10 @@ using Microsoft.Extensions.Configuration;
 
 namespace FastTodo.Persistence.EF;
 
-public sealed class FastTodoIdentity(DbContextOptions<FastTodoIdentity> options, IConfiguration configuration) : IdentityDbContext<AppUser>(options)
+public sealed class FastTodoIdentityDbContext(
+    DbContextOptions<FastTodoIdentityDbContext> options,
+    IConfiguration configuration) 
+    : IdentityDbContext<AppUser>(options)
 {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

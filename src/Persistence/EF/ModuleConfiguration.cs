@@ -28,9 +28,9 @@ public static partial class ModuleConfiguration
         services.AddDbContext<FastTodoSQLDbContext>();
         services.AddScoped<BaseDbContext, FastTodoSQLDbContext>();
 
-        services.AddDbContext<FastTodoIdentity>();
+        services.AddDbContext<FastTodoIdentityDbContext>();
         services.AddIdentityCore<AppUser>()
-            .AddEntityFrameworkStores<FastTodoIdentity>()
+            .AddEntityFrameworkStores<FastTodoIdentityDbContext>()
             .AddApiEndpoints();
 
         return services;
