@@ -7,6 +7,7 @@ namespace FastTodo.Application.Features.Todo;
 public class GetMyTodosRequest : IRequest<PaginatedList<TodoItemDto>>, ICollectionRequest
 {
     [QueryParam]
+    
     public int PageIndex { get; set; } = 1;
 
     [QueryParam]

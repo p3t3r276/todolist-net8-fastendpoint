@@ -7,7 +7,7 @@ using MediatR;
 
 namespace FastTodo.API.Endpoints.Todo;
 
-public class GetMyTodosEndpoint(IMediator mediator, ClaimsPrincipal user) : Endpoint<GetMyTodosRequest, PaginatedList<TodoItemDto>>
+public class GetMyTodosEndpoint(IMediator mediator) : Endpoint<GetMyTodosRequest, PaginatedList<TodoItemDto>>
 {
     public override void Configure()
     {
@@ -20,7 +20,10 @@ public class GetMyTodosEndpoint(IMediator mediator, ClaimsPrincipal user) : Endp
 
     public override async Task<PaginatedList<TodoItemDto>> ExecuteAsync(GetMyTodosRequest req, CancellationToken ct)
     {
-        var name = user.Identity.Name;
+        if (User.Identity.IsAuthenticated)
+        {
+            Console.WriteLine(User.Identity.Name);
+        }
         return await mediator.Send(req, ct);
     }
 }
