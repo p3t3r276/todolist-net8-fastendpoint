@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using FastEndpoints;
 using FastEndpoints.AspVersioning;
 using FastTodo.Application.Features.Todo;
@@ -20,7 +19,7 @@ public class GetMyTodosEndpoint(IMediator mediator) : Endpoint<GetMyTodosRequest
 
     public override async Task<PaginatedList<TodoItemDto>> ExecuteAsync(GetMyTodosRequest req, CancellationToken ct)
     {
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity is { IsAuthenticated: true })
         {
             Console.WriteLine(User.Identity.Name);
         }

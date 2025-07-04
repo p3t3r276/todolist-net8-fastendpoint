@@ -1,9 +1,8 @@
 using FastEndpoints;
-using FastEndpoints.AspVersioning;
 
 namespace FastTodo.API.Endpoints.Todo;
 
-public class TodoEndpointGroup : Group
+public sealed class TodoEndpointGroup : Group
 {
     public TodoEndpointGroup()
     {
