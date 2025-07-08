@@ -10,6 +10,7 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FastTodo.Infrastructure.Domain.Options;
+using FastTodo.Infrastructure.Domain;
 
 namespace FastTodo.Infrastructure;
 
@@ -28,6 +29,10 @@ public static partial class ModuleConfiguration
         if (!Enum.TryParse<DatabaseProviderType>(providerString, true, out var provider))
             throw new Exception($"Invalid SqlProvider configuration: {providerString}");
 
+        services.AddTransient<IUserContext, UserContext>();
+
+        services.AddTransient<AuditingInterceptor>();
+
         switch (provider)
         {
             case DatabaseProviderType.Postgres:
@@ -43,6 +48,7 @@ public static partial class ModuleConfiguration
 
         services.AddKeyedScoped<IUnitOfWork, EFUnitOfWork>(ServiceKeys.FastTodoEFUnitOfWork);
         services.AddTransient(typeof(IRepository<,>), typeof(EfRepository<,>));
+
         return services;
     }
 }

@@ -7,7 +7,10 @@ using Microsoft.Extensions.Configuration;
 
 namespace FastTodo.Persistence.EF;
 
-public class FastTodoSQLDbContext(DbContextOptions<FastTodoSQLDbContext> options, IConfiguration configuration)
+public class FastTodoSQLDbContext(
+    DbContextOptions<FastTodoSQLDbContext> options, 
+    IConfiguration configuration, 
+    AuditingInterceptor auditingInterceptor)
     : BaseDbContext(options)
 {
     protected override Assembly ExecutingAssembly => typeof(FastTodoApplyFilterConfiguration).Assembly;
@@ -19,6 +22,14 @@ public class FastTodoSQLDbContext(DbContextOptions<FastTodoSQLDbContext> options
     {
         base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseProviderType.SQLServer)));
+        optionsBuilder.UseSqlServer(
+            configuration.GetConnectionString(nameof(DatabaseProviderType.SQLServer)),
+            options => options.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: System.TimeSpan.FromSeconds(30),
+                    errorNumbersToAdd: null
+                ));
+
+        optionsBuilder.AddInterceptors(auditingInterceptor);
     }
 }

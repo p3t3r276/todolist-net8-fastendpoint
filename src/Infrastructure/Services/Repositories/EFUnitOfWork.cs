@@ -42,14 +42,12 @@ public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) :
 
     public async Task<TEntity> AddAsync<TEntity>(TEntity entity) where TEntity : class
     {
-        // TODO: Set actor
         var data = await context.AddAsync(entity);
         return data.Entity;
     }
 
     public async Task<IEnumerable<TEntity>> AddRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
     {
-        // TODO: set actor
         await context.AddRangeAsync(entities);
         return entities;
     }

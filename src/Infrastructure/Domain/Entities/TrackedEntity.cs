@@ -2,7 +2,11 @@ namespace FastTodo.Infrastructure.Domain.Entities;
 
 public class TrackedEntity
 {
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public string CreatedBy { get; set; } = string.Empty;
 
-    public DateTimeOffset ModifiedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; }
+
+    public string ModifiedBy { get; set; } = string.Empty;
+
+    public DateTimeOffset ModifiedAt { get; set; }
 }
