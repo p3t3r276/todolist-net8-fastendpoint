@@ -7,7 +7,7 @@ namespace FastTodo.Infrastructure.Domain;
 public class AuditingInterceptor : SaveChangesInterceptor
 {
     private readonly IUserContext _currentUser;
-    private readonly TimeProvider _timeProvider; // Inject TimeProvider for testability
+    private readonly TimeProvider _timeProvider;
 
     public AuditingInterceptor(IUserContext currentUser, TimeProvider timeProvider)
     {
@@ -17,13 +17,13 @@ public class AuditingInterceptor : SaveChangesInterceptor
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
-        UpdateAuditableEntities(eventData.Context);
+        //UpdateAuditableEntities(eventData.Context);
         return base.SavingChanges(eventData, result);
     }
 
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
-        UpdateAuditableEntities(eventData.Context);
+        //UpdateAuditableEntities(eventData.Context);
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
