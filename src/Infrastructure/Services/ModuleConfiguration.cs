@@ -23,7 +23,7 @@ public static partial class ModuleConfiguration
         services.AddDatabaseProvider(configuration);
     }
 
-    public static void AddDatabaseProvider(this IServiceCollection services,
+    private static void AddDatabaseProvider(this IServiceCollection services,
         IConfiguration configuration)
     {
         var providerString = configuration.GetSection(nameof(FastTodoOption.SqlProvider)).Value;
