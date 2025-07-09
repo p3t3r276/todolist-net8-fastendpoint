@@ -16,22 +16,21 @@ namespace FastTodo.Infrastructure;
 
 public static partial class ModuleConfiguration
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static void AddInfrastructure(this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddDatabaseProvider(configuration);
-        return services;
     }
 
-    public static IServiceCollection AddDatabaseProvider(this IServiceCollection services, IConfiguration configuration)
+    public static void AddDatabaseProvider(this IServiceCollection services,
+        IConfiguration configuration)
     {
         var providerString = configuration.GetSection(nameof(FastTodoOption.SqlProvider)).Value;
         if (!Enum.TryParse<DatabaseProviderType>(providerString, true, out var provider))
             throw new Exception($"Invalid SqlProvider configuration: {providerString}");
 
         services.AddTransient<IUserContext, UserContext>();
-
-        services.AddTransient<AuditingInterceptor>();
 
         switch (provider)
         {
@@ -48,7 +47,5 @@ public static partial class ModuleConfiguration
 
         services.AddKeyedScoped<IUnitOfWork, EFUnitOfWork>(ServiceKeys.FastTodoEFUnitOfWork);
         services.AddTransient(typeof(IRepository<,>), typeof(EfRepository<,>));
-
-        return services;
     }
 }

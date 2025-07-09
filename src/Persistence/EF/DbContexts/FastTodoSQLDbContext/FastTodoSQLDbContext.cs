@@ -9,8 +9,7 @@ namespace FastTodo.Persistence.EF;
 
 public class FastTodoSQLDbContext(
     DbContextOptions<FastTodoSQLDbContext> options, 
-    IConfiguration configuration, 
-    AuditingInterceptor auditingInterceptor)
+    IConfiguration configuration)
     : BaseDbContext(options)
 {
     protected override Assembly ExecutingAssembly => typeof(FastTodoApplyFilterConfiguration).Assembly;
@@ -29,7 +28,5 @@ public class FastTodoSQLDbContext(
                     maxRetryDelay: System.TimeSpan.FromSeconds(30),
                     errorNumbersToAdd: null
                 ));
-
-        optionsBuilder.AddInterceptors(auditingInterceptor);
     }
 }
