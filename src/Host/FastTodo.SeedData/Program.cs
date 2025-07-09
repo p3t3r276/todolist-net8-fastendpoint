@@ -11,8 +11,10 @@ var itemFaker = new Faker<TodoItem>()
     .RuleFor(x => x.Name, f => f.Lorem.Sentence())
     .RuleFor(x => x.IsDone, f => f.Random.Bool())
     .RuleFor(x => x.CreatedAt, f => f.Date.PastOffset(1))
-    .RuleFor(x => x.DueDate, f => f.Date.BetweenOffset(new DateTimeOffset(DateTime.UtcNow.AddMonths(-6), TimeSpan.Zero), new DateTimeOffset(DateTime.UtcNow.AddMonths(6), TimeSpan.Zero)))
-    .RuleFor(x => x.ModifiedAt, (f, item) => f.Date.BetweenOffset(item.CreatedAt, item.CreatedAt.AddMonths(6)));
+    .RuleFor(x => x.DueDate,
+        f => f.Date.BetweenOffset(
+            new DateTimeOffset(DateTime.UtcNow.AddMonths(-6), TimeSpan.Zero),
+            new DateTimeOffset(DateTime.UtcNow.AddMonths(6), TimeSpan.Zero)));
 
 Console.WriteLine("Starting geneating...");
 var watch = System.Diagnostics.Stopwatch.StartNew();
