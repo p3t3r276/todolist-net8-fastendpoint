@@ -49,10 +49,10 @@ Table of Contents
 7. Unit of Work Pattern
 8. Dockerization
 9. Logging
+10. ASP.NET Core Identity Integration
 
 ### In Progress 🚧
-1. ASP.NET Core Identity Integration
-2. User Management
+1. User Management
     - Implement ASP.NET Core Identity login using JWT
     - User Authentication
     - Todo Item Ownership

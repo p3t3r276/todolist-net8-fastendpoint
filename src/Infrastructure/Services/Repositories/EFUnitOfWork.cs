@@ -11,7 +11,11 @@ using System.Linq.Expressions;
 
 namespace FastTodo.Infrastructure.Repositories;
 
-public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) : IUnitOfWork
+public class EFUnitOfWork(
+    BaseDbContext context, 
+    ILogger<EFUnitOfWork> logger, 
+    IUserContext currentUser, 
+    TimeProvider timeProvider) : IUnitOfWork
 {
     public Task BeginTransactionAsync()
     {
@@ -42,14 +46,23 @@ public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) :
 
     public async Task<TEntity> AddAsync<TEntity>(TEntity entity) where TEntity : class
     {
-        // TODO: Set actor
+        var dbEntry = context.Entry(entity);
+
+        if (entity is TrackedEntity trackedEntity)
+        {
+            string userId = currentUser.UserId;
+            var now = timeProvider.GetUtcNow();
+
+            trackedEntity.CreatedAt = now;
+            trackedEntity.CreatedBy = userId;
+        }
+
         var data = await context.AddAsync(entity);
         return data.Entity;
     }
 
     public async Task<IEnumerable<TEntity>> AddRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
     {
-        // TODO: set actor
         await context.AddRangeAsync(entities);
         return entities;
     }
@@ -103,17 +116,18 @@ public class EFUnitOfWork(BaseDbContext context, ILogger<EFUnitOfWork> logger) :
         where TEntity : class
     {
         var dbEntry = context.Entry(item);
-
+        
         if (item is TrackedEntity trackedEntity)
         {
-            var utcNow = DateTimeOffset.UtcNow;
+            string userId = currentUser.UserId;
+            var now = timeProvider.GetUtcNow();
 
             var modifiedUtcProperty = dbEntry.Property(nameof(TrackedEntity.ModifiedAt));
-            modifiedUtcProperty.CurrentValue = utcNow;
+            modifiedUtcProperty.CurrentValue = now;
             modifiedUtcProperty.IsModified = true;
 
-            trackedEntity.ModifiedAt = utcNow;
-            // TODO: Set actor here
+            trackedEntity.ModifiedAt = now;
+            trackedEntity.ModifiedBy = userId;
         }
 
         if (setter is null)

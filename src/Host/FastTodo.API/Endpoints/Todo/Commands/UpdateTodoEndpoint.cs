@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FastEndpoints.AspVersioning;
 using FastTodo.Application.Features.Todo;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -11,7 +12,9 @@ public class UpdateTodoEndpoint(IMediator mediator) : Endpoint<UpdateTodoRequest
     {
         Put("/{id:guid}");
         Group<TodoEndpointGroup>();
-        Version(1);
+        Options(x => x
+            .WithVersionSet("Todos")
+            .MapToApiVersion(1.0));
     }
 
     public override async Task<Results<NoContent, Ok<TodoItemDto>>> ExecuteAsync(UpdateTodoRequest req, CancellationToken ct)
