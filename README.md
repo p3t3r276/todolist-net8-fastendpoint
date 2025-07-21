@@ -13,14 +13,14 @@ Table of Contents
 ### Architecture
 
 <p align='center'>
-   <img src='./docs/Architecture.png' />
+  <img src='./docs/Architecture.png' />
 </p>
 
 ### Database Providers
 - SQL Server
 - SQLite
 - Postgres
-- [Coming soon] MariaDB
+- MariaDB
 - [Coming soon] MongoDB
 
 ### Backend Stack
@@ -96,10 +96,16 @@ The database provider can be configured in `appsettings.json`:
 ```json
 {
   "ConnectionStrings": {
-    "Sqlite": "Data Source=FastTodo.db",
     "SqlServer": "",
-    "Postgres": ""
+    "SQLite": "Data Source=FastTodo.db",
+    "Postgres": "",
+    "Identity": ""
   },
-  "SqlProvider": "SQLServer"
+  "SqlProvider": "SQLServer",
+  "fastTodoOptions": {
+    "SqlProvider": "SQLServer",
+    "noSql": "",
+    "openapi": "swagger"
+  },
 }
 ```
