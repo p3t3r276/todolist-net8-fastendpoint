@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace FastTodo.Domain.Shared;
 
 public interface ICollectionRequest

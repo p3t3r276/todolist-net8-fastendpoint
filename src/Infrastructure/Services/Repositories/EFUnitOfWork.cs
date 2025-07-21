@@ -50,7 +50,7 @@ public class EFUnitOfWork(
 
         if (entity is TrackedEntity trackedEntity)
         {
-            string userId = currentUser.UserId;
+            string userId = currentUser.UserId!;
             var now = timeProvider.GetUtcNow();
 
             trackedEntity.CreatedAt = now;
@@ -119,7 +119,7 @@ public class EFUnitOfWork(
         
         if (item is TrackedEntity trackedEntity)
         {
-            string userId = currentUser.UserId;
+            string userId = currentUser.UserId!;
             var now = timeProvider.GetUtcNow();
 
             var modifiedUtcProperty = dbEntry.Property(nameof(TrackedEntity.ModifiedAt));
