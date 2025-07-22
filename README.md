@@ -51,11 +51,11 @@ Table of Contents
 9. Logging
 10. ASP.NET Core Identity Integration
 11. Options Pattern
-  - Allow choosing database providers
+    - Allow choosing database providers
 12. User Management
-  - Implement ASP.NET Core Identity login using JWT
-  - User Authentication
-  - Todo Item Ownership
+    - Implement ASP.NET Core Identity login using JWT
+    - User Authentication
+    - Todo Item Ownership
 
 ### In Progress 🚧
 1. User Management 
@@ -63,7 +63,7 @@ Table of Contents
 
 ### Planning 📋
 1. Options Pattern
-  - Swagger vs Scalar
+    - Swagger vs Scalar
 2. Allow multiple database connection from multiple database providers
 3. Caching with Redis
 4. MongoDB Integration
