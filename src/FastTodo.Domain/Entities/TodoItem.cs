@@ -9,8 +9,4 @@ public sealed class TodoItem : BaseEntity<Guid>
     public bool IsDone { get; set; }
 
     public DateTimeOffset? DueDate { get; set; }
-
-    public DateTimeOffset? StartDate { get; set; }
-
-    public DateTimeOffset? EndDate { get; set; }
 }

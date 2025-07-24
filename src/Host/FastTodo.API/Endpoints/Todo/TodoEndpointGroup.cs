@@ -2,7 +2,7 @@ using FastEndpoints;
 
 namespace FastTodo.API.Endpoints.Todo;
 
-public class TodoEndpointGroup : Group
+public sealed class TodoEndpointGroup : Group
 {
     public TodoEndpointGroup()
     {
@@ -12,7 +12,6 @@ public class TodoEndpointGroup : Group
             {
                 ep.Description(
                     x => x.Produces(401)
-                        .AllowAnonymous()
                         .ProducesProblemDetails()
                         .WithTags("Todos"));
             });

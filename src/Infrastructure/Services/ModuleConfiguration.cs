@@ -9,23 +9,28 @@ using FastTodo.Persistence.Postgres;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using FastTodo.Infrastructure.Domain.Options;
+using FastTodo.Infrastructure.Domain;
 
 namespace FastTodo.Infrastructure;
 
 public static partial class ModuleConfiguration
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static void AddInfrastructure(this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddDatabaseProvider(configuration);
-        return services;
     }
 
-    public static IServiceCollection AddDatabaseProvider(this IServiceCollection services, IConfiguration configuration)
+    private static void AddDatabaseProvider(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        var providerString = configuration["SqlProvider"];
+        var providerString = configuration.GetSection(nameof(FastTodoOption.SqlProvider)).Value;
         if (!Enum.TryParse<DatabaseProviderType>(providerString, true, out var provider))
             throw new Exception($"Invalid SqlProvider configuration: {providerString}");
+
+        services.AddTransient<IUserContext, UserContext>();
 
         switch (provider)
         {
@@ -42,6 +47,5 @@ public static partial class ModuleConfiguration
 
         services.AddKeyedScoped<IUnitOfWork, EFUnitOfWork>(ServiceKeys.FastTodoEFUnitOfWork);
         services.AddTransient(typeof(IRepository<,>), typeof(EfRepository<,>));
-        return services;
     }
 }

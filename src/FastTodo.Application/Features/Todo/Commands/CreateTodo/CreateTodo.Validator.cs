@@ -10,6 +10,6 @@ public class CreateTodoValidator : AbstractValidator<CreateTodoRequest>
             .NotEmpty()
             .WithMessage(m => $"{nameof(m.Name)} is required")
             .MaximumLength(250)
-            .WithMessage(m => $"{nameof(m.Name)} must be less than 250 characters");;
+            .WithMessage(m => $"{nameof(m.Name)} must be less than 250 characters");
     }
 }

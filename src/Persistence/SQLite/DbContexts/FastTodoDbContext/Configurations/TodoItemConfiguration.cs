@@ -20,10 +20,6 @@ public class TaskConfiguration : IEntityTypeConfiguration<TodoItem>
         
         builder.Property(x => x.DueDate);
 
-        builder.Property(x => x.StartDate);
-
-        builder.Property(x => x.EndDate);
-
         builder.Property(x => x.CreatedAt);
 
         builder.Property(x => x.ModifiedAt);

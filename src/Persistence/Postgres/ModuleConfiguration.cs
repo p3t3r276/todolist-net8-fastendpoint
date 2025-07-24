@@ -8,10 +8,6 @@ public static partial class ModuleConfiguration
     public static IServiceCollection AddPostgresPersistence(this IServiceCollection services)
     {
         services.AddFrameworkDbContexts();
-
-        // services.AddKeyedScoped<IUnitOfWork, DefaultEfCommandUnitOfWork>(ServiceKeys.DefaultEFCommandUnitOfWork);
-        //
-        // services.TryAddScoped(typeof(IQueryRepository<,>), typeof(DefaultQueryRepository<,>));
         return services;
     }
 

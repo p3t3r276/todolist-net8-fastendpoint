@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FastEndpoints.AspVersioning;
 using FastTodo.Application.Features.Todo;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -11,9 +12,11 @@ public class ChangeTodoStastusEndpoint(IMediator mediator)
     public override void Configure()
     {
         Patch("/{id:guid}");
-        Description(x => x.Accepts<ChangeTodoStastusRequest>());
         Group<TodoEndpointGroup>();
-        Version(1);
+        Description(x => x.Accepts<ChangeTodoStastusRequest>());
+        Options(x => x
+            .WithVersionSet("Todos")
+            .MapToApiVersion(1.0));
     }
 
     public override async Task<Results<NoContent, Ok<TodoItemDto>>> ExecuteAsync(
