@@ -1,8 +1,10 @@
+using FastTodo.Domain.Entities.Identity;
 using FastTodo.Infrastructure;
-using FastTodo.Persistence.EF;
 using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -30,7 +32,7 @@ public static partial class ModuleConfiguration
         application.UseHttpsRedirection();
         application.UseAuthorization();
 
-        application.UseEFPersistence();
+        application.MapGroup("/api/accounts").MapIdentityApi<AppUser>().WithTags("Accounts");
 
         return application;
     }
