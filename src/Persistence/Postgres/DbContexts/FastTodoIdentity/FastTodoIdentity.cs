@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace FastTodo.Persistence.EF;
+namespace FastTodo.Persistence.Postgres;
 
 public sealed class FastTodoIdentityDbContext(
     DbContextOptions<FastTodoIdentityDbContext> options,
@@ -15,6 +15,6 @@ public sealed class FastTodoIdentityDbContext(
     {
         base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseProviderType.Identity)));
+        optionsBuilder.UseNpgsql(configuration.GetConnectionString(nameof(DatabaseProviderType.Identity)));
     }
 }

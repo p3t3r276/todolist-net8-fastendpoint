@@ -1,8 +1,6 @@
+using FastTodo.Domain.Entities.Identity;
 using FastTodo.Infrastructure.Domain;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FastTodo.Persistence.EF;
@@ -34,11 +32,5 @@ public static partial class ModuleConfiguration
             .AddApiEndpoints();
 
         return services;
-    }
-
-    public static WebApplication UseEFPersistence(this WebApplication application)
-    {
-        application.MapGroup("/api/accounts").MapIdentityApi<AppUser>().WithTags("Accounts");
-        return application;
     }
 }
