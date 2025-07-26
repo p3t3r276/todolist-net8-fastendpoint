@@ -1,6 +1,5 @@
 ﻿using FastTodo.Domain.Constants;
 using FastTodo.Domain.Entities.Identity;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
