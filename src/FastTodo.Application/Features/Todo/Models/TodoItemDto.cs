@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using FastTodo.Application.Features.Identity;
+
 namespace FastTodo.Application.Features.Todo;
 
 public class TodoItemDto
@@ -16,6 +19,15 @@ public class TodoItemDto
 
     public DateTimeOffset? CreatedAt { get; set; }
 
+    [JsonIgnore]
+    public string CreatedBy { get; set; } = string.Empty;
+
+    public UserResponse? CreatedByUser { get; set; }
+
     public DateTimeOffset? ModifiedAt { get; set; }
 
+    [JsonIgnore]
+    public string ModifiedBy { get; set; } = string.Empty;
+
+    public UserResponse? ModifiedByUser { get; set; }
 }

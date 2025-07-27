@@ -3,6 +3,7 @@ using System;
 using FastTodo.Persistence.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FastTodo.Persistence.Postgres.Data.Todo.Migrations
 {
     [DbContext(typeof(FastTodoPostgresContext))]
-    partial class FastTodoPostgresContextModelSnapshot : ModelSnapshot
+    [Migration("20250726044148_Remove_StartEndDate")]
+    partial class Remove_StartEndDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

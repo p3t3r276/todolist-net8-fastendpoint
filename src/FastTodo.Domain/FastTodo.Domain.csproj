@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Mapster" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
