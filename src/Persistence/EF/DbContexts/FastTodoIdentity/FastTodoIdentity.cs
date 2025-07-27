@@ -1,4 +1,4 @@
-﻿using FastTodo.Domain.Constants;
+using FastTodo.Domain.Constants;
 using FastTodo.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
