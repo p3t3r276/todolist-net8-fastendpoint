@@ -14,8 +14,6 @@ public static class CorsConfiguration
         var corsOptions = configuration.GetSection(CorsOption.Cors).Get<CorsOption>();
         ArgumentNullException.ThrowIfNull(corsOptions);
 
-        Console.WriteLine("Hahaha");
-
         services.AddCors(option =>
         {
             option.AddPolicy(CorsPolicy,
