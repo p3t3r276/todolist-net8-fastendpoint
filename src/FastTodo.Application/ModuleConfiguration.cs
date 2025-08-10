@@ -28,13 +28,13 @@ public static partial class ModuleConfiguration
         return services;
     }
 
-    public static WebApplication UseApplication(this WebApplication application)
+    public static void UseApplication(this WebApplication application)
     {
         application.UseHttpsRedirection();
         application.UseAuthorization();
 
-        application.MapGroup("/api/accounts").MapIdentityApi<AppUser>().WithTags("Accounts");
+        application.UseInFrastructure();
 
-        return application;
+        application.MapGroup("/api/accounts").MapIdentityApi<AppUser>().WithTags("Accounts");
     }
 }
