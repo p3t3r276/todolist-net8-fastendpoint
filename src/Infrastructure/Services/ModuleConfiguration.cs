@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FastTodo.Infrastructure.Domain.Options;
 using FastTodo.Infrastructure.Domain;
+using FastTodo.Infrastructure.Domain.Configurations;
+using Microsoft.AspNetCore.Builder;
 
 namespace FastTodo.Infrastructure;
 
@@ -21,6 +23,13 @@ public static partial class ModuleConfiguration
     {
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddDatabaseProvider(configuration);
+
+        services.AddAPICors(configuration);
+    }
+
+    public static void UseInFrastructure(this IApplicationBuilder app)
+    {
+        app.UseAPICors();
     }
 
     private static void AddDatabaseProvider(this IServiceCollection services,
