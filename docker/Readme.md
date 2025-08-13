@@ -4,12 +4,17 @@
 ### Setup SQLite
 ```bash
 dotnet ef migrations add Remove_StartEndDate \
-    --project ./src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj \
+    --project ./src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj \
     --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj \
-    --context FastTodoSqliteDbContext -o "Data/Todo/Migrations"
+    --context FastTodoPostgresContext -o "Data/Todo/Migrations"
   
 dotnet ef database update `
-    --project ./src/Persistence/EF/FastTodo.Persistence.EF.csproj `
+    --project ./src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj `
+    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj `
+    --context FastTodoPostgresContext --connection "Server=(localdb)\MSSQLLocalDB;Database=FastTodoIdentity;User Id=SA;Password=123456;Encrypt=True;TrustServerCertificate=true;Persist Security Info=False"
+
+dotnet ef database update `
+    --project ./src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj `
     --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj `
     --context FastTodoIdentityDbContext --connection "Server=(localdb)\MSSQLLocalDB;Database=FastTodoIdentity;User Id=SA;Password=123456;Encrypt=True;TrustServerCertificate=true;Persist Security Info=False"
 ```
