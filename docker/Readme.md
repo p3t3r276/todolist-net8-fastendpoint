@@ -1,7 +1,25 @@
 # Run Docker Containers
 
 ## For developement
+### Setup SQLite
+```bash
+dotnet ef migrations add Remove_StartEndDate \
+    --project ./src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj \
+    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj \
+    --context FastTodoPostgresContext -o "Data/Todo/Migrations"
+  
+dotnet ef database update `
+    --project ./src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj `
+    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj `
+    --context FastTodoPostgresContext --connection "Server=(localdb)\MSSQLLocalDB;Database=FastTodoIdentity;User Id=SA;Password=123456;Encrypt=True;TrustServerCertificate=true;Persist Security Info=False"
 
+dotnet ef database update `
+    --project ./src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj `
+    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj `
+    --context FastTodoIdentityDbContext --connection "Server=(localdb)\MSSQLLocalDB;Database=FastTodoIdentity;User Id=SA;Password=123456;Encrypt=True;TrustServerCertificate=true;Persist Security Info=False"
+```
+
+## Deploy database with API
 1. Update .env file
 ```env
 DB_CONNECTION_STRING=

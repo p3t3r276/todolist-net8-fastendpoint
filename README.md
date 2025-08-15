@@ -13,21 +13,21 @@ Table of Contents
 ### Architecture
 
 <p align='center'>
-   <img src='./docs/Architecture.png' />
+  <img src='./docs/Architecture.png' />
 </p>
 
 ### Database Providers
 - SQL Server
 - SQLite
 - Postgres
-- [Coming soon] MariaDB
+- MariaDB
 - [Coming soon] MongoDB
 
 ### Backend Stack
 - .NET `8.0`
 - [FastEndpoints](https://fast-endpoints.com/) `5.34.0`
-- Entity Framework Core `9.0.0`
-- MediatR `12.4.1`
+- [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) `9.0.0`
+- [MediatR](https://github.com/jbogard/MediatR) `12.4.1`
 - [FluentValidation](https://docs.fluentvalidation.net/en/latest/) `12.0.0`
 
 ### Patterns
@@ -48,20 +48,29 @@ Table of Contents
 6. API Versioning
 7. Unit of Work Pattern
 8. Dockerization
-
-### In Progress 🚧
-1. Logging
-2. User Management
+9. Logging
+10. ASP.NET Core Identity Integration
+11. Options Pattern
+    - Allow choosing database providers
+12. User Management
     - Implement ASP.NET Core Identity login using JWT
     - User Authentication
     - Todo Item Ownership
+
+### In Progress 🚧
+1. User Management 
     - Todo Item Assignment
 
 ### Planning 📋
-3. ASP.NET Core Identity Integration
-4. Testing
-5. Azure Container integration
-6. Options Pattern
+1. Options Pattern
+    - Swagger vs Scalar
+2. Allow multiple database connection from multiple database providers
+3. Caching with Redis
+4. MongoDB Integration
+5. Integrate CAP
+6. RabbitMQ Integration
+6. Unit Test
+7. Azure Container integration
 
 ## API Endpoints
 
@@ -87,10 +96,16 @@ The database provider can be configured in `appsettings.json`:
 ```json
 {
   "ConnectionStrings": {
-    "Sqlite": "Data Source=FastTodo.db",
     "SqlServer": "",
-    "Postgres": ""
+    "SQLite": "Data Source=FastTodo.db",
+    "Postgres": "",
+    "Identity": ""
   },
-  "SqlProvider": "SQLServer"
+  "SqlProvider": "SQLServer",
+  "fastTodoOptions": {
+    "SqlProvider": "SQLServer",
+    "noSql": "",
+    "openapi": "swagger"
+  },
 }
 ```

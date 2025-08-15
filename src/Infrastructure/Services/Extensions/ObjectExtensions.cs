@@ -4,7 +4,7 @@ namespace FastTodo.Infrastructure.Extensions;
 
 public static class ObjectExtensions
 {
-    public static SqlParameter[] ToSqlParmeterArray(this object? obj)
+    public static SqlParameter[] ToSqlParameterArray(this object? obj)
     {
         if (obj == null) return [];
 

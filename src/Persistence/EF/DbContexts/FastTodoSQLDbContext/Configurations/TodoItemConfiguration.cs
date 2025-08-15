@@ -21,12 +21,6 @@ public class TaskConfiguration : IEntityTypeConfiguration<TodoItem>
         builder.Property(x => x.DueDate)
             .HasColumnType("datetimeoffset");
 
-        builder.Property(x => x.StartDate)
-            .HasColumnType("datetimeoffset");
-
-        builder.Property(x => x.EndDate)
-            .HasColumnType("datetimeoffset");
-
         builder.Property(x => x.CreatedAt)
             .HasColumnType("datetimeoffset");
 
