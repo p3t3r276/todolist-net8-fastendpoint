@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:17.5
+    container_name: postgres_db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - fasttodo-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "myuser", "-d", "FastTodo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  adminer:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: catsarecool
+    ports:
+      - 5050:80
+    networks:
+      - fasttodo-network
+
+  migrator:
+    container_name: fasttodo-migrator
+    build:
+      context: ../src
+      dockerfile: Dockerfile.Migrations
+    # env_file: ".env"
+    environment:
+      - DB_CONNECTION_STRING=${DB_CONNECTION_STRING}
+      - PROJECT=${DB_PROJECT}
+      - CONTEXT=${CONTEXT}
+      - SqlProvider=${SqlProvider}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - fasttodo-network
+    restart: "no"
+
+volumes:
+  pgdata:
+
+networks:
+  fasttodo-network:

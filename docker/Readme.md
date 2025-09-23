@@ -11,12 +11,12 @@ dotnet ef migrations add Remove_StartEndDate \
 dotnet ef database update `
     --project ./src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj `
     --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj `
-    --context FastTodoPostgresContext --connection "Server=(localdb)\MSSQLLocalDB;Database=FastTodoIdentity;User Id=SA;Password=123456;Encrypt=True;TrustServerCertificate=true;Persist Security Info=False"
+    --context FastTodoPostgresContext --connection "Server=127.0.0.1;Port=5432;Database=fasttodo;User Id=myuser;Password=mypassword;"
 
-dotnet ef database update `
-    --project ./src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj `
-    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj `
-    --context FastTodoIdentityDbContext --connection "Server=(localdb)\MSSQLLocalDB;Database=FastTodoIdentity;User Id=SA;Password=123456;Encrypt=True;TrustServerCertificate=true;Persist Security Info=False"
+dotnet ef database update \
+    --project ./src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj \
+    --startup-project ./src/Host/FastTodo.API/FastTodo.API.csproj \
+    --context FastTodoIdentityDbContext --connection "Server=127.0.0.1;Port=5432;Database=identity;User Id=myuser;Password=mypassword;"
 ```
 
 ## Deploy database with API

@@ -5,6 +5,8 @@ WORKDIR /app
 COPY ["Host/FastTodo.API/FastTodo.API.csproj", "Host/FastTodo.API/"]
 COPY ["Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
 COPY ["Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
+COPY ["Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
+COPY ["Persistence/SQLite/FastTodo.Persistence.SQLite.csproj", "Persistence/SQLite/"]
 COPY ["FastTodo.Domain.Shared/FastTodo.Domain.Shared.csproj", "FastTodo.Domain.Shared/"]
 COPY ["FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
 COPY ["Infrastructure/Domain/FastTodo.Infrastructure.Domain.csproj", "Infrastructure/Domain/"]
@@ -15,8 +17,14 @@ COPY . .
 
 RUN dotnet tool install --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json || dotnet tool update --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
 
-ENTRYPOINT /root/.dotnet/tools/dotnet-ef database update --verbose \
-    --project $PROJECT \
+CMD /root/.dotnet/tools/dotnet-ef database update --verbose \
+    --project $DB_PROJECT \
     --startup-project ./Host/FastTodo.API/FastTodo.API.csproj \
     --context $CONTEXT \
     --connection "$DB_CONNECTION_STRING"
+
+CMD /root/.dotnet/tools/dotnet-ef database update --verbose \
+    --project $IDENTITY_PROJECT \
+    --startup-project ./Host/FastTodo.API/FastTodo.API.csproj \
+    --context $IDENTITY_CONTEXT \
+    --connection "$IDENTITY_CONNECTION_STRING"
