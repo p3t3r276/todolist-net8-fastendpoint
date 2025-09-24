@@ -6,15 +6,15 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY ["FastTodo.Domain.Shared/FastTodo.Domain.Shared.csproj", "FastTodo.Domain.Shared/"]
+COPY ["src/FastTodo.Domain.Shared/FastTodo.Domain.Shared.csproj", "FastTodo.Domain.Shared/"]
 COPY ["Infrastructure/Domain/FastTodo.Infrastructure.Domain.csproj", "Infrastructure/Domain/"]
-COPY ["FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
-COPY ["Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
-COPY ["Persistence/SQLite/FastTodo.Persistence.SQLite.csproj", "Persistence/SQLite/"]
-COPY ["Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
-COPY ["Infrastructure/Services/FastTodo.Infrastructure.csproj", "Infrastructure/Services/"]
-COPY ["FastTodo.Application/FastTodo.Application.csproj", "FastTodo.Application/"]
-COPY ["Host/FastTodo.API/FastTodo.API.csproj", "Host/FastTodo.API/"]
+COPY ["src/FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
+COPY ["src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
+COPY ["src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj", "Persistence/SQLite/"]
+COPY ["src/Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
+COPY ["src/Infrastructure/Services/FastTodo.Infrastructure.csproj", "Infrastructure/Services/"]
+COPY ["src/FastTodo.Application/FastTodo.Application.csproj", "FastTodo.Application/"]
+COPY ["src/Host/FastTodo.API/FastTodo.API.csproj", "Host/FastTodo.API/"]
 
 RUN dotnet restore --disable-parallel "Host/FastTodo.API/FastTodo.API.csproj"
 

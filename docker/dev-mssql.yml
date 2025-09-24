@@ -22,7 +22,7 @@ services:
   migrator:
     container_name: fasttodo-migrator
     build:
-        context: ../src
+        context: ../
         dockerfile: Dockerfile.Migrations
     environment:
         DB_CONNECTION_STRING: Server=db,1433;Database=FastTodo;User ID=SA;Password=MyPass@word;Encrypt=True;TrustServerCertificate=true

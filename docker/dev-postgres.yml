@@ -36,7 +36,7 @@ services:
   migrator:
     container_name: fasttodo-migrator
     build:
-      context: ../src
+      context: ../
       dockerfile: Dockerfile.Migrations
     environment:
       - DB_CONNECTION_STRING=Server=db;Port=5432;Database=fasttodo;User Id=myuser;Password=mypassword;
