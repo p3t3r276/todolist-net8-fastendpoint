@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FastTodo.Domain\FastTodo.Domain.csproj" />
+    <ProjectReference Include="..\FastTodo.Redis\FastTodo.Redis.csproj" />
     <ProjectReference Include="..\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj" />
     <ProjectReference Include="..\Infrastructure\Services\FastTodo.Infrastructure.csproj" />
   </ItemGroup>
