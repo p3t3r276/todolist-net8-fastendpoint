@@ -3,7 +3,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS migrator
 WORKDIR /app
 
 COPY ["src/Host/FastTodo.API/FastTodo.API.csproj", "Host/FastTodo.API/"]
-# COPY ["src/FastTodo.Application/FastTodo.Application.csproj", "FastTodo.Application/"]
 
 COPY ["src/Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
 COPY ["src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
