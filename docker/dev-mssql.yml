@@ -25,10 +25,14 @@ services:
         context: ../
         dockerfile: Dockerfile.Migrations
     environment:
-        DB_CONNECTION_STRING: Server=db,1433;Database=FastTodo;User ID=SA;Password=MyPass@word;Encrypt=True;TrustServerCertificate=true
-        PROJECT: ./Persistence/EF/FastTodo.Persistence.EF.csproj
-        CONTEXT: FastTodoSQLDbContext
-        SqlProvider: SQLServer
+        - DB_CONNECTION_STRING=${DB_CONNECTION_STRING}
+        - DB_PROJECT=${DB_PROJECT}
+        - CONTEXT=${CONTEXT}
+        - IDENTITY_CONNECTION_STRING=${IDENTITY_CONNECTION_STRING}
+        - IDENTITY_PROJECT=${IDENTITY_PROJECT}
+        - IDENTITY_CONTEXT=${IDENTITY_CONTEXT}
+        - SqlProvider=${SqlProvider}
+        - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     depends_on:
         db:
           condition: service_healthy
@@ -44,9 +48,10 @@ services:
     ports:
         - "5001:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__SQLServer=Server=db,1433;Database=FastTodo;User ID=SA;Password=MyPass@word;Encrypt=True;TrustServerCertificate=true
-      - SqlProvider=SQLServer
+      - ConnectionStrings__SQLServer=${DB_CONNECTION_STRING}
+      - ConnectionStrings__Identity=${IDENTITY_CONNECTION_STRING}
+      - SqlProvider=${SqlProvider}
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     restart: always
     depends_on:
       db:
