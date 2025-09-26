@@ -9,7 +9,7 @@ public class GetMyTodosRequest : IRequest<PaginatedList<TodoItemDto>>, ICollecti
 {
     [QueryParam]
     [DefaultValue(1)]
-    public int PageIndex { get; set; } = 1;
+    public int PageIndex { get; set; } = 0;
 
     [QueryParam]
     [DefaultValue(10)]

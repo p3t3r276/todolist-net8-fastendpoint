@@ -12,7 +12,7 @@ public struct PaginatedList<T>(List<T> items, int count, int pageIndex, int page
 
     public int TotalCount { get; } = count;
 
-    public readonly bool HasPreviousPage => PageIndex > 1;
+    public readonly bool HasPreviousPage => PageIndex > 0;
 
     public readonly bool HasNextPage => PageIndex < TotalPages;
 }

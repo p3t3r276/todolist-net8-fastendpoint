@@ -34,7 +34,7 @@ services:
       - IDENTITY_CONNECTION_STRING=${IDENTITY_CONNECTION_STRING}
       - IDENTITY_PROJECT=${IDENTITY_PROJECT}
       - IDENTITY_CONTEXT=${IDENTITY_CONTEXT}
-      - SqlProvider=${SqlProvider}
+      - fastTodoOption__SQLProvider=${SQLProvider}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     depends_on:
         db:
