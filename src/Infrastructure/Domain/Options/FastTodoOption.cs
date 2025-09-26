@@ -5,7 +5,7 @@ namespace FastTodo.Infrastructure.Domain.Options;
 
 public sealed record FastTodoOption
 {
-    public DatabaseProviderType SqlProvider { get; set; }
+    public DatabaseProviderType SQLProvider { get; set; }
 
     public OpenAPI OpenAPI { get; set; }
 }

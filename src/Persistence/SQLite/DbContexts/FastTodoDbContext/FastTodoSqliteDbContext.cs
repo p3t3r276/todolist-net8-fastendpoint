@@ -38,6 +38,6 @@ public class FastTodoSqliteDbContext (DbContextOptions<FastTodoSqliteDbContext> 
     {
         base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder.UseSqlite(configuration.GetConnectionString(nameof(DatabaseProviderType.SQLite)));
+        optionsBuilder.UseSqlite(configuration.GetConnectionString(nameof(ConnectionStrings.Default)));
     }
 }

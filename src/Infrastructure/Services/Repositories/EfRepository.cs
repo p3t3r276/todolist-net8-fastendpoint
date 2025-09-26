@@ -26,10 +26,7 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         if (!enableTracking)
             query = query.AsNoTracking();
 
-        var keyProperty = typeof(TEntity).GetProperty("Id");
-        if (keyProperty == null)
-            throw new InvalidOperationException($"No 'Id' property found on type {typeof(TEntity).Name}");
-
+        var keyProperty = typeof(TEntity).GetProperty("Id") ?? throw new InvalidOperationException($"No 'Id' property found on type {typeof(TEntity).Name}");
         var parameter = Expression.Parameter(typeof(TEntity), "x");
         var property = Expression.Property(parameter, keyProperty);
         var constant = Expression.Convert(Expression.Constant(id), keyProperty.PropertyType);
@@ -48,14 +45,11 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         if (!enableTracking)
             query = query.AsNoTracking();
 
-        var keyProperty = typeof(TEntity).GetProperty("Id");
-        if (keyProperty == null)
-            throw new InvalidOperationException($"No 'Id' property found on type {typeof(TEntity).Name}");
-
+        var keyProperty = typeof(TEntity).GetProperty("Id") ?? throw new InvalidOperationException($"No 'Id' property found on type {typeof(TEntity).Name}");
         var parameter = Expression.Parameter(typeof(TEntity), "x");
         var property = Expression.Property(parameter, keyProperty);
         var constant = Expression.Constant(ids);
-        var body = Expression.Call(typeof(Enumerable), "Contains", new[] { keyProperty.PropertyType }, constant, property);
+        var body = Expression.Call(typeof(Enumerable), "Contains", [keyProperty.PropertyType], constant, property);
         var lambda = Expression.Lambda<Func<TEntity, bool>>(body, parameter);
 
         return await query.Where(lambda).ToListAsync(cancellationToken);
@@ -63,7 +57,7 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
 
     public async Task<List<TEntity>> ListAsync(
         Expression<Func<TEntity, bool>>? predicate = null,
-        bool enableTracking = true,
+        bool enableTracking = false,
         CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
@@ -75,9 +69,10 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
     }
 
     public async Task<PaginatedList<TEntity>> ListAsync(
-        int pageIndex, int pageSize,
+        int pageIndex,
+        int pageSize,
         Expression<Func<TEntity, bool>>? predicate = null,
-        bool enableTracking = true,
+        bool enableTracking = false,
         CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
@@ -88,7 +83,7 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
 
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
-            .Skip((pageIndex - 1) * pageSize)
+            .Skip((pageIndex < 0 ? 0 : pageIndex) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
@@ -99,7 +94,7 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         int pageIndex, 
         int pageSize, 
         Expression<Func<TEntity, bool>>? predicate = null, 
-        bool enableTracking = true, 
+        bool enableTracking = false, 
         CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
@@ -110,7 +105,7 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
 
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
-            .Skip((pageIndex - 1) * pageSize)
+            .Skip((pageIndex < 0 ? 0 : pageIndex) * pageSize)
             .Take(pageSize)
             .ProjectToType<TProjector>()
             .ToListAsync(cancellationToken);

@@ -5,11 +5,9 @@ namespace FastTodo.Infrastructure.Repositories.Builder;
 
 public class EntitySetter<TEntity>(TEntity entity) : IEntitySetter<TEntity> where TEntity : class
 {
-    private readonly TEntity _item = entity;
-
     internal HashSet<string> UpdateProperties { get; } = [];
 
-    internal TEntity Item => _item;
+    internal TEntity Item => entity;
 
     public IEntitySetter<TEntity> Set<TProperty>(Expression<Func<TEntity, TProperty>> expression, TProperty value)
     {

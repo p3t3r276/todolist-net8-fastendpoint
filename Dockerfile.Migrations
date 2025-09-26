@@ -1,0 +1,31 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS migrator
+
+WORKDIR /app
+
+COPY ["src/Host/FastTodo.API/FastTodo.API.csproj", "Host/FastTodo.API/"]
+
+COPY ["src/Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
+COPY ["src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
+COPY ["src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj", "Persistence/SQLite/"]
+
+COPY ["src/FastTodo.Domain.Shared/FastTodo.Domain.Shared.csproj", "FastTodo.Domain.Shared/"]
+COPY ["src/FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
+COPY ["src/Infrastructure/Domain/FastTodo.Infrastructure.Domain.csproj", "Infrastructure/Domain/"]
+COPY ["src/Infrastructure/Services/FastTodo.Infrastructure.csproj", "Infrastructure/Services/"]
+
+COPY Directory.Packages.props .
+
+RUN dotnet restore --disable-parallel "Host/FastTodo.API/FastTodo.API.csproj"
+
+COPY ./src .
+
+RUN dotnet tool install --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json || dotnet tool update --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+
+COPY ./entrypoint.sh .
+
+# FIX: Convert Windows line endings to Unix line endings
+RUN sed -i 's/\r$//' ./entrypoint.sh
+
+RUN chmod +x ./entrypoint.sh
+
+ENTRYPOINT ["./entrypoint.sh"]
