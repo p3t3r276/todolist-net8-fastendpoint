@@ -1,9 +1,6 @@
 ﻿using FastTodo.Domain.Entities.Identity;
 using FastTodo.Infrastructure.Domain;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -19,14 +16,6 @@ public static partial class ModuleConfiguration
 
     private static IServiceCollection AddFrameworkDbContexts(this IServiceCollection services)
     {
-        services.AddAuthorization();
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = IdentityConstants.BearerScheme;
-            options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
-            options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
-        }).AddBearerToken(IdentityConstants.BearerScheme);
-
         services.AddDbContext<FastTodoPostgresContext>();
         services.AddScoped<BaseDbContext, FastTodoPostgresContext>();
 
