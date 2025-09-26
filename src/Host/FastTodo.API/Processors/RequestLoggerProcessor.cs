@@ -8,7 +8,7 @@ public class RequestLoggerProcessor : IGlobalPreProcessor
     {
         var logger = context.HttpContext.Resolve<ILogger<Program>>();
         logger.LogInformation(
-            $"request:{context.Request.GetType().FullName} path: {context.HttpContext.Request.Path}");
+            "request:{requestName} path: {path}", context.Request?.GetType().FullName, context.HttpContext.Request.Path);
 
         return Task.CompletedTask;
     }

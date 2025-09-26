@@ -53,27 +53,6 @@ services:
       - fasttodo-network
     restart: "no"
 
-  api:
-    container_name: fasttodo-api
-    build:
-        context: ../
-        dockerfile: Dockerfile.dev
-    ports:
-        - "5001:8080"
-    environment:
-      - ConnectionStrings__Postgres=${DB_CONNECTION_STRING}
-      - ConnectionStrings__Identity=${IDENTITY_CONNECTION_STRING}
-      - SqlProvider=${SqlProvider}
-      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-    restart: always
-    depends_on:
-        db:
-          condition: service_healthy
-        migrator:
-          condition: service_completed_successfully
-    networks:
-        - fasttodo-network
-
 volumes:
   pgdata:
 
