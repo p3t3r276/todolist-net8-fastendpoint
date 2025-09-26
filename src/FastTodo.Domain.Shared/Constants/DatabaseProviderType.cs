@@ -6,9 +6,14 @@ public enum DatabaseProviderType
 
     SQLServer,
 
-    Identity,
-
     MySql,
 
     Postgres
+}
+
+public enum  ConnectionStrings
+{
+    Default,
+
+    Identity
 }

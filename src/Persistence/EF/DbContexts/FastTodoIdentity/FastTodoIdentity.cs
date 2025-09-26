@@ -15,6 +15,6 @@ public sealed class FastTodoIdentityDbContext(
     {
         base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseProviderType.Identity)));
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString(nameof(ConnectionStrings.Identity)));
     }
 }

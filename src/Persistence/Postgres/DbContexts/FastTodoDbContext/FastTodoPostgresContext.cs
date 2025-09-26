@@ -18,6 +18,6 @@ public class FastTodoPostgresContext(DbContextOptions<FastTodoPostgresContext> o
     {
         base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder.UseNpgsql(configuration.GetConnectionString(nameof(DatabaseProviderType.Postgres)));
+        optionsBuilder.UseNpgsql(configuration.GetConnectionString(nameof(ConnectionStrings.Default)));
     }
 }
