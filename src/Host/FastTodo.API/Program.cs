@@ -21,6 +21,15 @@ try
     builder.Services.AddAuthorization();
     builder.Services.AddAuthentication();
 
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+
+        // Clear all known networks and proxies to trust the Docker network's internal proxy
+        options.KnownNetworks.Clear();
+        options.KnownProxies.Clear(); 
+    });
+
     builder.Host.UseSerilog((context, services, configuration) =>
     {
         configuration
@@ -53,7 +62,6 @@ try
             {
                 x.DocumentName = "User managmenet";
                 x.Title = "User";
-
             };
         })
         .SwaggerDocument(o =>
@@ -68,15 +76,14 @@ try
             };
         });
 
-    builder.Services.Configure<ForwardedHeadersOptions>(options =>
-    {
-        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-        // Clear all known networks and proxies to trust the Docker network's internal proxy
-        options.KnownNetworks.Clear();
-        options.KnownProxies.Clear(); 
-    });
-
     var app = builder.Build();
+
+    app.UseForwardedHeaders();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwaggerGen();
+    }
 
     app.UseApplication();
 
@@ -91,13 +98,6 @@ try
         //    ep.PreProcessor<RequestLoggerProcessor>(Order.Before);
         //};
     });
-
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwaggerGen();
-    }
-
-    app.UseForwardedHeaders();
 
     Log.Information("Starting FastTodo...");
 
