@@ -83,7 +83,7 @@ services:
         - api
       restart: always
       networks:
-          - fasttodo-network
+        - fasttodo-network
 
 volumes:
   pgdata:
