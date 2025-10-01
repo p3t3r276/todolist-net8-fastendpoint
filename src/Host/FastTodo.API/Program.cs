@@ -4,6 +4,7 @@ using FastEndpoints;
 using FastEndpoints.AspVersioning;
 using FastEndpoints.Swagger;
 using FastTodo.Application;
+using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -52,7 +53,7 @@ try
             {
                 x.DocumentName = "User managmenet";
                 x.Title = "User";
-                
+
             };
         })
         .SwaggerDocument(o =>
@@ -66,6 +67,14 @@ try
                 x.Title = "Fast Todo API v1";
             };
         });
+
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        // Clear all known networks and proxies to trust the Docker network's internal proxy
+        options.KnownNetworks.Clear();
+        options.KnownProxies.Clear(); 
+    });
 
     var app = builder.Build();
 
@@ -87,6 +96,8 @@ try
     {
         app.UseSwaggerGen();
     }
+
+    app.UseForwardedHeaders();
 
     Log.Information("Starting FastTodo...");
 
