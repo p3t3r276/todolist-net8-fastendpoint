@@ -22,10 +22,10 @@ public class FastTodoSQLDbContext(
         base.OnConfiguring(optionsBuilder);
 
         optionsBuilder.UseSqlServer(
-            configuration.GetConnectionString(nameof(DatabaseProviderType.SQLServer)),
+            configuration.GetConnectionString(nameof(ConnectionStrings.Default)),
             options => options.EnableRetryOnFailure(
                     maxRetryCount: 5,
-                    maxRetryDelay: System.TimeSpan.FromSeconds(30),
+                    maxRetryDelay: TimeSpan.FromSeconds(30),
                     errorNumbersToAdd: null
                 ));
     }

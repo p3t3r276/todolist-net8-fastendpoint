@@ -19,7 +19,7 @@ public static class CorsConfiguration
             option.AddPolicy(CorsPolicy,
                 p => p.WithOrigins(corsOptions.Origins)
                     .SetIsOriginAllowed(origin =>
-                        (new Uri(origin).Host == "localhost" && corsOptions.IsAllowLocalhost)
+                        (new Uri(origin).Host == "*" && corsOptions.IsAllowLocalhost)
                         || corsOptions.Origins.Contains(origin.TrimEnd('/')))
                     .AllowAnyHeader()
                     .AllowAnyMethod()
