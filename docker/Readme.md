@@ -39,13 +39,13 @@ dotnet ef database update `
 ## Deploy database with API
 1. Update .env file
 ```env
-DB_CONNECTION_STRING=Server=
+DB_CONNECTION_STRING=
 DB_PROJECT=
 CONTEXT=
 IDENTITY_CONNECTION_STRING=
 IDENTITY_PROJECT=
 IDENTITY_CONTEXT=
-SqlProvider=
+SQLProvider=
 ASPNETCORE_ENVIRONMENT=
 ```
 or run docker-compose file based on database
