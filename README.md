@@ -104,7 +104,7 @@ The database provider can be configured in `appsettings.json`:
   "fastTodoOption": {
     "SQLProvider": "", // Postgres, SQLite or SQLServer
     "noSql": "",
-    "openapi": "swagger"
+    "openapi": "swagger" // swagger or scalar
   },
 }
 ```
