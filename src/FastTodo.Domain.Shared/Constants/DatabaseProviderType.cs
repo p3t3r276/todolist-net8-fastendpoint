@@ -12,3 +12,10 @@ public enum DatabaseProviderType
 
     Postgres
 }
+
+public enum  ConnectionStrings
+{
+    Default,
+
+    Identity
+}

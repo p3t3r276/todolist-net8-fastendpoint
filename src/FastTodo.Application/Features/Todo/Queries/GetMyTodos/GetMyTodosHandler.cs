@@ -26,7 +26,7 @@ public class GetMyTodosHandler (
 
         if (items.Data.Count is 0)
         {
-            // TODO: Return empty
+            return items;
         }
 
         var todoItems = items.Data;
@@ -39,7 +39,7 @@ public class GetMyTodosHandler (
 
         if (users.Count is 0)
         {
-            // TODO: return empty
+            return items;
         }
 
         var userDict = users.ToImmutableDictionary(u => u.Id,

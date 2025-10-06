@@ -15,6 +15,6 @@ public sealed class FastTodoIdentityDbContext(
     {
         base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder.UseNpgsql(configuration.GetConnectionString(nameof(DatabaseProviderType.Identity)));
+        optionsBuilder.UseNpgsql(configuration.GetConnectionString(nameof(ConnectionStrings.Identity)));
     }
 }

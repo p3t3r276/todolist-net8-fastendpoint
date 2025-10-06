@@ -11,6 +11,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FastTodo.Infrastructure.Domain.Options;
 using FastTodo.Infrastructure.Domain;
+using FastTodo.Infrastructure.Domain.Configurations;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 
 namespace FastTodo.Infrastructure;
 
@@ -19,20 +22,39 @@ public static partial class ModuleConfiguration
     public static void AddInfrastructure(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAuthorization();
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = IdentityConstants.BearerScheme;
+            options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
+            options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+        }).AddBearerToken(IdentityConstants.BearerScheme);
+
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddDatabaseProvider(configuration);
+
+        services.AddAPICors(configuration);
+    }
+
+    public static void UseInFrastructure(this IApplicationBuilder app)
+    {
+        app.UseAPICors();
     }
 
     private static void AddDatabaseProvider(this IServiceCollection services,
         IConfiguration configuration)
     {
-        var providerString = configuration.GetSection(nameof(FastTodoOption.SqlProvider)).Value;
-        if (!Enum.TryParse<DatabaseProviderType>(providerString, true, out var provider))
-            throw new Exception($"Invalid SqlProvider configuration: {providerString}");
+        var options = configuration.GetSection(nameof(FastTodoOption)).Get<FastTodoOption>();
+
+        ArgumentNullException.ThrowIfNull(options);
+
+        var sqlProvider = Enum.TryParse<DatabaseProviderType>(options.SQLProvider.ToString(), true, out var provider) 
+            ? provider 
+            : throw new Exception($"Invalid SqlProvider configuration: {options.Serialize()}");
 
         services.AddTransient<IUserContext, UserContext>();
 
-        switch (provider)
+        switch (sqlProvider)
         {
             case DatabaseProviderType.Postgres:
                 services.AddPostgresPersistence();
