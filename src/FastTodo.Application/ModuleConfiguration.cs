@@ -1,5 +1,6 @@
 using FastTodo.Domain.Entities.Identity;
 using FastTodo.Infrastructure;
+using FastTodo.Persistence.EF;
 using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Builder;

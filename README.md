@@ -21,10 +21,11 @@ Table of Contents
 - SQLite
 - Postgres
 - MariaDB
+- [Coming soon] Redis
 - [Coming soon] MongoDB
 
 ### Backend Stack
-- .NET `8.0`
+- [.NET](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) `8.0`
 - [FastEndpoints](https://fast-endpoints.com/) `5.34.0`
 - [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) `9.0.0`
 - [MediatR](https://github.com/jbogard/MediatR) `12.4.1`
@@ -33,7 +34,7 @@ Table of Contents
 ### Patterns
 - Generic Repository Pattern with Unit of Work
 - CQRS Pattern with MediatR
-- [Coming soon] Option pattern
+- Option pattern
 
 ## Features
 ### Completed ✅
@@ -89,23 +90,21 @@ Table of Contents
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - [Docker](https://www.docker.com/) or [Podman](https://podman.io/)
 
-Setup `docker containers` in [Getting started](https://github.com/p3t3r276/todolist-net8-fastendpoint/blob/dev/docker/Readme.md)
+Setup `docker containers` in [Docker documentation](https://github.com/p3t3r276/todolist-net8-fastendpoint/blob/dev/docker/Readme.md)
 
 ### Configuration
 The database provider can be configured in `appsettings.json`:
+
 ```json
 {
-  "ConnectionStrings": {
-    "SqlServer": "",
-    "SQLite": "Data Source=FastTodo.db",
-    "Postgres": "",
+"ConnectionStrings": {
+    "Default": "",
     "Identity": ""
   },
-  "SqlProvider": "SQLServer",
-  "fastTodoOptions": {
-    "SqlProvider": "SQLServer",
+  "fastTodoOption": {
+    "SQLProvider": "", // Postgres, SQLite or SQLServer
     "noSql": "",
-    "openapi": "swagger"
+    "openapi": "swagger" // swagger or scalar
   },
 }
 ```
