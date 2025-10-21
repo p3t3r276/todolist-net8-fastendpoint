@@ -1,4 +1,4 @@
-namespace FastTodo.Infrastructure.Services;
+namespace FastTodo.Infrastructure.Domain;
 
 public interface ICacheService
 {
@@ -15,7 +15,7 @@ public interface ICacheService
     /// <param name="searchOperator"></param>
     /// <param name="cancellation"></param>
     /// <returns></returns>
-    Task RemoveRangeAsync(string keyPattern, CacheKeySearchOperator searchOperator = CacheKeySearchOperator.StartsWith, CancellationToken cancellation = default);
+    //Task RemoveRangeAsync(string keyPattern, CacheKeySearchOperator searchOperator = CacheKeySearchOperator.StartsWith, CancellationToken cancellation = default);
 
     Task<(bool, T? cacheData)> TryGetValueAsync<T>(string key, CancellationToken cancellation = default);
 

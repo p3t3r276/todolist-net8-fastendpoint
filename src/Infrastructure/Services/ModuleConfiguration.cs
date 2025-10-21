@@ -14,6 +14,8 @@ using FastTodo.Infrastructure.Domain;
 using FastTodo.Infrastructure.Domain.Configurations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using FastTodo.Infrastructure.Services;
+using FastTodo.Persistence.Redis;
 
 namespace FastTodo.Infrastructure;
 
@@ -63,11 +65,12 @@ public static partial class ModuleConfiguration
                 services.AddSQLEFPersistence();
                 break;
             default:
-                services.AddSQLiteEFPersistence();
+                services.AddSQLitePersistence();
                 break;
         }
 
         services.AddKeyedScoped<IUnitOfWork, EFUnitOfWork>(ServiceKeys.FastTodoEFUnitOfWork);
         services.AddTransient(typeof(IRepository<,>), typeof(EfRepository<,>));
+        services.AddTransient<ICacheService, CacheService>();
     }
 }
