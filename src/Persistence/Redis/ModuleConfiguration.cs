@@ -1,15 +1,29 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FastTodo.Domain.Constants;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+
 namespace FastTodo.Persistence.Redis;
 
 public static class ModuleConfiguration
 {
-    public static void AddRedisPersistence(this IServiceCollection services)
+    public static void AddRedisPersistence(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        services.Addstas(options =>
+        var redisConnectionString = configuration.GetConnectionString(nameof(ConnectionStrings.Redis));
+        
+        if (redisConnectionString is null)
         {
-            options.Configuration = builder.Configuration.GetConnectionString("MyRedisConStr");
-            options.InstanceName = "SampleInstance";
-        });
+            services.AddMemoryCache();
+        }
+        else
+        {
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString(redisConnectionString);
+            });
+            services.AddSingleton<IConnectionMultiplexer>(provider => ConnectionMultiplexer.Connect(redisConnectionString));
+        }
     }
 }

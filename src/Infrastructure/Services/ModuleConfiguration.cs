@@ -33,7 +33,7 @@ public static partial class ModuleConfiguration
 
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddDatabaseProvider(configuration);
-
+        services.AddRedisPersistence(configuration);
         services.AddAPICors(configuration);
     }
 
