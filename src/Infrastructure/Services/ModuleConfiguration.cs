@@ -14,7 +14,6 @@ using FastTodo.Infrastructure.Domain;
 using FastTodo.Infrastructure.Domain.Configurations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using FastTodo.Infrastructure.Services;
 using FastTodo.Persistence.Redis;
 
 namespace FastTodo.Infrastructure;

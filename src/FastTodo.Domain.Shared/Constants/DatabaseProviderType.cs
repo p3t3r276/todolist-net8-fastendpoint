@@ -13,9 +13,11 @@ public enum DatabaseProviderType
     Postgres
 }
 
-public enum  ConnectionStrings
+public enum ConnectionStrings
 {
     Default,
 
-    Identity
+    Identity,
+
+    Redis
 }
