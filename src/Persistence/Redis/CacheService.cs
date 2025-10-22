@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
 using FastTodo.Domain.Constants;
+using FastTodo.Domain.Shared.Constants;
 using FastTodo.Infrastructure.Domain;
+using FastTodo.Infrastructure.Domain.Options;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,11 +23,10 @@ public class CacheService : ICacheService
         ILogger<CacheService> logger,
         IDistributedCache distributedCache,
         IServiceProvider serviceProvider,
-        IConfiguration configuration)
+        FastTodoOption options)
     {
         _distributedCache = distributedCache;
-        var redisConnectionString = configuration.GetConnectionString(nameof(ConnectionStrings.Redis));
-        _isRedisCacheProvider = redisConnectionString is not null;
+        _isRedisCacheProvider = options.CacheType == CacheType.Redis;
 
         if (_isRedisCacheProvider)
         {

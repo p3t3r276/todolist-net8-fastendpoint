@@ -16,7 +16,7 @@ public static class ModuleConfiguration
 
         if (redisConnectionString is null)
         {
-            services.AddMemoryCache();
+            services.AddDistributedMemoryCache();
         }
         else
         {
@@ -26,6 +26,7 @@ public static class ModuleConfiguration
             });
             services.AddSingleton<IConnectionMultiplexer>(provider => ConnectionMultiplexer.Connect(redisConnectionString));
         }
+
         services.AddScoped<ICacheService, CacheService>();
     }
 }
