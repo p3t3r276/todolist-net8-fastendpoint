@@ -70,6 +70,5 @@ public static partial class ModuleConfiguration
 
         services.AddKeyedScoped<IUnitOfWork, EFUnitOfWork>(ServiceKeys.FastTodoEFUnitOfWork);
         services.AddTransient(typeof(IRepository<,>), typeof(EfRepository<,>));
-        services.AddTransient<ICacheService, CacheService>();
     }
 }

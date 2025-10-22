@@ -8,21 +8,35 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using FastTodo.Application.Features.Identity;
 using Mapster;
+using FastTodo.Infrastructure.Domain;
+using FastTodo.Domain.Shared.Constants;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class GetMyTodosHandler (
     IRepository<TodoItem, Guid> repository,
-    UserManager<AppUser> userManager
-): IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
+    UserManager<AppUser> userManager,
+    ICacheService cacheService
+) : IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
 {
     public async Task<PaginatedList<TodoItemDto>> Handle(GetMyTodosRequest request, CancellationToken cancellationToken)
     {
-        var items = await repository.ListAsync<TodoItemDto>(
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var items = await cacheService.GetOrSetAsync(CacheKeys.TODO_LIST,
+            func: () => repository.ListAsync<TodoItemDto>(
             request.PageIndex,
             request.PageSize,
             enableTracking: false,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken),
+            5,
+            cancellationToken);
+
+        // var items = await repository.ListAsync<TodoItemDto>(
+        //     request.PageIndex,
+        //     request.PageSize,
+        //     enableTracking: false,
+        //     cancellationToken: cancellationToken);
 
         if (items.Data.Count is 0)
         {

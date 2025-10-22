@@ -1,4 +1,5 @@
-﻿using FastTodo.Domain.Constants;
+﻿using System.Text.Json;
+using FastTodo.Domain.Constants;
 using FastTodo.Infrastructure.Domain;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -33,17 +34,46 @@ public class CacheService : ICacheService
         }
     }
 
-    public string GenerateKey(params string[] keys)
+    public async Task<T?> GetAsync<T>(string key, CancellationToken cancellation = default)
     {
-        throw new NotImplementedException();
+        var cacheData = await _distributedCache.GetStringAsync(key, token: cancellation);
+
+        if (string.IsNullOrEmpty(cacheData)) { return default; }
+
+        return JsonSerializer.Deserialize<T?>(cacheData);
     }
 
-    public Task<T?> GetAsync<T>(string key, CancellationToken cancellation = default)
+    public async Task<T?> GetOrSetAsync<T>(
+        string key,
+        Func<Task<T>> func,
+        int cacheTimeInMinutes,
+        CancellationToken cancellation = default)
     {
-        throw new NotImplementedException();
+        var value = await GetAsync<T?>(key, cancellation);
+
+        if (value is not null)
+        {
+            return value;
+        }
+
+        value = await func();
+
+        if (value is not null)
+        {
+            await SetAsync(key, value, cacheTimeInMinutes, cancellation);
+        }
+
+        return value;
     }
 
-    public Task<T?> GetOrSetAsync<T>(string key, Func<Task<T>> func, int cacheTimeInMinutes, CancellationToken cancellation = default)
+    public async Task SetAsync<T>(string key, T data, int cacheTimeInMinutes, CancellationToken cancellation = default)
+    {
+        var serializedData = JsonSerializer.Serialize(data);
+
+        await _distributedCache.SetStringAsync(key, serializedData, GetTimeOutOption(cacheTimeInMinutes), cancellation);
+    }
+
+    public Task<(bool, T? cacheData)> TryGetValueAsync<T>(string key, CancellationToken cancellation = default)
     {
         throw new NotImplementedException();
     }
@@ -53,13 +83,16 @@ public class CacheService : ICacheService
         throw new NotImplementedException();
     }
 
-    public Task SetAsync<T>(string key, T data, int cacheTimeInMinutes, CancellationToken cancellation = default)
+    public string GenerateKey(params string[] keys)
     {
         throw new NotImplementedException();
     }
 
-    public Task<(bool, T? cacheData)> TryGetValueAsync<T>(string key, CancellationToken cancellation = default)
+    private static DistributedCacheEntryOptions GetTimeOutOption(int cacheTimeInMinutes)
     {
-        throw new NotImplementedException();
+        DistributedCacheEntryOptions option = new();
+        option.SetAbsoluteExpiration(DateTime.UtcNow.AddMinutes(cacheTimeInMinutes));
+
+        return option;
     }
 }
