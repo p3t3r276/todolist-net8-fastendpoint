@@ -24,11 +24,11 @@ public class GetMyTodosHandler (
         cancellationToken.ThrowIfCancellationRequested();
 
         var items = await cacheService.GetOrSetAsync(CacheKeys.TODO_LIST,
-            func: () => repository.ListAsync<TodoItemDto>(
-            request.PageIndex,
-            request.PageSize,
-            enableTracking: false,
-            cancellationToken: cancellationToken),
+            func: async () => await repository.ListAsync<TodoItemDto>(
+                request.PageIndex,
+                request.PageSize,
+                enableTracking: false,
+                cancellationToken: cancellationToken),
             5,
             cancellationToken);
 

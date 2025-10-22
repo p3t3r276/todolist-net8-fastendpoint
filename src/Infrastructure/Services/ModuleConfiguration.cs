@@ -32,8 +32,23 @@ public static partial class ModuleConfiguration
         }).AddBearerToken(IdentityConstants.BearerScheme);
 
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        services.AddDatabaseProvider(configuration);
-        services.AddRedisPersistence(configuration);
+
+        var options = configuration.GetSection(nameof(FastTodoOption)).Get<FastTodoOption>();
+
+        ArgumentNullException.ThrowIfNull(options);
+
+
+        var redisConnectionString = configuration.GetConnectionString(nameof(ConnectionStrings.Redis));
+        if (redisConnectionString is not null)
+        {
+            options.CacheType = CacheType.Redis;
+            options.RedisConnectionString = redisConnectionString;
+        }
+
+        services.AddSingleton(options);
+
+        services.AddDatabaseProvider(configuration, options);
+        services.AddRedisPersistence(configuration, options);
         services.AddAPICors(configuration);
     }
 
@@ -43,12 +58,8 @@ public static partial class ModuleConfiguration
     }
 
     private static void AddDatabaseProvider(this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration, FastTodoOption options)
     {
-        var options = configuration.GetSection(nameof(FastTodoOption)).Get<FastTodoOption>();
-
-        ArgumentNullException.ThrowIfNull(options);
-
         var sqlProvider = Enum.TryParse<DatabaseProviderType>(options.SQLProvider.ToString(), true, out var provider) 
             ? provider 
             : throw new Exception($"Invalid SqlProvider configuration: {options.Serialize()}");

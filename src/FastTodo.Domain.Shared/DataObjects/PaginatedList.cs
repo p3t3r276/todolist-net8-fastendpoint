@@ -2,7 +2,7 @@ namespace FastTodo.Domain.Shared;
 
 public struct PaginatedList<T>(List<T> items, int count, int pageIndex, int pageSize)
 {
-    public List<T> Data { get; } = items;
+    public List<T> Data { get; } = items ?? [];
 
     public int PageIndex { get; } = pageIndex;
 

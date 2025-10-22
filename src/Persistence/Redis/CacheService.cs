@@ -1,10 +1,8 @@
 ﻿using System.Text.Json;
-using FastTodo.Domain.Constants;
 using FastTodo.Domain.Shared.Constants;
 using FastTodo.Infrastructure.Domain;
 using FastTodo.Infrastructure.Domain.Options;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
@@ -50,16 +48,16 @@ public class CacheService : ICacheService
         int cacheTimeInMinutes,
         CancellationToken cancellation = default)
     {
-        var value = await GetAsync<T?>(key, cancellation);
+        var value = await GetAsync<T>(key, cancellation);
 
-        if (value is not null)
+        if (!IsNullOrDefault(value))
         {
             return value;
         }
 
         value = await func();
 
-        if (value is not null)
+        if (!IsNullOrDefault(value))
         {
             await SetAsync(key, value, cacheTimeInMinutes, cancellation);
         }
@@ -96,4 +94,18 @@ public class CacheService : ICacheService
 
         return option;
     }
+
+    private static bool IsNullOrDefault<T>(T? value)
+    {
+        if (value is null) { return true; }
+
+        return !typeof(T).IsValueTupleType() ? EqualityComparer<T>.Default.Equals(value, default) :
+            typeof(T).GetFields().All(field => IsNullOrDefault(field.GetValue(value)));
+    }
+}
+
+public static class ReflectionExtention
+{
+    public static bool IsValueTupleType(this Type type)
+        =>  type.IsGenericType && type.FullName?.StartsWith("System.ValueTuple") == true;
 }

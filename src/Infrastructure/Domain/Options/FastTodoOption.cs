@@ -10,4 +10,6 @@ public sealed record FastTodoOption
     public OpenAPI OpenAPI { get; set; }
 
     public CacheType CacheType { get; set; } = CacheType.InMemory;
+
+    public string? RedisConnectionString { get; set; } = string.Empty;
 }
