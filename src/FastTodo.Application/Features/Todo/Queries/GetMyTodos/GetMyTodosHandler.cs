@@ -10,10 +10,12 @@ using FastTodo.Application.Features.Identity;
 using Mapster;
 using FastTodo.Infrastructure.Domain;
 using FastTodo.Domain.Shared.Constants;
+using Microsoft.Extensions.Logging;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class GetMyTodosHandler (
+    ILogger<GetMyTodosHandler> logger,
     IRepository<TodoItem, Guid> repository,
     UserManager<AppUser> userManager,
     ICacheService cacheService
@@ -23,48 +25,50 @@ public class GetMyTodosHandler (
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var items = await cacheService.GetOrSetAsync(CacheKeys.TODO_LIST,
-            func: async () => await repository.ListAsync<TodoItemDto>(
-                request.PageIndex,
-                request.PageSize,
-                enableTracking: false,
-                cancellationToken: cancellationToken),
-            5,
-            cancellationToken);
-
-        // var items = await repository.ListAsync<TodoItemDto>(
-        //     request.PageIndex,
-        //     request.PageSize,
-        //     enableTracking: false,
-        //     cancellationToken: cancellationToken);
-
-        if (items.Data.Count is 0)
+        try
         {
+            var items = await cacheService.GetOrSetAsync(CacheKeys.TODO_LIST,
+                func: async () => await repository.ListAsync<TodoItemDto>(
+                    request.PageIndex,
+                    request.PageSize,
+                    enableTracking: false,
+                    cancellationToken: cancellationToken),
+                CACHE_TIME_IN_MINUTES.EVERY_DAY,
+                cancellationToken);
+
+            if (items.Data.Count is 0)
+            {
+                return items;
+            }
+
+            var todoItems = items.Data;
+
+            var userList = todoItems.SelectMany(u => new[] { u.CreatedBy, u.ModifiedBy }).ToList();
+
+            var users = await userManager.Users
+                .Where(u => userList.Contains(u.Id))
+                .ToListAsync(cancellationToken: cancellationToken);
+
+            if (users.Count is 0)
+            {
+                return items;
+            }
+
+            var userDict = users.ToImmutableDictionary(u => u.Id,
+                u => u.Adapt<UserResponse>());
+
+            todoItems.ForEach(entity =>
+            {
+                entity.CreatedByUser = userDict.TryGetValue(entity.CreatedBy, out var createdByUser) ? createdByUser : null;
+                entity.ModifiedByUser = userDict.TryGetValue(entity.ModifiedBy, out var modifiedByUser) ? modifiedByUser : null;
+            });
+
             return items;
         }
-
-        var todoItems = items.Data;
-
-        var userList = todoItems.SelectMany(u => new[] { u.CreatedBy, u.ModifiedBy }).ToList();
-
-        var users = await userManager.Users
-            .Where(u => userList.Contains(u.Id))
-            .ToListAsync(cancellationToken: cancellationToken);
-
-        if (users.Count is 0)
+        catch(Exception ex)
         {
-            return items;
+            logger.LogError(ex, "Handle-GetMyTodosHandler: {request}", request.Serialize());
+            throw;
         }
-
-        var userDict = users.ToImmutableDictionary(u => u.Id,
-            u => u.Adapt<UserResponse>());
-
-        todoItems.ForEach(entity =>
-        {
-            entity.CreatedByUser = userDict.TryGetValue(entity.CreatedBy, out var createdByUser) ? createdByUser : null;
-            entity.ModifiedByUser = userDict.TryGetValue(entity.ModifiedBy, out var modifiedByUser) ? modifiedByUser : null;
-        });
-
-        return items;
     }
 }

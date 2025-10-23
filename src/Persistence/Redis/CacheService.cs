@@ -17,12 +17,15 @@ public class CacheService : ICacheService
 
     private readonly IConnectionMultiplexer? _connectionMultiplexer;
 
+    ILogger<CacheService> _logger;
+
     public CacheService(
         ILogger<CacheService> logger,
         IDistributedCache distributedCache,
         IServiceProvider serviceProvider,
         FastTodoOption options)
     {
+        _logger = logger;
         _distributedCache = distributedCache;
         _isRedisCacheProvider = options.CacheType == CacheType.Redis;
 

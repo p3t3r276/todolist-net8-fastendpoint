@@ -13,3 +13,10 @@ public struct CacheKeys
 
     public const string USERS_LIST = "Users";
 }
+
+public struct CACHE_TIME_IN_MINUTES
+{
+    public const int EVERY_DAY = 24 * 60;
+
+    public const int EVERY_MONTH = 24 * 60 * 30;
+}
