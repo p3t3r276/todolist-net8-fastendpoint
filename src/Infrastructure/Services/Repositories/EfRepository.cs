@@ -57,6 +57,7 @@ public class EfRepository<TEntity, TKey> : IRepository<TEntity, TKey>
 
     public async Task<List<TEntity>> ListAsync(
         Expression<Func<TEntity, bool>>? predicate = null,
+        Expression<Func<TEntity, object>>? querybuilder = null,
         bool enableTracking = false,
         CancellationToken cancellationToken = default)
     {
