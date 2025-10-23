@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Host", "Host", "{02EA681E-C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.Postgres", "src\Persistence\Postgres\FastTodo.Persistence.Postgres.csproj", "{8C273D90-9EC8-4030-A48C-59879CF5B741}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.Mongo", "src\Persistence\Mongo\FastTodo.Persistence.Mongo.csproj", "{7E2F453E-252E-45C0-9438-2A8341B7878C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,18 @@ Global
 		{8C273D90-9EC8-4030-A48C-59879CF5B741}.Release|x64.Build.0 = Release|Any CPU
 		{8C273D90-9EC8-4030-A48C-59879CF5B741}.Release|x86.ActiveCfg = Release|Any CPU
 		{8C273D90-9EC8-4030-A48C-59879CF5B741}.Release|x86.Build.0 = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|x64.Build.0 = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|x86.Build.0 = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|x64.ActiveCfg = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|x64.Build.0 = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|x86.ActiveCfg = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,5 +193,9 @@ Global
 		{8EB7F8B2-96B7-44D2-83A5-14C544EC8B57} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{8C273D90-9EC8-4030-A48C-59879CF5B741} = {3BA5312F-4CB7-F189-D5EC-6A9485924027}
+		{7E2F453E-252E-45C0-9438-2A8341B7878C} = {3BA5312F-4CB7-F189-D5EC-6A9485924027}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CDBE1359-C5BF-404F-A100-FF8E88155E48}
 	EndGlobalSection
 EndGlobal
