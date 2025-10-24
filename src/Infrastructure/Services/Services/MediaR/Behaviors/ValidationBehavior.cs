@@ -20,19 +20,29 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if (_validators.Any())
+        cancellationToken.ThrowIfCancellationRequested();
+        try
         {
-            var context = new ValidationContext<TRequest>(request);
-            var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
-            var failures = validationResults.SelectMany(r => r.Errors).Where(f => f != null).ToList();
-
-            if (failures.Count != 0)
+            if (_validators.Any())
             {
-                var message = string.Join(@"\r\n", failures.Select(x => x.ErrorMessage));
+                var context = new ValidationContext<TRequest>(request);
+                var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+                var failures = validationResults.SelectMany(r => r.Errors).Where(f => f != null).ToList();
 
-                throw new ValidationException(message);
+                if (failures.Count != 0)
+                {
+                    var message = string.Join(@"\r\n", failures.Select(x => x.ErrorMessage));
+
+                    throw new ValidationException(message);
+                }
             }
+            return await next();
         }
-        return await next();
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "ValidationBehavior: {request}", request);
+            throw;
+        }
+        
     }
 }
