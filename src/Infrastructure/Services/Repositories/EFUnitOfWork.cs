@@ -57,23 +57,23 @@ public class EFUnitOfWork(
             trackedEntity.CreatedBy = userId;
         }
 
-        var data = await context.AddAsync(entity);
+        var data = await context.AddAsync(dbEntry.Entity);
         return data.Entity;
     }
 
-    public async Task<IEnumerable<TEntity>> AddRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+    public async Task<IEnumerable<TEntity>> AddRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class, IEntity
     {
         await context.AddRangeAsync(entities);
         return entities;
     }
 
-    public void Update<TEntity>(TEntity entity, Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class
+    public void Update<TEntity>(TEntity entity, Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class, IEntity
     {
         UpdateEntryValueAndState(entity, actor: null, setter);
     }
 
     public async Task UpdateAsync<TEntity>(Expression<Func<TEntity, bool>> predicate,
-        Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class
+        Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class, IEntity
     {
         var item = await context
             .Set<TEntity>()
@@ -113,7 +113,7 @@ public class EFUnitOfWork(
     private void UpdateEntryValueAndState<TEntity>(TEntity item,
         object? actor = null,
         Action<IEntitySetter<TEntity>>? setter = default) 
-        where TEntity : class
+        where TEntity : class, IEntity
     {
         var dbEntry = context.Entry(item);
         
