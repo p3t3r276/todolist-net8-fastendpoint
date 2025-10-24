@@ -1,3 +1,4 @@
+using FastTodo.Infrastructure.Domain.Entities;
 using FastTodo.Infrastructure.Domain.Repositories.Builder;
 using System.Linq.Expressions;
 
@@ -7,12 +8,12 @@ public interface IUnitOfWork
 {
     Task<TEntity> AddAsync<TEntity>(TEntity entity) where TEntity : class;
 
-    Task<IEnumerable<TEntity>> AddRangeAsync<TEntity>(IEnumerable<TEntity> entity) where TEntity : class;
+    Task<IEnumerable<TEntity>> AddRangeAsync<TEntity>(IEnumerable<TEntity> entity) where TEntity : class, IEntity;
 
-    void Update<TEntity>(TEntity entit, Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class;
+    void Update<TEntity>(TEntity entit, Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class, IEntity;
 
     Task UpdateAsync<TEntity>(Expression<Func<TEntity, bool>> predicate,
-        Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class;
+        Action<IEntitySetter<TEntity>>? setter = default) where TEntity : class, IEntity;
 
     void UpdateRange<TEntity>(
         IEnumerable<TEntity> entities) where TEntity : class;

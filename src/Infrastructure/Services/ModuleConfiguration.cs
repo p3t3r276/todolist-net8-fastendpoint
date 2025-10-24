@@ -14,6 +14,7 @@ using FastTodo.Infrastructure.Domain;
 using FastTodo.Infrastructure.Domain.Configurations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using FastTodo.Infrastructure.Services;
 
 namespace FastTodo.Infrastructure;
 
@@ -48,8 +49,8 @@ public static partial class ModuleConfiguration
 
         ArgumentNullException.ThrowIfNull(options);
 
-        var sqlProvider = Enum.TryParse<DatabaseProviderType>(options.SQLProvider.ToString(), true, out var provider) 
-            ? provider 
+        var sqlProvider = Enum.TryParse<DatabaseProviderType>(options.SQLProvider.ToString(), true, out var provider)
+            ? provider
             : throw new Exception($"Invalid SqlProvider configuration: {options.Serialize()}");
 
         services.AddTransient<IUserContext, UserContext>();

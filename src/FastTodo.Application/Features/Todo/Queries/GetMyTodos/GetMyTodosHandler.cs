@@ -11,16 +11,17 @@ using Mapster;
 
 namespace FastTodo.Application.Features.Todo;
 
-public class GetMyTodosHandler (
+public class GetMyTodosHandler(
     IRepository<TodoItem, Guid> repository,
     UserManager<AppUser> userManager
-): IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
+) : IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
 {
     public async Task<PaginatedList<TodoItemDto>> Handle(GetMyTodosRequest request, CancellationToken cancellationToken)
     {
         var items = await repository.ListAsync<TodoItemDto>(
             request.PageIndex,
             request.PageSize,
+            querybuilder: qb => qb.OrderByDescending(ti => ti.CreatedAt),
             enableTracking: false,
             cancellationToken: cancellationToken);
 
