@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using FastTodo.Application.Features.Identity;
 using Mapster;
+using FastTodo.Infrastructure.Domain;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class GetMyTodosHandler(
     IRepository<TodoItem, Guid> repository,
-    UserManager<AppUser> userManager
+    UserManager<AppUser> userManager,
+    IUserContext userContext
 ) : IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
 {
     public async Task<PaginatedList<TodoItemDto>> Handle(GetMyTodosRequest request, CancellationToken cancellationToken)
@@ -21,7 +23,8 @@ public class GetMyTodosHandler(
         var items = await repository.ListAsync<TodoItemDto>(
             request.PageIndex,
             request.PageSize,
-            querybuilder: qb => qb.OrderByDescending(ti => ti.CreatedAt),
+            predicate: item => item.CreatedBy == userContext.UserId,
+            querybuilder: item => item.OrderByDescending(ti => ti.CreatedAt),
             enableTracking: false,
             cancellationToken: cancellationToken);
 
