@@ -1,3 +1,4 @@
+name: "fasttodo-dev"
 services:
   db:
     image: postgres:17.5
