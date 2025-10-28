@@ -133,7 +133,7 @@ Setup `docker containers` in [Docker documentation](https://github.com/p3t3r276/
 ### Configuration
 The database provider can be configured in `appsettings.json`:
 
-```json
+```jsonc
 {
 "ConnectionStrings": {
     "Default": "",
