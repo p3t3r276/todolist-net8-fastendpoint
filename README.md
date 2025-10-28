@@ -17,6 +17,12 @@ Table of Contents
   <img src='./docs/Architecture.png' />
 </p>
 
+### Database structure
+
+<p align='center'>
+  <img src='./docs/Database.png' />
+</p>
+
 ### Database Providers
 - SQL Server
 - SQLite
