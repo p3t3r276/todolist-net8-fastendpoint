@@ -4,8 +4,8 @@ A project demonstrating Clean Architecture with EF Core and ASP.NET Core using F
 Table of Contents
 =======
 * [Technologies & Patterns](#technologies--patterns)
-* [Solution Structure](#solution--structure)
-* [Features](#features)
+* [Solution Structure](#solution-structure)
+* [Features plan](#features)
 * [API Endpoints](#api-endpoints)
 * [Getting Started](#getting-started)
 * [Configuration](#configuration)
