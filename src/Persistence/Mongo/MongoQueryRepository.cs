@@ -2,7 +2,9 @@ using System.Linq.Expressions;
 using FastTodo.Domain.Shared;
 using FastTodo.Infrastructure.Domain.Entities;
 using FastTodo.Infrastructure.Domain.Repositories;
+using FastTodo.Infrastructure.Domain.Repositories.Builder;
 using FastTodo.Persistence.Mongo.DbContexts.MongoDbContext;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
@@ -48,6 +50,35 @@ public class MongoQueryRepository<TEntity, TKey>(MongoDbContext context)
             .ToListAsync(cancellationToken);
 
         return new PaginatedList<TEntity>(items, totalCount, pageIndex, pageSize);
+    }
+
+    public async Task<PaginatedList<TProjector>> FindAllAsync<TProjector>(
+        int pageIndex,
+        int pageSize,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        bool enableNoTracking = true,
+        Expression<Func<TEntity, object>>? orderBy = null,
+        bool isAscending = true,
+        CancellationToken cancellationToken = default)
+    {
+        var source = Queryable(enableNoTracking);
+
+        source = BindPredicate(source, predicate);
+
+        if (orderBy != null)
+        {
+            source = isAscending ? source.OrderBy(orderBy) : source.OrderByDescending(orderBy);
+        }
+
+        var totalCount = await source.CountAsync(cancellationToken);
+
+        var items = await source
+            .Skip((pageIndex < 0 ? 0 : pageIndex) * pageSize)
+            .Take(pageSize)
+            .ProjectToType<TProjector>()
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedList<TProjector>(items, totalCount, pageIndex, pageSize);
     }
 
     public async Task<TEntity?> FindAsync(

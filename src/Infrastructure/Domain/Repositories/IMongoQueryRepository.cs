@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using FastTodo.Domain.Shared;
 using FastTodo.Infrastructure.Domain.Entities;
+using FastTodo.Infrastructure.Domain.Repositories.Builder;
 
 namespace FastTodo.Infrastructure.Domain.Repositories;
 
@@ -12,6 +13,15 @@ public interface IMongoQueryRepository<TEntity, TKey> where TEntity : class, IEn
         CancellationToken cancellationToken = default);
 
     Task<PaginatedList<TEntity>> FindAllAsync(
+        int pageIndex,
+        int pageSize,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        bool enableNoTracking = true,
+        Expression<Func<TEntity, object>>? orderBy = null,
+        bool isAscending = true,
+        CancellationToken cancellationToken = default);
+
+    Task<PaginatedList<TProjector>> FindAllAsync<TProjector>(
         int pageIndex,
         int pageSize,
         Expression<Func<TEntity, bool>>? predicate = null,
