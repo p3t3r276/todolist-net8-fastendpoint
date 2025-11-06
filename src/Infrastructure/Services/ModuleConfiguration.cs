@@ -15,6 +15,7 @@ using FastTodo.Infrastructure.Domain.Configurations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using FastTodo.Infrastructure.Services;
+using FastTodo.Persistence.Mongo;
 
 namespace FastTodo.Infrastructure;
 
@@ -67,6 +68,8 @@ public static partial class ModuleConfiguration
                 services.AddSQLiteEFPersistence();
                 break;
         }
+
+        services.AddMongoPersistence(configuration);
 
         services.AddKeyedScoped<IUnitOfWork, EFUnitOfWork>(ServiceKeys.FastTodoEFUnitOfWork);
         services.AddTransient(typeof(IRepository<,>), typeof(EfRepository<,>));
