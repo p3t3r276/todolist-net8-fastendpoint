@@ -4,6 +4,7 @@ A project demonstrating Clean Architecture with EF Core and ASP.NET Core using F
 Table of Contents
 =======
 * [Technologies & Patterns](#technologies--patterns)
+* [Solution Structure](#solution--structure)
 * [Features](#features)
 * [API Endpoints](#api-endpoints)
 * [Getting Started](#getting-started)
@@ -36,8 +37,23 @@ Table of Contents
 - CQRS Pattern with MediatR
 - Option pattern
 
+## Solution Structure
+
+| Project | Responsibility |
+|---------|---------------|
+| FastTodo.API | Main entry point. Handles HTTP requests, configures services, and manages API endpoints using FastEndpoints |
+| FastTodo.Application | Contains application business logic, CQRS handlers, validations, and mapping profiles |
+| FastTodo.Domain | Core domain entities, interfaces, and business rules. No external dependencies |
+| FastTodo.Domain.Shared | Shared constants, enums, and utility classes used across all layers |
+| FastTodo.Infrastructure | Cross-cutting concerns: data access, logging, caching, authentication |
+| FastTodo.Infrastructure.Domain | Interfaces and base classes for infrastructure services |
+| FastTodo.Persistence.EF | Entity Framework Core implementations for SQL Server |
+| FastTodo.Persistence.SQLite | SQLite specific database context and configurations |
+| FastTodo.Persistence.Postgres | PostgreSQL specific database context and configurations |
+| FastTodo.SeedData | Console application for seeding sample data into the database |
+
 ## Features
-### Completed ✅
+### ✅ Completed 
 1. Basic Todo Operations
     - Create, Read, Update, Delete (CRUD)
     - List all items with filtering
@@ -58,11 +74,11 @@ Table of Contents
     - User Authentication
     - Todo Item Ownership
 
-### In Progress 🚧
+### 🚧 In Progress 
 1. User Management 
     - Todo Item Assignment
 
-### Planning 📋
+### 📋 Planning 
 1. Options Pattern
     - Swagger vs Scalar
 2. Allow multiple database connection from multiple database providers
@@ -75,14 +91,30 @@ Table of Contents
 
 ## API Endpoints
 
+### Todo Operations
+
 | Method | Endpoint        | Description                           |
 |--------|----------------|---------------------------------------|
 | GET    | /api/todos     | Get all todos with optional filtering |
 | GET    | /api/todos/{id}| Get a specific todo by ID            |
 | POST   | /api/todos     | Create a new todo                    |
 | PUT    | /api/todos/{id}| Update an existing todo             |
-| PATCH  | /api/todos/{id}| Update todo status             |
+| PATCH  | /api/todos/{id}| Update todo status                  |
 | DELETE | /api/todos/{id}| Delete a todo                       |
+
+### Authentication & User Management
+
+| Method | Endpoint                    | Description                          |
+|--------|----------------------------|--------------------------------------|
+| POST   | /api/accounts/register     | Register a new user                 |
+| POST   | /api/accounts/login        | Login and get JWT token             |
+| POST   | /api/accounts/refresh      | Refresh JWT token                   |
+| POST   | /api/accounts/logout       | Logout and invalidate token         |
+| GET    | /api/accounts/info         | Get current user info               |
+| PUT    | /api/accounts/info         | Update user profile                 |
+| PUT    | /api/accounts/password     | Change password                     |
+| POST   | /api/accounts/confirmemail | Confirm email address               |
+| POST   | /api/accounts/resetpassword| Reset forgotten password            |
 
 ## Getting Started
 
