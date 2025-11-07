@@ -8,26 +8,32 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using FastTodo.Application.Features.Identity;
 using Mapster;
+using FastTodo.Domain.Entities.Mongo;
+using MongoDB.Bson;
 using FastTodo.Infrastructure.Domain;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class GetMyTodosHandler(
-    IRepository<TodoItem, Guid> repository,
+    IMongoQueryRepository<TodoItemSchema, ObjectId> mongoRepository,
     UserManager<AppUser> userManager,
     IUserContext userContext
 ) : IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
 {
-    public async Task<PaginatedList<TodoItemDto>> Handle(GetMyTodosRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<TodoItemDto>> Handle(
+        GetMyTodosRequest request,
+        CancellationToken cancellationToken = default)
     {
-        var items = await repository.ListAsync<TodoItemDto>(
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var items = await mongoRepository.FindAllAsync<TodoItemDto>(
             request.PageIndex,
             request.PageSize,
             predicate: item => item.CreatedBy == userContext.UserId,
-            querybuilder: item => item.OrderByDescending(ti => ti.CreatedAt),
-            enableTracking: false,
+            enableNoTracking: true,
+            orderBy: qb => qb.CreatedAt!,
             cancellationToken: cancellationToken);
-
+            
         if (items.Data.Count is 0)
         {
             return items;
