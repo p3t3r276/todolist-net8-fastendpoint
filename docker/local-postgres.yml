@@ -2,7 +2,7 @@ name: "fasttodo-dev"
 services:
   db:
     image: postgres:17.5
-    container_name: postgres_db
+    container_name: db
     restart: always
     ports:
       - "5432:5432"
