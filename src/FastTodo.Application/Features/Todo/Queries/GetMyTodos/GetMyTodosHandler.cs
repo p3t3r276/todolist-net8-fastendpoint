@@ -27,7 +27,7 @@ public class GetMyTodosHandler (
 
         try
         {
-            var items = await cacheService.GetOrSetAsync(CacheKeys.TODO_LIST,
+            var items = await cacheService.GetOrSetAsync("TodoLIST",
                 func: async () => await repository.ListAsync<TodoItemDto>(
                     request.PageIndex,
                     request.PageSize,

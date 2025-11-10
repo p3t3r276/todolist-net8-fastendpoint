@@ -9,8 +9,6 @@ public enum CacheType
 
 public struct CacheKeys
 {
-    public const string TODO_LIST = "Todos";
-
     public const string USERS_LIST = "Users";
 }
 

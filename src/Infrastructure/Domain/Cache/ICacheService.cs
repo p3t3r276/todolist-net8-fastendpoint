@@ -24,5 +24,7 @@ public interface ICacheService
         Func<Task<T>> func,
         int cacheTimeInMinutes, CancellationToken cancellation = default);
 
+    Task<bool> SetBulkAsync<TRedisDto>(string group, IDictionary<string, TRedisDto> fields, CancellationToken cancellationToken = default);
+
     string GenerateKey(params string[] keys);
 }
