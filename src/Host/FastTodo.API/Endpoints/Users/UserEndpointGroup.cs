@@ -1,19 +1,19 @@
 using FastEndpoints;
 
-namespace FastTodo.API.Endpoints.Todo;
+namespace FastTodo.API.Endpoints.Users;
 
-public sealed class TodoEndpointGroup : Group
+public sealed class UserEndpointGroup : Group
 {
-    public TodoEndpointGroup()
+    public UserEndpointGroup()
     {
         Configure(
-            "todos",
+            "users",
             ep =>
             {
                 ep.Description(
                     x => x.Produces(401)
                         .ProducesProblemDetails()
-                        .WithTags("Todos"));
+                        .WithTags("Users"));
             });
     }
 }

@@ -6,6 +6,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
+using static System.Threading.Tasks.Task;
+using static System.Text.Encoding;
 
 namespace FastTodo.Persistence.Redis;
 
@@ -17,7 +19,9 @@ public class CacheService : ICacheService
 
     private readonly IConnectionMultiplexer? _connectionMultiplexer;
 
-    ILogger<CacheService> _logger;
+    private readonly IDatabase _database;
+
+    readonly ILogger<CacheService> _logger;
 
     public CacheService(
         ILogger<CacheService> logger,
@@ -33,6 +37,7 @@ public class CacheService : ICacheService
         {
             logger.LogInformation("Connect to redis");
             _connectionMultiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>();
+            _database = _connectionMultiplexer.GetDatabase();
         }
     }
 
@@ -43,6 +48,52 @@ public class CacheService : ICacheService
         if (string.IsNullOrEmpty(cacheData)) { return default; }
 
         return JsonSerializer.Deserialize<T?>(cacheData);
+    }
+
+    public async Task<Dictionary<string, T?>?> GetAllAsync<T>(string key, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new Exception("Group name cannot be null.");
+            }
+
+            var result = new Dictionary<string, T?>();
+            var slim = new SemaphoreSlim(1);
+
+            await WhenAll((await _database.HashGetAllAsync(key.ToLowerInvariant()).WaitAsync(cancellationToken))
+                .Where(e => e.Name.HasValue && e.Value.HasValue).Select(async x =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (x.Value.HasValue)
+                {
+                    await slim.WaitAsync(cancellationToken);
+
+                    try
+                    {
+                        var key = x.Name.ToString();
+
+                        if (!result.ContainsKey(key))
+                        {
+                            result.Add(key, JsonSerializer.Deserialize<T>(UTF8.GetString(x.Value!)));
+                        }
+                    }
+                    finally
+                    {
+                        _ = slim.Release();
+                    }
+                }
+            }));
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetAllAsync-CacheService: {key}", key);
+            throw;
+        }
     }
 
     public async Task<T?> GetOrSetAsync<T>(
@@ -81,6 +132,14 @@ public class CacheService : ICacheService
     }
 
     public Task RemoveAsync(string key, CancellationToken cancellation = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> SetBulkAsync<TRedisDto>(
+        string group,
+        IDictionary<string, TRedisDto> fields,
+        CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

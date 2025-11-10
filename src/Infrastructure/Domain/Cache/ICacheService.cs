@@ -4,6 +4,8 @@ public interface ICacheService
 {
     Task<T?> GetAsync<T>(string key, CancellationToken cancellation = default);
 
+    Task<Dictionary<string, T?>?> GetAllAsync<T>(string key, CancellationToken cancellationToken = default);
+
     Task SetAsync<T>(string key, T data, int cacheTimeInMinutes, CancellationToken cancellation = default);
 
     Task RemoveAsync(string key, CancellationToken cancellation = default);

@@ -2,23 +2,21 @@ using FastTodo.Domain.Entities;
 using MediatR;
 using FastTodo.Domain.Shared;
 using FastTodo.Infrastructure.Domain.Repositories;
-using Microsoft.AspNetCore.Identity;
-using FastTodo.Domain.Entities.Identity;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using FastTodo.Application.Features.Identity;
-using Mapster;
 using FastTodo.Infrastructure.Domain;
 using FastTodo.Domain.Shared.Constants;
 using Microsoft.Extensions.Logging;
+using FastTodo.Application.Features.Identity.Services;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class GetMyTodosHandler (
     ILogger<GetMyTodosHandler> logger,
     IRepository<TodoItem, Guid> repository,
-    UserManager<AppUser> userManager,
-    ICacheService cacheService
+    // UserManager<AppUser> userManager,
+    ICacheService cacheService,
+    IUserService userService
 ) : IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
 {
     public async Task<PaginatedList<TodoItemDto>> Handle(GetMyTodosRequest request, CancellationToken cancellationToken)
@@ -45,17 +43,17 @@ public class GetMyTodosHandler (
 
             var userList = todoItems.SelectMany(u => new[] { u.CreatedBy, u.ModifiedBy }).ToList();
 
-            var users = await userManager.Users
-                .Where(u => userList.Contains(u.Id))
-                .ToListAsync(cancellationToken: cancellationToken);
+            var users = await userService.GetAll<UserResponse>(CacheKeys.USERS_LIST, cancellationToken);
+            // var users = await userManager.Users
+            //     .Where(u => userList.Contains(u.Id))
+            //     .ToListAsync(cancellationToken: cancellationToken);
 
-            if (users.Count is 0)
+            if (users is null || users.Count is 0)
             {
                 return items;
             }
 
-            var userDict = users.ToImmutableDictionary(u => u.Id,
-                u => u.Adapt<UserResponse>());
+            var userDict = users.ToImmutableDictionary(u => u.Id.ToString(), u => u);
 
             todoItems.ForEach(entity =>
             {

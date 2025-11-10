@@ -13,6 +13,27 @@ public class UserService(ILogger<UserService> logger,
     ICacheService cacheService,
     UserManager<AppUser> userManager) : IUserService
 {
+
+    public async Task<List<UserResponse>> GetAll<T>(string redisGroup, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            var result = await cacheService.GetAllAsync<T>(redisGroup, cancellationToken);
+
+            return (result is null || result.Count is 0)
+                ? []
+                : [.. result.Adapt<List<UserResponse>>().OrderBy(x => x?.Id)];
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "SyncToRedis-UserService");
+
+            throw;
+        }
+    }
+
     public async Task<bool> SyncDataToRedis(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
