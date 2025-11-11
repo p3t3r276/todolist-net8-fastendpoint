@@ -37,7 +37,6 @@ public static partial class ModuleConfiguration
 
         ArgumentNullException.ThrowIfNull(options);
 
-
         var redisConnectionString = configuration.GetConnectionString(nameof(ConnectionStrings.Redis));
         if (redisConnectionString is not null)
         {
@@ -50,6 +49,8 @@ public static partial class ModuleConfiguration
         services.AddDatabaseProvider(configuration, options);
         services.AddRedisPersistence(configuration, options);
         services.AddAPICors(configuration);
+
+        services.AddScoped<ICacheService, CacheService>();
     }
 
     public static void UseInFrastructure(this IApplicationBuilder app)
