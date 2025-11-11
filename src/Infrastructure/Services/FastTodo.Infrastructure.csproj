@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\Persistence\Postgres\FastTodo.Persistence.Postgres.csproj" />
     <ProjectReference Include="..\..\Persistence\Redis\FastTodo.Persistence.Redis.csproj" />
     <ProjectReference Include="..\..\Persistence\SQLite\FastTodo.Persistence.SQLite.csproj" />
+    <ProjectReference Include="..\..\Persistence\Mongo\FastTodo.Persistence.Mongo.csproj" />
     <ProjectReference Include="..\Domain\FastTodo.Infrastructure.Domain.csproj" />
     <ProjectReference Include="..\..\FastTodo.Domain.Shared\FastTodo.Domain.Shared.csproj" />
   </ItemGroup>

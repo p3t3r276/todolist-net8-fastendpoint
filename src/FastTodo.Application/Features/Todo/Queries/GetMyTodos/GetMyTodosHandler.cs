@@ -4,35 +4,33 @@ using FastTodo.Domain.Shared;
 using FastTodo.Infrastructure.Domain.Repositories;
 using System.Collections.Immutable;
 using FastTodo.Application.Features.Identity;
-using FastTodo.Infrastructure.Domain;
-using FastTodo.Domain.Shared.Constants;
-using Microsoft.Extensions.Logging;
-using FastTodo.Application.Features.Identity.Services;
+using Mapster;
+using FastTodo.Domain.Entities.Mongo;
+using MongoDB.Bson;
 
 namespace FastTodo.Application.Features.Todo;
 
-public class GetMyTodosHandler (
-    ILogger<GetMyTodosHandler> logger,
-    IRepository<TodoItem, Guid> repository,
-    // UserManager<AppUser> userManager,
-    ICacheService cacheService,
-    IUserService userService
-) : IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
+public class GetMyTodosHandler(
+    IMongoQueryRepository<TodoItemSchema, ObjectId> mongoRepository,
+    UserManager<AppUser> userManager,
+    IUserContext userContext
+    ) : IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
 {
-    public async Task<PaginatedList<TodoItemDto>> Handle(GetMyTodosRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<TodoItemDto>> Handle(
+        GetMyTodosRequest request,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            var items = await cacheService.GetOrSetAsync("TodoLIST",
-                func: async () => await repository.ListAsync<TodoItemDto>(
-                    request.PageIndex,
-                    request.PageSize,
-                    enableTracking: false,
-                    cancellationToken: cancellationToken),
-                CACHE_TIME_IN_MINUTES.EVERY_DAY,
-                cancellationToken);
+            var items = await mongoRepository.FindAllAsync<TodoItemDto>(
+              request.PageIndex,
+              request.PageSize,
+              predicate: item => item.CreatedBy == userContext.UserId,
+              enableNoTracking: true,
+              orderBy: qb => qb.CreatedAt!,
+              cancellationToken: cancellationToken);
 
             if (items.Data.Count is 0)
             {
@@ -44,9 +42,6 @@ public class GetMyTodosHandler (
             var userList = todoItems.SelectMany(u => new[] { u.CreatedBy, u.ModifiedBy }).ToList();
 
             var users = await userService.GetAll<UserResponse>(CacheKeys.USERS_LIST, cancellationToken);
-            // var users = await userManager.Users
-            //     .Where(u => userList.Contains(u.Id))
-            //     .ToListAsync(cancellationToken: cancellationToken);
 
             if (users is null || users.Count is 0)
             {

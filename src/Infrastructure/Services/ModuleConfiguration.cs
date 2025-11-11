@@ -15,6 +15,8 @@ using FastTodo.Infrastructure.Domain.Configurations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using FastTodo.Persistence.Redis;
+using FastTodo.Infrastructure.Services;
+using FastTodo.Persistence.Mongo;
 
 namespace FastTodo.Infrastructure;
 
@@ -61,8 +63,12 @@ public static partial class ModuleConfiguration
     private static void AddDatabaseProvider(this IServiceCollection services,
         IConfiguration configuration, FastTodoOption options)
     {
-        var sqlProvider = Enum.TryParse<DatabaseProviderType>(options.SQLProvider.ToString(), true, out var provider) 
-            ? provider 
+        var options = configuration.GetSection(nameof(FastTodoOption)).Get<FastTodoOption>();
+
+        ArgumentNullException.ThrowIfNull(options);
+
+        var sqlProvider = Enum.TryParse<DatabaseProviderType>(options.SQLProvider.ToString(), true, out var provider)
+            ? provider
             : throw new Exception($"Invalid SqlProvider configuration: {options.Serialize()}");
 
         services.AddTransient<IUserContext, UserContext>();
@@ -79,6 +85,8 @@ public static partial class ModuleConfiguration
                 services.AddSQLitePersistence();
                 break;
         }
+
+        services.AddMongoPersistence(configuration);
 
         services.AddKeyedScoped<IUnitOfWork, EFUnitOfWork>(ServiceKeys.FastTodoEFUnitOfWork);
         services.AddTransient(typeof(IRepository<,>), typeof(EfRepository<,>));

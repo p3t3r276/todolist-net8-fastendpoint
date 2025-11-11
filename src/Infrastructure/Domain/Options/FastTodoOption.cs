@@ -7,6 +7,8 @@ public sealed record FastTodoOption
 {
     public DatabaseProviderType SQLProvider { get; set; }
 
+    public string? NoSql { get; set; }
+
     public OpenAPI OpenAPI { get; set; }
 
     public CacheType CacheType { get; set; } = CacheType.InMemory;
