@@ -15,6 +15,8 @@ public class CacheService : ICacheService
 {
     private readonly IDistributedCache _distributedCache;
 
+    private const string cacheStoreKey = "CacheStore:Outbox:Keys";
+
     private readonly bool _isRedisCacheProvider;
 
     private readonly IConnectionMultiplexer? _connectionMultiplexer;
@@ -131,9 +133,11 @@ public class CacheService : ICacheService
         throw new NotImplementedException();
     }
 
-    public Task RemoveAsync(string key, CancellationToken cancellation = default)
+    public async Task RemoveAsync(string key, CancellationToken cancellation = default)
     {
-        throw new NotImplementedException();
+        await Task.WhenAll(
+            SyncCacheKeyOutbox(key, true, cancellation),
+            _distributedCache.RemoveAsync(key, cancellation));
     }
 
     public async Task<bool> SetBulkAsync<TRedisDto>(
@@ -141,7 +145,34 @@ public class CacheService : ICacheService
         IDictionary<string, TRedisDto> fields,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(group) || fields is null || fields.Count is 0)
+            {
+                throw new Exception("BAD_REQUEST");
+            }
+
+            await _database.HashSetAsync(
+                group.ToLowerInvariant(),
+                [.. fields.Select(static p => new HashEntry(p.Key.ToLowerInvariant(), p.Value.Serialize()))])
+                .WaitAsync(cancellationToken);
+
+            return true;
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning("Operation was canceled: {Method} - {Group}", nameof(SetBulkAsync), group);
+
+            throw new OperationCanceledException($"Redis SetBulkAsync operation canceled for {group}", ex, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SetBulkAsync-RedisService-Exception: {Group} - {Fields}", group, fields.Serialize());
+
+            throw;
+        }
     }
 
     public string GenerateKey(params string[] keys)
@@ -163,6 +194,33 @@ public class CacheService : ICacheService
 
         return !typeof(T).IsValueTupleType() ? EqualityComparer<T>.Default.Equals(value, default) :
             typeof(T).GetFields().All(field => IsNullOrDefault(field.GetValue(value)));
+    }
+
+    private async Task SyncCacheKeyOutbox(string key, bool shouldRemove = false, CancellationToken cancellation = default)
+    {
+        if (_isRedisCacheProvider) return;
+
+        var outboxKeys = (await GetAsync<HashSet<string>>(cacheStoreKey, cancellation)) ?? [];
+
+        if (!shouldRemove && !outboxKeys.Add(key))
+        {
+            return;
+        }
+
+        if (shouldRemove && !outboxKeys.Remove(key))
+        {
+            return;
+        }
+
+        await _distributedCache.SetStringAsync(cacheStoreKey, outboxKeys.Serialize(), GetOutBoxCacheTimeOut(), cancellation);
+    }
+
+    private static DistributedCacheEntryOptions GetOutBoxCacheTimeOut()
+    {
+        return new DistributedCacheEntryOptions()
+        {
+            AbsoluteExpiration = DateTime.UtcNow.AddYears(20)
+        };
     }
 }
 

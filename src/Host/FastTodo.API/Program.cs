@@ -45,9 +45,6 @@ try
     VersionSets.CreateApi("Todos", v => v
         .HasApiVersion(1.0));
 
-    VersionSets.CreateApi("Users", v => v
-        .HasApiVersion(1.0));
-
     builder.Services
         .AddApplication(builder.Configuration)
         .AddFastEndpoints()
