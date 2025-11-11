@@ -1,19 +1,25 @@
-using FastTodo.Domain.Entities;
 using MediatR;
 using FastTodo.Domain.Shared;
 using FastTodo.Infrastructure.Domain.Repositories;
 using System.Collections.Immutable;
 using FastTodo.Application.Features.Identity;
-using Mapster;
 using FastTodo.Domain.Entities.Mongo;
 using MongoDB.Bson;
+using Microsoft.AspNetCore.Identity;
+using FastTodo.Infrastructure.Domain;
+using FastTodo.Domain.Entities.Identity;
+using FastTodo.Application.Features.Identity.Services;
+using FastTodo.Domain.Shared.Constants;
+using Microsoft.Extensions.Logging;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class GetMyTodosHandler(
+    ILogger<GetMyTodosHandler> logger,
     IMongoQueryRepository<TodoItemSchema, ObjectId> mongoRepository,
     UserManager<AppUser> userManager,
-    IUserContext userContext
+    IUserContext userContext,
+    IUserService userService
     ) : IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
 {
     public async Task<PaginatedList<TodoItemDto>> Handle(
@@ -25,12 +31,12 @@ public class GetMyTodosHandler(
         try
         {
             var items = await mongoRepository.FindAllAsync<TodoItemDto>(
-              request.PageIndex,
-              request.PageSize,
-              predicate: item => item.CreatedBy == userContext.UserId,
-              enableNoTracking: true,
-              orderBy: qb => qb.CreatedAt!,
-              cancellationToken: cancellationToken);
+                request.PageIndex,
+                request.PageSize,
+                predicate: item => item.CreatedBy == userContext.UserId,
+                enableNoTracking: true,
+                orderBy: qb => qb.CreatedAt!,
+                cancellationToken: cancellationToken);
 
             if (items.Data.Count is 0)
             {

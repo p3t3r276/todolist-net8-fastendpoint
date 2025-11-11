@@ -63,10 +63,6 @@ public static partial class ModuleConfiguration
     private static void AddDatabaseProvider(this IServiceCollection services,
         IConfiguration configuration, FastTodoOption options)
     {
-        var options = configuration.GetSection(nameof(FastTodoOption)).Get<FastTodoOption>();
-
-        ArgumentNullException.ThrowIfNull(options);
-
         var sqlProvider = Enum.TryParse<DatabaseProviderType>(options.SQLProvider.ToString(), true, out var provider)
             ? provider
             : throw new Exception($"Invalid SqlProvider configuration: {options.Serialize()}");
