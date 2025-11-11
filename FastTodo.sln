@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Host", "Host", "{02EA681E-C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.Postgres", "src\Persistence\Postgres\FastTodo.Persistence.Postgres.csproj", "{8C273D90-9EC8-4030-A48C-59879CF5B741}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.Redis", "src\Persistence\Redis\FastTodo.Persistence.Redis.csproj", "{FEF28C4B-713A-41DC-8B76-0124A0CA615E}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.Mongo", "src\Persistence\Mongo\FastTodo.Persistence.Mongo.csproj", "{7E2F453E-252E-45C0-9438-2A8341B7878C}"
 EndProject
 Global

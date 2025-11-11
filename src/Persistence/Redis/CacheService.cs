@@ -1,0 +1,231 @@
+﻿using System.Text.Json;
+using FastTodo.Domain.Shared.Constants;
+using FastTodo.Infrastructure.Domain;
+using FastTodo.Infrastructure.Domain.Options;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
+using static System.Threading.Tasks.Task;
+using static System.Text.Encoding;
+
+namespace FastTodo.Persistence.Redis;
+
+public class CacheService : ICacheService
+{
+    private readonly IDistributedCache _distributedCache;
+
+    private const string cacheStoreKey = "CacheStore:Outbox:Keys";
+
+    private readonly bool _isRedisCacheProvider;
+
+    private readonly IConnectionMultiplexer? _connectionMultiplexer;
+
+    private readonly IDatabase _database;
+
+    readonly ILogger<CacheService> _logger;
+
+    public CacheService(
+        ILogger<CacheService> logger,
+        IDistributedCache distributedCache,
+        IServiceProvider serviceProvider,
+        FastTodoOption options)
+    {
+        _logger = logger;
+        _distributedCache = distributedCache;
+        _isRedisCacheProvider = options.CacheType == CacheType.Redis;
+
+        if (_isRedisCacheProvider)
+        {
+            logger.LogInformation("Connect to redis");
+            _connectionMultiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>();
+            _database = _connectionMultiplexer.GetDatabase();
+        }
+    }
+
+    public async Task<T?> GetAsync<T>(string key, CancellationToken cancellation = default)
+    {
+        var cacheData = await _distributedCache.GetStringAsync(key, token: cancellation);
+
+        if (string.IsNullOrEmpty(cacheData)) { return default; }
+
+        return JsonSerializer.Deserialize<T?>(cacheData);
+    }
+
+    public async Task<Dictionary<string, T?>?> GetAllAsync<T>(string key, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new Exception("Group name cannot be null.");
+            }
+
+            var result = new Dictionary<string, T?>();
+            var slim = new SemaphoreSlim(1);
+
+            await WhenAll((await _database.HashGetAllAsync(key.ToLowerInvariant()).WaitAsync(cancellationToken))
+                .Where(e => e.Name.HasValue && e.Value.HasValue).Select(async x =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (x.Value.HasValue)
+                {
+                    await slim.WaitAsync(cancellationToken);
+
+                    try
+                    {
+                        var key = x.Name.ToString();
+
+                        if (!result.ContainsKey(key))
+                        {
+                            result.Add(key, JsonSerializer.Deserialize<T>(UTF8.GetString(x.Value!)));
+                        }
+                    }
+                    finally
+                    {
+                        _ = slim.Release();
+                    }
+                }
+            }));
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetAllAsync-CacheService: {key}", key);
+            throw;
+        }
+    }
+
+    public async Task<T?> GetOrSetAsync<T>(
+        string key,
+        Func<Task<T>> func,
+        int cacheTimeInMinutes,
+        CancellationToken cancellation = default)
+    {
+        var value = await GetAsync<T>(key, cancellation);
+
+        if (!IsNullOrDefault(value))
+        {
+            return value;
+        }
+
+        value = await func();
+
+        if (!IsNullOrDefault(value))
+        {
+            await SetAsync(key, value, cacheTimeInMinutes, cancellation);
+        }
+
+        return value;
+    }
+
+    public async Task SetAsync<T>(string key, T data, int cacheTimeInMinutes, CancellationToken cancellation = default)
+    {
+        var serializedData = JsonSerializer.Serialize(data);
+
+        await _distributedCache.SetStringAsync(key, serializedData, GetTimeOutOption(cacheTimeInMinutes), cancellation);
+    }
+
+    public Task<(bool, T? cacheData)> TryGetValueAsync<T>(string key, CancellationToken cancellation = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task RemoveAsync(string key, CancellationToken cancellation = default)
+    {
+        await Task.WhenAll(
+            SyncCacheKeyOutbox(key, true, cancellation),
+            _distributedCache.RemoveAsync(key, cancellation));
+    }
+
+    public async Task<bool> SetBulkAsync<TRedisDto>(
+        string group,
+        IDictionary<string, TRedisDto> fields,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(group) || fields is null || fields.Count is 0)
+            {
+                throw new Exception("BAD_REQUEST");
+            }
+
+            await _database.HashSetAsync(
+                group.ToLowerInvariant(),
+                [.. fields.Select(static p => new HashEntry(p.Key.ToLowerInvariant(), p.Value.Serialize()))])
+                .WaitAsync(cancellationToken);
+
+            return true;
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning("Operation was canceled: {Method} - {Group}", nameof(SetBulkAsync), group);
+
+            throw new OperationCanceledException($"Redis SetBulkAsync operation canceled for {group}", ex, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SetBulkAsync-RedisService-Exception: {Group} - {Fields}", group, fields.Serialize());
+
+            throw;
+        }
+    }
+
+    public string GenerateKey(params string[] keys)
+    {
+        throw new NotImplementedException();
+    }
+
+    private static DistributedCacheEntryOptions GetTimeOutOption(int cacheTimeInMinutes)
+    {
+        DistributedCacheEntryOptions option = new();
+        option.SetAbsoluteExpiration(DateTime.UtcNow.AddMinutes(cacheTimeInMinutes));
+
+        return option;
+    }
+
+    private static bool IsNullOrDefault<T>(T? value)
+    {
+        if (value is null) { return true; }
+
+        return !typeof(T).IsValueTupleType() ? EqualityComparer<T>.Default.Equals(value, default) :
+            typeof(T).GetFields().All(field => IsNullOrDefault(field.GetValue(value)));
+    }
+
+    private async Task SyncCacheKeyOutbox(string key, bool shouldRemove = false, CancellationToken cancellation = default)
+    {
+        if (_isRedisCacheProvider) return;
+
+        var outboxKeys = (await GetAsync<HashSet<string>>(cacheStoreKey, cancellation)) ?? [];
+
+        if (!shouldRemove && !outboxKeys.Add(key))
+        {
+            return;
+        }
+
+        if (shouldRemove && !outboxKeys.Remove(key))
+        {
+            return;
+        }
+
+        await _distributedCache.SetStringAsync(cacheStoreKey, outboxKeys.Serialize(), GetOutBoxCacheTimeOut(), cancellation);
+    }
+
+    private static DistributedCacheEntryOptions GetOutBoxCacheTimeOut()
+    {
+        return new DistributedCacheEntryOptions()
+        {
+            AbsoluteExpiration = DateTime.UtcNow.AddYears(20)
+        };
+    }
+}
+
+public static class ReflectionExtention
+{
+    public static bool IsValueTupleType(this Type type)
+        =>  type.IsGenericType && type.FullName?.StartsWith("System.ValueTuple") == true;
+}

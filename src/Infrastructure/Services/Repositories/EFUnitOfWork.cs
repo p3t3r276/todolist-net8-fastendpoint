@@ -6,6 +6,7 @@ using FastTodo.Infrastructure.Extensions;
 using FastTodo.Infrastructure.Repositories.Builder;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
@@ -94,9 +95,9 @@ public class EFUnitOfWork(
         context.UpdateRange(entities);
     }
 
-    public void Remove<TEntity>(TEntity entity) where TEntity : class
+    public EntityEntry<TEntity> Remove<TEntity>(TEntity entity) where TEntity : class
     {
-        context.Remove(entity);
+        return context.Remove(entity);
     }
 
     public void RemoveRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
