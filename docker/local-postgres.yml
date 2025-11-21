@@ -1,4 +1,4 @@
-name: "fasttodo-dev"
+name: "fasttodo_dev"
 services:
   db:
     image: postgres:17.5
@@ -12,7 +12,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - fasttodo-network
+      - fasttodo_network
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "myuser", "-d", "FastTodo"]
       interval: 5s
@@ -31,7 +31,7 @@ services:
     ports:
       - 5050:80
     networks:
-      - fasttodo-network
+      - fasttodo_network
 
   redis:
     image: redis:7.4.0-alpine
@@ -42,7 +42,7 @@ services:
     ports:
       - 6379:6379
     networks:
-      - fasttodo-network
+      - fasttodo_network
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       interval: 1s
@@ -68,7 +68,7 @@ services:
       db:
         condition: service_healthy
     networks:
-      - fasttodo-network
+      - fasttodo_network
     restart: "no"
 
   mongodb:
@@ -78,9 +78,9 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=pass12345
     volumes:
-      - mongodb-data:/data/db
+      - mongodb_data:/data/db
     networks:
-      - fasttodo-network
+      - fasttodo_network
     ports:
       - 27020:27017
     healthcheck:
@@ -89,6 +89,7 @@ services:
       timeout: 10s
       retries: 3
     restart: unless-stopped
+
   mongo-express:
     image: mongo-express
     container_name: mongo-express
@@ -102,7 +103,7 @@ services:
     depends_on:
       - mongodb
     networks:
-      - fasttodo-network
+      - fasttodo_network
     ports:
       - 8081:8081
     healthcheck:
@@ -114,8 +115,8 @@ services:
 
 volumes:
   pgdata:
-  mongodb-data:
-    name: mongodb-data
+  mongodb_data:
+    name: mongodb_data
 
 networks:
-  fasttodo-network:
+  fasttodo_network:
