@@ -8,6 +8,8 @@ COPY ["src/FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
 COPY ["src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
 COPY ["src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj", "Persistence/SQLite/"]
 COPY ["src/Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
+COPY ["src/Persistence/Redis/FastTodo.Persistence.Redis.csproj", "Persistence/Redis/"]
+COPY ["src/Persistence/Mongo/FastTodo.Persistence.Mongo.csproj", "Persistence/Mongo/"]
 
 COPY ["src/Infrastructure/Services/FastTodo.Infrastructure.csproj", "Infrastructure/Services/"]
 COPY ["src/FastTodo.Application/FastTodo.Application.csproj", "FastTodo.Application/"]

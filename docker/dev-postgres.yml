@@ -5,14 +5,15 @@ services:
     container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - fasttodo-network
+      - fasttodo_network
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "myuser", "-d", "FastTodo"]
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -24,10 +25,10 @@ services:
       - db
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: user@domain.com
-      PGADMIN_DEFAULT_PASSWORD: catsarecool
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     networks:
-      - fasttodo-network
+      - fasttodo_network
 
   migrator:
     container_name: fasttodo-migrator
@@ -47,7 +48,7 @@ services:
       db:
         condition: service_healthy
     networks:
-      - fasttodo-network
+      - fasttodo_network
     restart: "no"
 
   api:
@@ -67,7 +68,7 @@ services:
         migrator:
           condition: service_completed_successfully
     networks:
-        - fasttodo-network
+        - fasttodo_network
 
   nginx:
       image: nginx:latest
@@ -82,10 +83,11 @@ services:
         - api
       restart: always
       networks:
-        - fasttodo-network
+        - fasttodo_network
 
 volumes:
   pgdata:
 
 networks:
-  fasttodo-network:
+  fasttodo_network:
+    driver: bridge
