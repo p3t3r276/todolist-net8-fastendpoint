@@ -1,13 +1,12 @@
-using System.Linq.Expressions;
 using FastTodo.Domain.Shared;
 using FastTodo.Infrastructure.Domain.Entities;
 using FastTodo.Infrastructure.Domain.Repositories;
-using FastTodo.Infrastructure.Domain.Repositories.Builder;
 using FastTodo.Persistence.Mongo.DbContexts.MongoDbContext;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
+using System.Linq.Expressions;
 
 namespace FastTodo.Persistence.Mongo;
 
@@ -25,8 +24,8 @@ public class MongoQueryRepository<TEntity, TKey>(MongoDbContext context)
     public string? CollectionName => _collectionName;
 
     public async Task<PaginatedList<TEntity>> FindAllAsync(
-        int pageIndex,
-        int pageSize,
+        int pageIndex = 0,
+        int pageSize = 10,
         Expression<Func<TEntity, bool>>? predicate = null,
         bool enableNoTracking = true,
         Expression<Func<TEntity, object>>? orderBy = null,

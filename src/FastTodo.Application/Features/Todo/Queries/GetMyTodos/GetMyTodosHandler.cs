@@ -5,9 +5,7 @@ using System.Collections.Immutable;
 using FastTodo.Application.Features.Identity;
 using FastTodo.Domain.Entities.Mongo;
 using MongoDB.Bson;
-using Microsoft.AspNetCore.Identity;
 using FastTodo.Infrastructure.Domain;
-using FastTodo.Domain.Entities.Identity;
 using FastTodo.Application.Features.Identity.Services;
 using FastTodo.Domain.Shared.Constants;
 using Microsoft.Extensions.Logging;
@@ -17,7 +15,6 @@ namespace FastTodo.Application.Features.Todo;
 public class GetMyTodosHandler(
     ILogger<GetMyTodosHandler> logger,
     IMongoQueryRepository<TodoItemSchema, ObjectId> mongoRepository,
-    UserManager<AppUser> userManager,
     IUserContext userContext,
     IUserService userService
     ) : IRequestHandler<GetMyTodosRequest, PaginatedList<TodoItemDto>>
