@@ -21,9 +21,9 @@ Table of Contents
 - SQL Server
 - SQLite
 - Postgres
-- MariaDB
-- [Coming soon] Redis
-- [Coming soon] MongoDB
+- [Coming soon] MariaDB
+- Redis
+- MongoDB
 
 ### Backend Stack
 - [.NET](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) `8.0`
