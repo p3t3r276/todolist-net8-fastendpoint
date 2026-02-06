@@ -21,7 +21,7 @@ public class CacheService : ICacheService
 
     private readonly IConnectionMultiplexer? _connectionMultiplexer;
 
-    private readonly IDatabase _database;
+    private readonly IDatabase? _database;
 
     readonly ILogger<CacheService> _logger;
 
