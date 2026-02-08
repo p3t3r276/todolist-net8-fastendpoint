@@ -377,7 +377,7 @@ public class CacheService : ICacheService
         }));
 
         outboxKeys.RemoveWhere(x => keysToRemove.Contains(x));
-        await _distributedCache.SetStringAsync(cacheStoreKey, outboxKeys.Serialize(), GetOutBoxCacheTimeOut(), cancellation);
+        await _distributedCache.SetStringAsync(cacheStoreKey, outboxKeys.Serialize(), GetOutBoxCacheTimeOut(), cancellationToken);
     }
 
     private static DistributedCacheEntryOptions GetTimeOutOption(int cacheTimeInMinutes)
