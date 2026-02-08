@@ -11,6 +11,10 @@ using static System.Text.Encoding;
 
 namespace FastTodo.Persistence.Redis;
 
+/// <summary>
+/// Provides distributed caching functionality with support for Redis and in-memory cache providers.
+/// Implements the cache-aside pattern and supports both individual and bulk operations.
+/// </summary>
 public class CacheService : ICacheService
 {
     private readonly IDistributedCache _distributedCache;
@@ -43,15 +47,37 @@ public class CacheService : ICacheService
         }
     }
 
+    /// <summary>
+    /// Retrieves a cached value by key with automatic JSON deserialization.
+    /// </summary>
+    /// <typeparam name="T">The type to deserialize the cached data to.</typeparam>
+    /// <param name="key">The cache key.</param>
+    /// <param name="cancellation">Cancellation token.</param>
+    /// <returns>The cached value or default if not found.</returns>
     public async Task<T?> GetAsync<T>(string key, CancellationToken cancellation = default)
     {
-        var cacheData = await _distributedCache.GetStringAsync(key, token: cancellation);
+        try
+        {
+            var cacheData = await _distributedCache.GetStringAsync(key, token: cancellation);
 
-        if (string.IsNullOrEmpty(cacheData)) { return default; }
+            if (string.IsNullOrEmpty(cacheData)) { return default; }
 
-        return JsonSerializer.Deserialize<T?>(cacheData);
+            return JsonSerializer.Deserialize<T?>(cacheData);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetAsync-CacheService: {Key}", key);
+            throw;
+        }
     }
 
+    /// <summary>
+    /// Retrieves all cached values from a Redis hash by group key.
+    /// </summary>
+    /// <typeparam name="T">The type to deserialize the cached data to.</typeparam>
+    /// <param name="key">The hash group key.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A dictionary of all cached values in the hash.</returns>
     public async Task<Dictionary<string, T?>?> GetAllAsync<T>(string key, CancellationToken cancellationToken = default)
     {
         try
@@ -98,48 +124,109 @@ public class CacheService : ICacheService
         }
     }
 
+    /// <summary>
+    /// Implements the cache-aside pattern: retrieves from cache or executes the function and caches the result.
+    /// </summary>
+    /// <typeparam name="T">The type of data to cache.</typeparam>
+    /// <param name="key">The cache key.</param>
+    /// <param name="func">The function to execute if cache miss occurs.</param>
+    /// <param name="cacheTimeInMinutes">Cache expiration time in minutes.</param>
+    /// <param name="cancellation">Cancellation token.</param>
+    /// <returns>The cached or newly computed value.</returns>
     public async Task<T?> GetOrSetAsync<T>(
         string key,
         Func<Task<T>> func,
         int cacheTimeInMinutes,
         CancellationToken cancellation = default)
     {
-        var value = await GetAsync<T>(key, cancellation);
-
-        if (!IsNullOrDefault(value))
+        try
         {
+            var value = await GetAsync<T>(key, cancellation);
+
+            if (!IsNullOrDefault(value))
+            {
+                return value;
+            }
+
+            value = await func();
+
+            if (!IsNullOrDefault(value))
+            {
+                await SetAsync(key, value, cacheTimeInMinutes, cancellation);
+            }
+
             return value;
         }
-
-        value = await func();
-
-        if (!IsNullOrDefault(value))
+        catch (Exception ex)
         {
-            await SetAsync(key, value, cacheTimeInMinutes, cancellation);
+            _logger.LogError(ex, "GetOrSetAsync-CacheService: {Key}", key);
+            throw;
         }
-
-        return value;
     }
 
+    /// <summary>
+    /// Stores a value in the cache with automatic JSON serialization.
+    /// </summary>
+    /// <typeparam name="T">The type of data to cache.</typeparam>
+    /// <param name="key">The cache key.</param>
+    /// <param name="data">The data to cache.</param>
+    /// <param name="cacheTimeInMinutes">Cache expiration time in minutes.</param>
+    /// <param name="cancellation">Cancellation token.</param>
     public async Task SetAsync<T>(string key, T data, int cacheTimeInMinutes, CancellationToken cancellation = default)
     {
-        var serializedData = JsonSerializer.Serialize(data);
+        try
+        {
+            var serializedData = JsonSerializer.Serialize(data);
 
-        await _distributedCache.SetStringAsync(key, serializedData, GetTimeOutOption(cacheTimeInMinutes), cancellation);
+            await _distributedCache.SetStringAsync(key, serializedData, GetTimeOutOption(cacheTimeInMinutes), cancellation);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SetAsync-CacheService: {Key}", key);
+            throw;
+        }
     }
 
+    /// <summary>
+    /// Attempts to retrieve a cached value without throwing exceptions on cache miss.
+    /// </summary>
+    /// <typeparam name="T">The type to deserialize the cached data to.</typeparam>
+    /// <param name="key">The cache key.</param>
+    /// <param name="cancellation">Cancellation token.</param>
+    /// <returns>A tuple indicating success and the cached data if found.</returns>
     public Task<(bool, T? cacheData)> TryGetValueAsync<T>(string key, CancellationToken cancellation = default)
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Removes a cached value by key and updates the cache key outbox.
+    /// </summary>
+    /// <param name="key">The cache key to remove.</param>
+    /// <param name="cancellation">Cancellation token.</param>
     public async Task RemoveAsync(string key, CancellationToken cancellation = default)
     {
-        await Task.WhenAll(
-            SyncCacheKeyOutbox(key, true, cancellation),
-            _distributedCache.RemoveAsync(key, cancellation));
+        try
+        {
+            await Task.WhenAll(
+                SyncCacheKeyOutbox(key, true, cancellation),
+                _distributedCache.RemoveAsync(key, cancellation));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "RemoveAsync-CacheService: {Key}", key);
+            throw;
+        }
     }
 
+    /// <summary>
+    /// Stores multiple key-value pairs in a Redis hash for bulk operations.
+    /// </summary>
+    /// <typeparam name="TRedisDto">The type of data to store in the hash.</typeparam>
+    /// <param name="group">The hash group key.</param>
+    /// <param name="fields">Dictionary of field names and values to store.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>True if the operation succeeds.</returns>
     public async Task<bool> SetBulkAsync<TRedisDto>(
         string group,
         IDictionary<string, TRedisDto> fields,
@@ -175,6 +262,11 @@ public class CacheService : ICacheService
         }
     }
 
+    /// <summary>
+    /// Generates a composite cache key from multiple key segments.
+    /// </summary>
+    /// <param name="keys">The key segments to combine.</param>
+    /// <returns>A composite cache key.</returns>
     public string GenerateKey(params string[] keys)
     {
         throw new NotImplementedException();
