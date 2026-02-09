@@ -11,10 +11,6 @@ using static System.Text.Encoding;
 
 namespace FastTodo.Persistence.Redis;
 
-/// <summary>
-/// Provides distributed caching functionality with support for Redis and in-memory cache providers.
-/// Implements the cache-aside pattern and supports both individual and bulk operations.
-/// </summary>
 public class CacheService : ICacheService
 {
     private readonly IDistributedCache _distributedCache;
@@ -47,13 +43,7 @@ public class CacheService : ICacheService
         }
     }
 
-    /// <summary>
-    /// Retrieves a cached value by key with automatic JSON deserialization.
-    /// </summary>
-    /// <typeparam name="T">The type to deserialize the cached data to.</typeparam>
-    /// <param name="key">The cache key.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The cached value or default if not found.</returns>
+    /// <inheritdoc />
     public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -73,13 +63,7 @@ public class CacheService : ICacheService
         }
     }
 
-    /// <summary>
-    /// Retrieves all cached values from a Redis hash by group key.
-    /// </summary>
-    /// <typeparam name="T">The type to deserialize the cached data to.</typeparam>
-    /// <param name="key">The hash group key.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>A dictionary of all cached values in the hash.</returns>
+    /// <inheritdoc />
     public async Task<Dictionary<string, T?>?> GetAllAsync<T>(string key, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -128,15 +112,7 @@ public class CacheService : ICacheService
         }
     }
 
-    /// <summary>
-    /// Implements the cache-aside pattern: retrieves from cache or executes the function and caches the result.
-    /// </summary>
-    /// <typeparam name="T">The type of data to cache.</typeparam>
-    /// <param name="key">The cache key.</param>
-    /// <param name="func">The function to execute if cache miss occurs.</param>
-    /// <param name="cacheTimeInMinutes">Cache expiration time in minutes.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The cached or newly computed value.</returns>
+    /// <inheritdoc />
     public async Task<T?> GetOrSetAsync<T>(
         string key,
         Func<Task<T>> func,
@@ -170,14 +146,7 @@ public class CacheService : ICacheService
         }
     }
 
-    /// <summary>
-    /// Stores a value in the cache with automatic JSON serialization.
-    /// </summary>
-    /// <typeparam name="T">The type of data to cache.</typeparam>
-    /// <param name="key">The cache key.</param>
-    /// <param name="data">The data to cache.</param>
-    /// <param name="cacheTimeInMinutes">Cache expiration time in minutes.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <inheritdoc />
     public async Task SetAsync<T>(string key, T data, int cacheTimeInMinutes, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -195,13 +164,7 @@ public class CacheService : ICacheService
         }
     }
 
-    /// <summary>
-    /// Attempts to retrieve a cached value without throwing exceptions on cache miss.
-    /// </summary>
-    /// <typeparam name="T">The type to deserialize the cached data to.</typeparam>
-    /// <param name="key">The cache key.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>A tuple indicating success and the cached data if found.</returns>
+    /// <inheritdoc />
     public async Task<(bool, T? cacheData)> TryGetValueAsync<T>(string key, CancellationToken cancellationToken = default)
     {
         var cacheData = await GetAsync<T>(key, cancellationToken);
@@ -209,11 +172,7 @@ public class CacheService : ICacheService
         return (!IsNullOrDefault(cacheData), cacheData);
     }
 
-    /// <summary>
-    /// Removes a cached value by key and updates the cache key outbox.
-    /// </summary>
-    /// <param name="key">The cache key to remove.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <inheritdoc />
     public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -231,14 +190,7 @@ public class CacheService : ICacheService
         }
     }
 
-    /// <summary>
-    /// Stores multiple key-value pairs in a Redis hash for bulk operations.
-    /// </summary>
-    /// <typeparam name="TRedisDto">The type of data to store in the hash.</typeparam>
-    /// <param name="group">The hash group key.</param>
-    /// <param name="fields">Dictionary of field names and values to store.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>True if the operation succeeds.</returns>
+    /// <inheritdoc />
     public async Task<bool> SetBulkAsync<TRedisDto>(
         string group,
         IDictionary<string, TRedisDto> fields,
@@ -260,12 +212,6 @@ public class CacheService : ICacheService
 
             return true;
         }
-        catch (OperationCanceledException ex)
-        {
-            _logger.LogWarning("Operation was canceled: {Method} - {Group}", nameof(SetBulkAsync), group);
-
-            throw new OperationCanceledException($"Redis SetBulkAsync operation canceled for {group}", ex, cancellationToken);
-        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "SetBulkAsync-RedisService-Exception: {Group} - {Fields}", group, fields.Serialize());
@@ -274,11 +220,7 @@ public class CacheService : ICacheService
         }
     }
 
-    /// <summary>
-    /// Generates a composite cache key from multiple key segments.
-    /// </summary>
-    /// <param name="keys">The key segments to combine.</param>
-    /// <returns>A composite cache key.</returns>
+    /// <inheritdoc />
     public string GenerateKey(params string[] keys)
     {
         try
