@@ -43,19 +43,38 @@ public class CacheService : ICacheService
         }
     }
 
-    public async Task<T?> GetAsync<T>(string key, CancellationToken cancellation = default)
+    /// <inheritdoc />
+    public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default)
     {
-        var cacheData = await _distributedCache.GetStringAsync(key, token: cancellation);
+        cancellationToken.ThrowIfCancellationRequested();
 
-        if (string.IsNullOrEmpty(cacheData)) { return default; }
-
-        return JsonSerializer.Deserialize<T?>(cacheData);
-    }
-
-    public async Task<Dictionary<string, T?>?> GetAllAsync<T>(string key, CancellationToken cancellationToken = default)
-    {
         try
         {
+            var cacheData = await _distributedCache.GetStringAsync(key, token: cancellationToken);
+
+            if (string.IsNullOrEmpty(cacheData)) { return default; }
+
+            return JsonSerializer.Deserialize<T?>(cacheData);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetAsync-CacheService: {Key}", key);
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<Dictionary<string, T?>?> GetAllAsync<T>(string key, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            if (!_isRedisCacheProvider)
+            {
+                throw new Exception("This method is only supported in Redis cache provider.");
+            }
+
             if (string.IsNullOrEmpty(key))
             {
                 throw new Exception("Group name cannot be null.");
@@ -98,48 +117,85 @@ public class CacheService : ICacheService
         }
     }
 
+    /// <inheritdoc />
     public async Task<T?> GetOrSetAsync<T>(
         string key,
         Func<Task<T>> func,
         int cacheTimeInMinutes,
-        CancellationToken cancellation = default)
+        CancellationToken cancellationToken = default)
     {
-        var value = await GetAsync<T>(key, cancellation);
+        cancellationToken.ThrowIfCancellationRequested();
 
-        if (!IsNullOrDefault(value))
+        try
         {
+            var value = await GetAsync<T>(key, cancellationToken);
+
+            if (!IsNullOrDefault(value))
+            {
+                return value;
+            }
+
+            value = await func();
+
+            if (!IsNullOrDefault(value))
+            {
+                await SetAsync(key, value, cacheTimeInMinutes, cancellationToken);
+            }
+
             return value;
         }
-
-        value = await func();
-
-        if (!IsNullOrDefault(value))
+        catch (Exception ex)
         {
-            await SetAsync(key, value, cacheTimeInMinutes, cancellation);
+            _logger.LogError(ex, "GetOrSetAsync-CacheService: {Key}", key);
+            throw;
         }
-
-        return value;
     }
 
-    public async Task SetAsync<T>(string key, T data, int cacheTimeInMinutes, CancellationToken cancellation = default)
+    /// <inheritdoc />
+    public async Task SetAsync<T>(string key, T data, int cacheTimeInMinutes, CancellationToken cancellationToken = default)
     {
-        var serializedData = JsonSerializer.Serialize(data);
+        cancellationToken.ThrowIfCancellationRequested();
 
-        await _distributedCache.SetStringAsync(key, serializedData, GetTimeOutOption(cacheTimeInMinutes), cancellation);
+        try
+        {
+            var serializedData = data.Serialize();
+
+            await _distributedCache.SetStringAsync(key, serializedData, GetTimeOutOption(cacheTimeInMinutes), cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SetAsync-CacheService: {Key}-{Data}-{CacheTimeInMinutes}", key, data.Serialize(), cacheTimeInMinutes);
+            throw;
+        }
     }
 
-    public Task<(bool, T? cacheData)> TryGetValueAsync<T>(string key, CancellationToken cancellation = default)
+    /// <inheritdoc />
+    public async Task<(bool, T? cacheData)> TryGetValueAsync<T>(string key, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var cacheData = await GetAsync<T>(key, cancellationToken);
+
+        return (!IsNullOrDefault(cacheData), cacheData);
     }
 
-    public async Task RemoveAsync(string key, CancellationToken cancellation = default)
+    /// <inheritdoc />
+    public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)
     {
-        await Task.WhenAll(
-            SyncCacheKeyOutbox(key, true, cancellation),
-            _distributedCache.RemoveAsync(key, cancellation));
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            await Task.WhenAll(
+                SyncCacheKeyOutbox(key, true, cancellationToken),
+                _distributedCache.RemoveAsync(key, cancellationToken));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "RemoveAsync-CacheService: {Key}", key);
+            throw;
+        }
     }
 
+    /// <inheritdoc />
     public async Task<bool> SetBulkAsync<TRedisDto>(
         string group,
         IDictionary<string, TRedisDto> fields,
@@ -149,6 +205,11 @@ public class CacheService : ICacheService
 
         try
         {
+            if (!_isRedisCacheProvider)
+            {
+                throw new Exception("This method is only supported in Redis cache provider.");
+            }
+
             if (string.IsNullOrWhiteSpace(group) || fields is null || fields.Count is 0)
             {
                 throw new Exception("BAD_REQUEST");
@@ -161,12 +222,6 @@ public class CacheService : ICacheService
 
             return true;
         }
-        catch (OperationCanceledException ex)
-        {
-            _logger.LogWarning("Operation was canceled: {Method} - {Group}", nameof(SetBulkAsync), group);
-
-            throw new OperationCanceledException($"Redis SetBulkAsync operation canceled for {group}", ex, cancellationToken);
-        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "SetBulkAsync-RedisService-Exception: {Group} - {Fields}", group, fields.Serialize());
@@ -175,9 +230,106 @@ public class CacheService : ICacheService
         }
     }
 
+    /// <inheritdoc />
     public string GenerateKey(params string[] keys)
     {
-        throw new NotImplementedException();
+        try
+        {
+            return string.Join(":", keys);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GenerateKey-CacheService: {Keys}", keys.Serialize());
+            throw;
+        }
+    }
+
+    public async Task RemoveRangeAsync(string keyPattern, CacheKeySearchOperator searchOperator = CacheKeySearchOperator.StartsWith, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            if (!_isRedisCacheProvider)
+            {
+                await InMemoryRemoveRange(keyPattern, searchOperator, cancellationToken);
+
+                return;
+            }
+
+            await RedisRemoveRange(keyPattern, searchOperator, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "RemoveRangeAsync-CacheService: {KeyPattern}-{SearchOperator}", keyPattern, searchOperator);
+            throw;
+        }
+    }
+
+    private async Task RedisRemoveRange(string keyPattern, CacheKeySearchOperator searchOperator, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        ArgumentException.ThrowIfNullOrWhiteSpace(keyPattern, nameof(keyPattern));
+
+        var server = _connectionMultiplexer!.GetServer(_connectionMultiplexer!.GetEndPoints().First());
+
+        var searchPattern = searchOperator switch
+        {
+            CacheKeySearchOperator.StartsWith => $"{keyPattern}*",
+            CacheKeySearchOperator.EndsWith => $"*{keyPattern}",
+            CacheKeySearchOperator.Contains => $"*{keyPattern}*",
+            _ => throw new ArgumentOutOfRangeException(nameof(searchOperator), searchOperator, null)
+        };
+
+        var keys = server.Keys(_database!.Database, searchPattern);
+
+        if (!keys.Any())
+        {
+            return;
+        }
+
+        await _database!.KeyDeleteAsync([.. keys]);
+    }
+
+    private async Task InMemoryRemoveRange(string keyPattern, CacheKeySearchOperator searchOperator, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        ArgumentException.ThrowIfNullOrWhiteSpace(keyPattern, nameof(keyPattern));
+
+        var outboxKeys = (await GetAsync<HashSet<string>>(cacheStoreKey, cancellationToken)) ?? [];
+
+        if (outboxKeys.Count == 0)
+        {
+            return;
+        }
+
+        HashSet<string> keysToRemove = [];
+
+        switch(searchOperator)
+        {
+            case CacheKeySearchOperator.StartsWith:
+                keysToRemove = [.. outboxKeys.Where(x => x.StartsWith(keyPattern))];
+                break;
+            case CacheKeySearchOperator.EndsWith:
+                keysToRemove = [.. outboxKeys.Where(x => x.EndsWith(keyPattern))];
+                break;
+            case CacheKeySearchOperator.Contains:
+                keysToRemove = [.. outboxKeys.Where(x => x.Contains(keyPattern))];
+                break;
+        }
+
+        if (keysToRemove.Count == 0)
+        {
+            return;
+        }
+
+        await Task.WhenAll(keysToRemove.Select(async key =>
+        {
+            await _distributedCache.RemoveAsync(key);
+        }));
+
+        outboxKeys.RemoveWhere(x => keysToRemove.Contains(x));
+        await _distributedCache.SetStringAsync(cacheStoreKey, outboxKeys.Serialize(), GetOutBoxCacheTimeOut(), cancellationToken);
     }
 
     private static DistributedCacheEntryOptions GetTimeOutOption(int cacheTimeInMinutes)
@@ -196,11 +348,11 @@ public class CacheService : ICacheService
             typeof(T).GetFields().All(field => IsNullOrDefault(field.GetValue(value)));
     }
 
-    private async Task SyncCacheKeyOutbox(string key, bool shouldRemove = false, CancellationToken cancellation = default)
+    private async Task SyncCacheKeyOutbox(string key, bool shouldRemove = false, CancellationToken cancellationToken = default)
     {
         if (_isRedisCacheProvider) return;
 
-        var outboxKeys = (await GetAsync<HashSet<string>>(cacheStoreKey, cancellation)) ?? [];
+        var outboxKeys = (await GetAsync<HashSet<string>>(cacheStoreKey, cancellationToken)) ?? [];
 
         if (!shouldRemove && !outboxKeys.Add(key))
         {
@@ -212,7 +364,7 @@ public class CacheService : ICacheService
             return;
         }
 
-        await _distributedCache.SetStringAsync(cacheStoreKey, outboxKeys.Serialize(), GetOutBoxCacheTimeOut(), cancellation);
+        await _distributedCache.SetStringAsync(cacheStoreKey, outboxKeys.Serialize(), GetOutBoxCacheTimeOut(), cancellationToken);
     }
 
     private static DistributedCacheEntryOptions GetOutBoxCacheTimeOut()

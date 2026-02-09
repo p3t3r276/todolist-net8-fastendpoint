@@ -41,7 +41,7 @@ public class UserService(ILogger<UserService> logger,
         try
         {
             var redisGroup = CacheKeys.USERS_LIST;
-            var cleanTask = cacheService.RemoveAsync(redisGroup, cancellation: cancellationToken);
+            var cleanTask = cacheService.RemoveAsync(redisGroup, cancellationToken: cancellationToken);
             var entitiesTask = userManager.Users.ToListAsync(cancellationToken);
 
             await WhenAll(cleanTask, entitiesTask);
