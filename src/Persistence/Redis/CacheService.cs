@@ -70,6 +70,11 @@ public class CacheService : ICacheService
 
         try
         {
+            if (!_isRedisCacheProvider)
+            {
+                throw new Exception("This method is only supported in Redis cache provider.");
+            }
+
             if (string.IsNullOrEmpty(key))
             {
                 throw new Exception("Group name cannot be null.");
@@ -200,6 +205,11 @@ public class CacheService : ICacheService
 
         try
         {
+            if (!_isRedisCacheProvider)
+            {
+                throw new Exception("This method is only supported in Redis cache provider.");
+            }
+
             if (string.IsNullOrWhiteSpace(group) || fields is null || fields.Count is 0)
             {
                 throw new Exception("BAD_REQUEST");
