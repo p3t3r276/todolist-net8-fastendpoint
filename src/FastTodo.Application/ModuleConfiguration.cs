@@ -1,3 +1,4 @@
+using FastTodo.Application.Features.Identity.Services;
 using FastTodo.Domain.Entities.Identity;
 using FastTodo.Infrastructure;
 using FluentValidation;
@@ -24,6 +25,8 @@ public static partial class ModuleConfiguration
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddInfrastructure(configuration);
+
+        services.AddScoped<IUserService, UserService>();
         return services;
     }
 

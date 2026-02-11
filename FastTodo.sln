@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.API", "src\Host\FastTodo.API\FastTodo.API.csproj", "{699C7FF7-AC75-4A34-BA1A-E16AFB3FC20E}"
 EndProject
@@ -30,6 +30,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Host", "Host", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.Postgres", "src\Persistence\Postgres\FastTodo.Persistence.Postgres.csproj", "{8C273D90-9EC8-4030-A48C-59879CF5B741}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.Redis", "src\Persistence\Redis\FastTodo.Persistence.Redis.csproj", "{FEF28C4B-713A-41DC-8B76-0124A0CA615E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTodo.Persistence.Mongo", "src\Persistence\Mongo\FastTodo.Persistence.Mongo.csproj", "{7E2F453E-252E-45C0-9438-2A8341B7878C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,6 +165,30 @@ Global
 		{8C273D90-9EC8-4030-A48C-59879CF5B741}.Release|x64.Build.0 = Release|Any CPU
 		{8C273D90-9EC8-4030-A48C-59879CF5B741}.Release|x86.ActiveCfg = Release|Any CPU
 		{8C273D90-9EC8-4030-A48C-59879CF5B741}.Release|x86.Build.0 = Release|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Debug|x64.Build.0 = Debug|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Debug|x86.Build.0 = Debug|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Release|x64.ActiveCfg = Release|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Release|x64.Build.0 = Release|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Release|x86.ActiveCfg = Release|Any CPU
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E}.Release|x86.Build.0 = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|x64.Build.0 = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Debug|x86.Build.0 = Debug|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|x64.ActiveCfg = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|x64.Build.0 = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|x86.ActiveCfg = Release|Any CPU
+		{7E2F453E-252E-45C0-9438-2A8341B7878C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,5 +207,10 @@ Global
 		{8EB7F8B2-96B7-44D2-83A5-14C544EC8B57} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{8C273D90-9EC8-4030-A48C-59879CF5B741} = {3BA5312F-4CB7-F189-D5EC-6A9485924027}
+		{FEF28C4B-713A-41DC-8B76-0124A0CA615E} = {3BA5312F-4CB7-F189-D5EC-6A9485924027}
+		{7E2F453E-252E-45C0-9438-2A8341B7878C} = {3BA5312F-4CB7-F189-D5EC-6A9485924027}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CDBE1359-C5BF-404F-A100-FF8E88155E48}
 	EndGlobalSection
 EndGlobal

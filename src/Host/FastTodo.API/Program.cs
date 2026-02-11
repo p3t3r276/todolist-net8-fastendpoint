@@ -4,6 +4,7 @@ using FastEndpoints;
 using FastEndpoints.AspVersioning;
 using FastEndpoints.Swagger;
 using FastTodo.Application;
+using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -20,6 +21,15 @@ try
     builder.Services.AddAuthorization();
     builder.Services.AddAuthentication();
 
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+
+        // Clear all known networks and proxies to trust the Docker network's internal proxy
+        options.KnownNetworks.Clear();
+        options.KnownProxies.Clear(); 
+    });
+
     builder.Host.UseSerilog((context, services, configuration) =>
     {
         configuration
@@ -31,7 +41,7 @@ try
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services);
     });
-    
+
     VersionSets.CreateApi("Todos", v => v
         .HasApiVersion(1.0));
 
@@ -52,7 +62,6 @@ try
             {
                 x.DocumentName = "User managmenet";
                 x.Title = "User";
-                
             };
         })
         .SwaggerDocument(o =>
@@ -69,6 +78,13 @@ try
 
     var app = builder.Build();
 
+    app.UseForwardedHeaders();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwaggerGen();
+    }
+
     app.UseApplication();
 
     app.UseSerilogRequestLogging();
@@ -82,11 +98,6 @@ try
         //    ep.PreProcessor<RequestLoggerProcessor>(Order.Before);
         //};
     });
-
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwaggerGen();
-    }
 
     Log.Information("Starting FastTodo...");
 
