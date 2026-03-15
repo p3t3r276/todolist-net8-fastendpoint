@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Mapster" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" />
+    <PackageReference Include="MongoDB.EntityFrameworkCore" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

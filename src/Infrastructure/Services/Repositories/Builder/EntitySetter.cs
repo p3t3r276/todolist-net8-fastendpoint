@@ -1,9 +1,10 @@
-﻿using FastTodo.Infrastructure.Domain.Repositories.Builder;
+﻿using FastTodo.Infrastructure.Domain.Entities;
+using FastTodo.Infrastructure.Domain.Repositories.Builder;
 using System.Linq.Expressions;
 
 namespace FastTodo.Infrastructure.Repositories.Builder;
 
-public class EntitySetter<TEntity>(TEntity entity) : IEntitySetter<TEntity> where TEntity : class
+public class EntitySetter<TEntity>(TEntity entity) : IEntitySetter<TEntity> where TEntity : class, IEntity
 {
     internal HashSet<string> UpdateProperties { get; } = [];
 

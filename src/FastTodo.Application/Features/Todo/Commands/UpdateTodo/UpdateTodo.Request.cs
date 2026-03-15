@@ -13,6 +13,4 @@ public class UpdateTodoRequest : IRequest<Results<NoContent, Ok<TodoItemDto>>>
     public UpdateTodoBody? Body { get; set; }
 }
 
-public record UpdateTodoBody(
-    string? Name
-);
+public record UpdateTodoBody(string? Name);

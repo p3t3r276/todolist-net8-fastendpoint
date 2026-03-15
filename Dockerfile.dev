@@ -1,8 +1,3 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 80
-EXPOSE 443
-
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
@@ -13,6 +8,8 @@ COPY ["src/FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
 COPY ["src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
 COPY ["src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj", "Persistence/SQLite/"]
 COPY ["src/Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
+COPY ["src/Persistence/Redis/FastTodo.Persistence.Redis.csproj", "Persistence/Redis/"]
+COPY ["src/Persistence/Mongo/FastTodo.Persistence.Mongo.csproj", "Persistence/Mongo/"]
 
 COPY ["src/Infrastructure/Services/FastTodo.Infrastructure.csproj", "Infrastructure/Services/"]
 COPY ["src/FastTodo.Application/FastTodo.Application.csproj", "FastTodo.Application/"]
@@ -33,7 +30,9 @@ FROM build AS publish
 RUN dotnet publish "Host/FastTodo.API/FastTodo.API.csproj" -c Release --no-restore -o app/publish
 
 # Stage 3: Final (Runtime)
-FROM base AS runtime
+FROM build AS runtime
 WORKDIR /app
+ENV ASPNETCORE_HTTP_PORTS=8080;8081
+EXPOSE 8080 8081
 COPY --from=publish /src/app/publish .
 ENTRYPOINT ["dotnet", "FastTodo.API.dll"]

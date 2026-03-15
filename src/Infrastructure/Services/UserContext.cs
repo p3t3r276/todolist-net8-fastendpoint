@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FastTodo.Infrastructure.Domain;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace FastTodo.Infrastructure.Domain;
+namespace FastTodo.Infrastructure.Services;
 
 public sealed class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContext
 {
