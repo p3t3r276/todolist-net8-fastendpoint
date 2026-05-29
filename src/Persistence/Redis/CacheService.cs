@@ -3,6 +3,7 @@ using FastTodo.Domain.Shared.Constants;
 using FastTodo.Infrastructure.Domain;
 using FastTodo.Infrastructure.Domain.Options;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
@@ -14,6 +15,7 @@ namespace FastTodo.Persistence.Redis;
 public class CacheService : ICacheService
 {
     private readonly IDistributedCache _distributedCache;
+    private readonly HybridCache _hybridCache;
 
     private const string cacheStoreKey = "CacheStore:Outbox:Keys";
 
@@ -28,11 +30,13 @@ public class CacheService : ICacheService
     public CacheService(
         ILogger<CacheService> logger,
         IDistributedCache distributedCache,
+        HybridCache hybridCache,
         IServiceProvider serviceProvider,
         FastTodoOption options)
     {
         _logger = logger;
         _distributedCache = distributedCache;
+        _hybridCache = hybridCache;
         _isRedisCacheProvider = options.CacheType == CacheType.Redis;
 
         if (_isRedisCacheProvider)
@@ -50,11 +54,10 @@ public class CacheService : ICacheService
 
         try
         {
-            var cacheData = await _distributedCache.GetStringAsync(key, token: cancellationToken);
-
-            if (string.IsNullOrEmpty(cacheData)) { return default; }
-
-            return JsonSerializer.Deserialize<T?>(cacheData);
+            return await _hybridCache.GetOrCreateAsync<T?>(
+                key,
+                _ => ValueTask.FromResult(default(T)),
+                cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {
@@ -70,7 +73,7 @@ public class CacheService : ICacheService
 
         try
         {
-            if (!_isRedisCacheProvider)
+            if (!_isRedisCacheProvider || _database == null)
             {
                 throw new Exception("This method is only supported in Redis cache provider.");
             }
@@ -94,11 +97,11 @@ public class CacheService : ICacheService
 
                     try
                     {
-                        var key = x.Name.ToString();
+                        var fieldName = x.Name.ToString();
 
-                        if (!result.ContainsKey(key))
+                        if (!result.ContainsKey(fieldName))
                         {
-                            result.Add(key, JsonSerializer.Deserialize<T>(UTF8.GetString(x.Value!)));
+                            result.Add(fieldName, JsonSerializer.Deserialize<T>(UTF8.GetString(x.Value!)));
                         }
                     }
                     finally
@@ -128,21 +131,17 @@ public class CacheService : ICacheService
 
         try
         {
-            var value = await GetAsync<T>(key, cancellationToken);
-
-            if (!IsNullOrDefault(value))
+            var options = new HybridCacheEntryOptions
             {
-                return value;
-            }
+                Expiration = TimeSpan.FromMinutes(cacheTimeInMinutes),
+                LocalCacheExpiration = TimeSpan.FromMinutes(cacheTimeInMinutes)
+            };
 
-            value = await func();
-
-            if (!IsNullOrDefault(value))
-            {
-                await SetAsync(key, value, cacheTimeInMinutes, cancellationToken);
-            }
-
-            return value;
+            return await _hybridCache.GetOrCreateAsync(
+                key,
+                async ct => await func(),
+                options,
+                cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {
@@ -158,13 +157,22 @@ public class CacheService : ICacheService
 
         try
         {
-            var serializedData = data.Serialize();
+            var options = new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.FromMinutes(cacheTimeInMinutes),
+                LocalCacheExpiration = TimeSpan.FromMinutes(cacheTimeInMinutes)
+            };
 
-            await _distributedCache.SetStringAsync(key, serializedData, GetTimeOutOption(cacheTimeInMinutes), cancellationToken);
+            await _hybridCache.SetAsync(key, data, options, cancellationToken: cancellationToken);
+            
+            if (!_isRedisCacheProvider)
+            {
+                await SyncCacheKeyOutbox(key, false, cancellationToken);
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetAsync-CacheService: {Key}-{Data}-{CacheTimeInMinutes}", key, data.Serialize(), cacheTimeInMinutes);
+            _logger.LogError(ex, "SetAsync-CacheService: {Key}-{Data}-{CacheTimeInMinutes}", key, data?.Serialize() ?? "", cacheTimeInMinutes);
             throw;
         }
     }
@@ -186,7 +194,7 @@ public class CacheService : ICacheService
         {
             await Task.WhenAll(
                 SyncCacheKeyOutbox(key, true, cancellationToken),
-                _distributedCache.RemoveAsync(key, cancellationToken));
+                _hybridCache.RemoveAsync(key, cancellationToken).AsTask());
         }
         catch (Exception ex)
         {
@@ -205,7 +213,7 @@ public class CacheService : ICacheService
 
         try
         {
-            if (!_isRedisCacheProvider)
+            if (!_isRedisCacheProvider || _database == null)
             {
                 throw new Exception("This method is only supported in Redis cache provider.");
             }
@@ -271,7 +279,9 @@ public class CacheService : ICacheService
         cancellationToken.ThrowIfCancellationRequested();
         ArgumentException.ThrowIfNullOrWhiteSpace(keyPattern, nameof(keyPattern));
 
-        var server = _connectionMultiplexer!.GetServer(_connectionMultiplexer!.GetEndPoints().First());
+        if (_connectionMultiplexer == null || _database == null) return;
+
+        var server = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
 
         var searchPattern = searchOperator switch
         {
@@ -281,14 +291,19 @@ public class CacheService : ICacheService
             _ => throw new ArgumentOutOfRangeException(nameof(searchOperator), searchOperator, null)
         };
 
-        var keys = server.Keys(_database!.Database, searchPattern);
+        var keys = server.Keys(_database.Database, searchPattern).ToArray();
 
-        if (!keys.Any())
+        if (keys.Length == 0)
         {
             return;
         }
 
-        await _database!.KeyDeleteAsync([.. keys]);
+        foreach (var key in keys)
+        {
+            await _hybridCache.RemoveAsync(key.ToString(), cancellationToken);
+        }
+
+        await _database.KeyDeleteAsync(keys);
     }
 
     private async Task InMemoryRemoveRange(string keyPattern, CacheKeySearchOperator searchOperator, CancellationToken cancellationToken = default)
@@ -325,19 +340,11 @@ public class CacheService : ICacheService
 
         await Task.WhenAll(keysToRemove.Select(async key =>
         {
-            await _distributedCache.RemoveAsync(key);
+            await _hybridCache.RemoveAsync(key, cancellationToken);
         }));
 
         outboxKeys.RemoveWhere(x => keysToRemove.Contains(x));
-        await _distributedCache.SetStringAsync(cacheStoreKey, outboxKeys.Serialize(), GetOutBoxCacheTimeOut(), cancellationToken);
-    }
-
-    private static DistributedCacheEntryOptions GetTimeOutOption(int cacheTimeInMinutes)
-    {
-        DistributedCacheEntryOptions option = new();
-        option.SetAbsoluteExpiration(DateTime.UtcNow.AddMinutes(cacheTimeInMinutes));
-
-        return option;
+        await SetAsync(cacheStoreKey, outboxKeys, (int)TimeSpan.FromDays(365 * 20).TotalMinutes, cancellationToken);
     }
 
     private static bool IsNullOrDefault<T>(T? value)
@@ -364,15 +371,7 @@ public class CacheService : ICacheService
             return;
         }
 
-        await _distributedCache.SetStringAsync(cacheStoreKey, outboxKeys.Serialize(), GetOutBoxCacheTimeOut(), cancellationToken);
-    }
-
-    private static DistributedCacheEntryOptions GetOutBoxCacheTimeOut()
-    {
-        return new DistributedCacheEntryOptions()
-        {
-            AbsoluteExpiration = DateTime.UtcNow.AddYears(20)
-        };
+        await SetAsync(cacheStoreKey, outboxKeys, (int)TimeSpan.FromDays(365 * 20).TotalMinutes, cancellationToken);
     }
 }
 
