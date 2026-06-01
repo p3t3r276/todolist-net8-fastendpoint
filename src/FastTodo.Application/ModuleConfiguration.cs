@@ -1,6 +1,6 @@
+using FastTodo.Application.Features.Identity.Services;
 using FastTodo.Domain.Entities.Identity;
 using FastTodo.Infrastructure;
-using FastTodo.Persistence.EF;
 using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Builder;
@@ -25,6 +25,8 @@ public static partial class ModuleConfiguration
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddInfrastructure(configuration);
+
+        services.AddScoped<IUserService, UserService>();
         return services;
     }
 

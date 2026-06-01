@@ -14,6 +14,7 @@ using FastTodo.Infrastructure.Domain;
 using FastTodo.Infrastructure.Domain.Configurations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using FastTodo.Persistence.Redis;
 using FastTodo.Infrastructure.Services;
 using FastTodo.Persistence.Mongo;
 
@@ -33,9 +34,25 @@ public static partial class ModuleConfiguration
         }).AddBearerToken(IdentityConstants.BearerScheme);
 
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        services.AddDatabaseProvider(configuration);
 
+        var options = configuration.GetSection(nameof(FastTodoOption)).Get<FastTodoOption>();
+
+        ArgumentNullException.ThrowIfNull(options);
+
+        var redisConnectionString = configuration.GetConnectionString(nameof(ConnectionStrings.Redis));
+        if (redisConnectionString is not null)
+        {
+            options.CacheType = CacheType.Redis;
+            options.RedisConnectionString = redisConnectionString;
+        }
+
+        services.AddSingleton(options);
+
+        services.AddDatabaseProvider(configuration, options);
+        services.AddRedisPersistence(configuration, options);
         services.AddAPICors(configuration);
+
+        services.AddScoped<ICacheService, CacheService>();
     }
 
     public static void UseInFrastructure(this IApplicationBuilder app)
@@ -44,12 +61,8 @@ public static partial class ModuleConfiguration
     }
 
     private static void AddDatabaseProvider(this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration, FastTodoOption options)
     {
-        var options = configuration.GetSection(nameof(FastTodoOption)).Get<FastTodoOption>();
-
-        ArgumentNullException.ThrowIfNull(options);
-
         var sqlProvider = Enum.TryParse<DatabaseProviderType>(options.SQLProvider.ToString(), true, out var provider)
             ? provider
             : throw new Exception($"Invalid SqlProvider configuration: {options.Serialize()}");
@@ -65,7 +78,7 @@ public static partial class ModuleConfiguration
                 services.AddSQLEFPersistence();
                 break;
             default:
-                services.AddSQLiteEFPersistence();
+                services.AddSQLitePersistence();
                 break;
         }
 

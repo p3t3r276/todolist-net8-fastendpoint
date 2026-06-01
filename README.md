@@ -1,4 +1,4 @@
-# todolist-net8-fastendpoint
+# FastTodo
 A project demonstrating Clean Architecture with EF Core and ASP.NET Core using FastEndpoints
 
 Table of Contents
@@ -11,6 +11,7 @@ Table of Contents
 * [Configuration](#configuration)
 
 ## Technologies & Patterns
+
 ### Architecture
 
 <p align='center'>
@@ -21,9 +22,9 @@ Table of Contents
 - SQL Server
 - SQLite
 - Postgres
-- MariaDB
-- [Coming soon] Redis
-- [Coming soon] MongoDB
+- [Coming soon] MariaDB
+- Redis
+- MongoDB
 
 ### Backend Stack
 - [.NET](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) `8.0`
@@ -31,14 +32,14 @@ Table of Contents
 - [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) `9.0.0`
 - [MediatR](https://github.com/jbogard/MediatR) `12.4.1`
 - [FluentValidation](https://docs.fluentvalidation.net/en/latest/) `12.0.0`
+- [Nginx](https://nginx.org/)
 
 ### Patterns
 - Generic Repository Pattern with Unit of Work
-- CQRS Pattern with MediatR
+- CQRS Pattern with [MediatR](https://github.com/jbogard/MediatR)
 - Option pattern
 
 ## Solution Structure
-
 | Project | Responsibility |
 |---------|---------------|
 | FastTodo.API | Main entry point. Handles HTTP requests, configures services, and manages API endpoints using FastEndpoints |

@@ -5,24 +5,35 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace FastTodo.Application.Features.Todo;
 
 public class DeleteTodoHandler(
-    IRepository<TodoItem, Guid> repository,
-    [FromKeyedServices(ServiceKeys.FastTodoEFUnitOfWork)]
-    IUnitOfWork unitOfWork
+    ILogger<DeleteTodoHandler> logger,
+
+    [FromKeyedServices(ServiceKeys.FastTodoEFUnitOfWork)] IUnitOfWork unitOfWork
+
 ) : IRequestHandler<DeleteTodoRequest, Results<NoContent, Ok>>
 {
     public async Task<Results<NoContent, Ok>> Handle(DeleteTodoRequest request, CancellationToken cancellationToken)
     {
-        var item = await repository.GetByIdAsync(request.Id!.Value, cancellationToken: cancellationToken);
-        if (item is null)
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        try
         {
-            return TypedResults.NoContent();
+            var result = unitOfWork.Remove(new TodoItem { Id = request.Id!.Value });
+            if (result is null)
+            {
+                return TypedResults.NoContent();
+            }
+            return TypedResults.Ok();
         }
-        unitOfWork.Remove(item);
-        await unitOfWork.SaveChangeAsync(cancellationToken);
-        return TypedResults.Ok();
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "DeleteTodoHandler: {id}", request.Id);
+
+            throw;
+        }
     }
 }

@@ -41,7 +41,7 @@ try
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services);
     });
-    
+
     VersionSets.CreateApi("Todos", v => v
         .HasApiVersion(1.0));
 

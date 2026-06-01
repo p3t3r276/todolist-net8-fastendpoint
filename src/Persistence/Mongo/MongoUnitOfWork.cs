@@ -108,17 +108,15 @@ public class MongoUnitOfWork(
         var notExistIndex = entityType
             .GetIndexes()
             .Where(x => x.Properties.Count > 0
-                        && !string.IsNullOrEmpty(x.Properties[0].Name)
-                        && !existIndexName.Any(i => i.Contains(x.Properties[0].Name, StringComparison.OrdinalIgnoreCase)))
+                && !string.IsNullOrEmpty(x.Properties[0].Name)
+                && !existIndexName.Any(i => i.Contains(x.Properties[0].Name, StringComparison.OrdinalIgnoreCase)))
             .ToList();
 
         foreach (var index in notExistIndex)
         {
             IndexKeysDefinition<TEntity> indexKeysDefinition = Builders<TEntity>
                 .IndexKeys
-                .Ascending(index.Properties
-                                .FirstOrDefault()
-                                !.Name);
+                .Ascending(index.Properties.FirstOrDefault()!.Name);
 
             collection.Indexes.CreateOne(new MongoDB.Driver.CreateIndexModel<TEntity>(
                 indexKeysDefinition,
