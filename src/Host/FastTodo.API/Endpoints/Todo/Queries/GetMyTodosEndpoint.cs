@@ -3,10 +3,11 @@ using FastEndpoints.AspVersioning;
 using FastTodo.Application.Features.Todo;
 using FastTodo.Domain.Shared;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace FastTodo.API.Endpoints.Todo;
 
-public class GetMyTodosEndpoint(IMediator mediator) : Endpoint<GetMyTodosRequest, PaginatedList<TodoItemDto>>
+public class GetMyTodosEndpoint(IMediator mediator, ILogger<GetMyTodosEndpoint> logger) : Endpoint<GetMyTodosRequest, PaginatedList<TodoItemDto>>
 {
     public override void Configure()
     {
@@ -21,7 +22,7 @@ public class GetMyTodosEndpoint(IMediator mediator) : Endpoint<GetMyTodosRequest
     {
         if (User.Identity is { IsAuthenticated: true })
         {
-            Console.WriteLine(User.Identity.Name);
+            logger.LogDebug("GetMyTodos requested by {UserName}", User.Identity.Name);
         }
         return await mediator.Send(req, ct);
     }
