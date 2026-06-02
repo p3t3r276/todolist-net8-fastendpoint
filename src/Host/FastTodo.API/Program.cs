@@ -3,6 +3,7 @@ using Asp.Versioning.Conventions;
 using FastEndpoints;
 using FastEndpoints.AspVersioning;
 using FastEndpoints.Swagger;
+using FastTodo.API.Processors;
 using FastTodo.Application;
 using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
@@ -93,10 +94,10 @@ try
     {
         c.Endpoints.RoutePrefix = "api";
 
-        //c.Endpoints.Configurator = ep =>
-        //{
-        //    ep.PreProcessor<RequestLoggerProcessor>(Order.Before);
-        //};
+        c.Endpoints.Configurator = ep =>
+        {
+           ep.PreProcessor<RequestLoggerProcessor>(Order.Before);
+        };
     });
 
     Log.Information("Starting FastTodo...");
