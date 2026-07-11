@@ -9,8 +9,7 @@ namespace FastTodo.Infrastructure.Repositories.Builder;
 public class QueryBuilder<TEntity>(
     IQueryable<TEntity> query,
     IOrderedQueryable<TEntity>? order = default,
-    QueryBuilder<TEntity>? root = default
-    ) : IQueryBuilder<TEntity> where TEntity : class, IEntity
+    QueryBuilder<TEntity>? root = default) : IQueryBuilder<TEntity> where TEntity : class, IEntity
 {
     private IQueryable<TEntity> _query = query;
 
@@ -66,7 +65,7 @@ public class QueryBuilder<TEntity>(
         Expression<Func<TEntity, TProperty?>> navigationProperty
     ) where TProperty : class, IEntity
     {
-        query = _query.Include(navigationProperty);
+        _query = _query.Include(navigationProperty);
         _root?.UpdateQuery(_query);
         var builder = new QueryBuilder<TEntity, TProperty, TProperty>((_root ?? this).Query, (_root ?? this).QueryOrder, _root ?? this);
         return builder;
@@ -144,7 +143,7 @@ internal class QueryBuilder<TEntity, TProperty, TGeneric>(
     }
 
     public IQueryBuilder<TEntity, TNextProperty, TNextProperty> ThenInclude<TNextProperty>(
-        Expression<Func<TGeneric, TNextProperty>> navigationProperty
+        Expression<Func<TGeneric, TNextProperty?>> navigationProperty
     ) where TNextProperty : class, IEntity
     {
         if (_root?.Query is IIncludableQueryable<TEntity, TGeneric> singleInclude)

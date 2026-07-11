@@ -1,4 +1,4 @@
-﻿using FastTodo.Infrastructure.Domain;
+using FastTodo.Infrastructure.Domain;
 using FastTodo.Infrastructure.Domain.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +26,7 @@ public static class ModuleConfiguration
             services.AddSingleton<IConnectionMultiplexer>(provider => ConnectionMultiplexer.Connect(option.RedisConnectionString!));
         }
 
+        services.AddHybridCache();
         services.AddScoped<ICacheService, CacheService>();
     }
 }
