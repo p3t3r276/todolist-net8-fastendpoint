@@ -2,7 +2,6 @@
 using FastTodo.Domain.Shared.Constants;
 using FastTodo.Infrastructure.Domain;
 using FastTodo.Infrastructure.Domain.Options;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,7 +13,6 @@ namespace FastTodo.Persistence.Redis;
 
 public class CacheService : ICacheService
 {
-    private readonly IDistributedCache _distributedCache;
     private readonly HybridCache _hybridCache;
 
     private const string cacheStoreKey = "CacheStore:Outbox:Keys";
@@ -29,13 +27,11 @@ public class CacheService : ICacheService
 
     public CacheService(
         ILogger<CacheService> logger,
-        IDistributedCache distributedCache,
         HybridCache hybridCache,
         IServiceProvider serviceProvider,
         FastTodoOption options)
     {
         _logger = logger;
-        _distributedCache = distributedCache;
         _hybridCache = hybridCache;
         _isRedisCacheProvider = options.CacheType == CacheType.Redis;
 
