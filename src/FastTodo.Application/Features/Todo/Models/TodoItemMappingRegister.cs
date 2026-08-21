@@ -1,3 +1,4 @@
+using FastTodo.Domain.Entities;
 using FastTodo.Domain.Entities.Mongo;
 using FastTodo.Domain.Shared;
 using Mapster;
@@ -8,6 +9,8 @@ public class TodoItemMappingRegister : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
+        config.NewConfig<TodoItem, TodoItemDto>();
+
         config.NewConfig<TodoItemSchema, TodoItemDto>()
             .Map(dest => dest.Id, src => src.TaskId);
 
