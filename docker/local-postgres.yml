@@ -92,15 +92,20 @@ services:
       - mongo1
       - mongo2
       - mongo3
-    networks:
-      - fasttodo_network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://$${ME_CONFIG_BASICAUTH_USERNAME}:$${ME_CONFIG_BASICAUTH_PASSWORD}@localhost:8081/ || exit 1"]
+      interval: 10s
+      retries: 10
+      start_period: 20s
     ports:
       - 8081:8081
-    healthcheck:
-      test:  wget --quiet --tries=3 --spider http://admin:admin123@10.10.10.60:8081 || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    networks:
+      - fasttodo_network
+    # healthcheck:
+    #   test:  wget --quiet --tries=3 --spider http://admin:admin123@10.10.10.60:8081 || exit 1
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
     restart: unless-stopped
 
 volumes:
