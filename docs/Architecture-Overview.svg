@@ -38,9 +38,9 @@
 <path d="M755,575 L755,540" fill="none" stroke="#555555" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar-gray)"/>
 <path d="M885,575 L885,540" fill="none" stroke="#555555" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar-gray)"/>
 <path d="M30,670 H60" stroke="#b85450" stroke-width="1.5" marker-end="url(#ar-red)"/><text x="68" y="674" font-size="12" fill="#333">Request</text>
-<path d="M140,670 H170" stroke="#82b366" stroke-width="1.5" marker-end="url(#ar-green)"/><text x="178" y="674" font-size="12" fill="#333">Write</text>
-<path d="M235,670 H265" stroke="#6c8ebf" stroke-width="1.5" marker-end="url(#ar-blue)"/><text x="273" y="674" font-size="12" fill="#333">Read / cache</text>
-<path d="M375,670 H405" stroke="#d79b00" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar-orange)"/><text x="413" y="674" font-size="12" fill="#333">Relations</text>
-<path d="M485,670 H515" stroke="#9673a6" stroke-width="1.5" marker-end="url(#ar-purple)"/><text x="523" y="674" font-size="12" fill="#333">Identity</text>
-<path d="M590,670 H620" stroke="#555555" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar-gray)"/><text x="628" y="674" font-size="12" fill="#333">Tooling</text>
+<path d="M140,670 H170" stroke="#82b366" stroke-width="1.5" marker-end="url(#ar-green)"/><text x="178" y="674" font-size="12" fill="#333">Primary data</text>
+<path d="M270,670 H300" stroke="#6c8ebf" stroke-width="1.5" marker-end="url(#ar-blue)"/><text x="308" y="674" font-size="12" fill="#333">Master data</text>
+<path d="M395,670 H425" stroke="#d79b00" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar-orange)"/><text x="433" y="674" font-size="12" fill="#333">Bridge data</text>
+<path d="M520,670 H550" stroke="#9673a6" stroke-width="1.5" marker-end="url(#ar-purple)"/><text x="558" y="674" font-size="12" fill="#333">Identity</text>
+<path d="M625,670 H655" stroke="#555555" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar-gray)"/><text x="663" y="674" font-size="12" fill="#333">Tooling</text>
 </svg>
