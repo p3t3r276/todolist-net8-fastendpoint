@@ -7,6 +7,8 @@ COPY ["src/Host/FastTodo.API/FastTodo.API.csproj", "Host/FastTodo.API/"]
 COPY ["src/Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
 COPY ["src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
 COPY ["src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj", "Persistence/SQLite/"]
+COPY ["src/Persistence/Redis/FastTodo.Persistence.Redis.csproj", "Persistence/Redis/"]
+COPY ["src/Persistence/Mongo/FastTodo.Persistence.Mongo.csproj", "Persistence/Mongo/"]
 
 COPY ["src/FastTodo.Domain.Shared/FastTodo.Domain.Shared.csproj", "FastTodo.Domain.Shared/"]
 COPY ["src/FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
@@ -19,7 +21,7 @@ RUN dotnet restore --disable-parallel "Host/FastTodo.API/FastTodo.API.csproj"
 
 COPY ./src .
 
-RUN dotnet tool install --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json || dotnet tool update --global dotnet-ef --version 9.0.0 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+RUN dotnet tool install --global dotnet-ef --version 9.0.4 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json || dotnet tool update --global dotnet-ef --version 9.0.4 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
 
 COPY ./entrypoint.sh .
 

@@ -4,7 +4,7 @@ using FastTodo.Domain.Entities;
 
 namespace FastTodo.Persistence.EF.DbContexts.FastTodoDbContext.Configurations;
 
-public class TaskConfiguration : IEntityTypeConfiguration<TodoItem>
+public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
 {
     public void Configure(EntityTypeBuilder<TodoItem> builder)
     {

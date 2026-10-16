@@ -1,35 +1,66 @@
-# todolist-net8-fastendpoint
+# FastTodo
 A project demonstrating Clean Architecture with EF Core and ASP.NET Core using FastEndpoints
 
 Table of Contents
 =======
 * [Technologies & Patterns](#technologies--patterns)
-* [Solution Structure](#solution-structure)
-* [Features plan](#features)
+* [Solution Structure](#solution--structure)
+* [Features](#features)
 * [API Endpoints](#api-endpoints)
 * [Getting Started](#getting-started)
 * [Configuration](#configuration)
 
 ## Technologies & Patterns
+
 ### Architecture
 
 <p align='center'>
-  <img src='./docs/Architecture.png' />
+  <img src='./docs/Architecture-Overview.svg' alt='FastTodo high-level architecture' />
 </p>
 
-### Database structure
+The diagram is in [`docs/Architecture-Overview.drawio`](./docs/Architecture-Overview.drawio).
 
-<p align='center'>
-  <img src='./docs/Database.png' />
-</p>
+> Only one SQL provider is active at runtime, chosen by `fastTodoOption:SQLProvider` (`SQLServer`, `Postgres` or `SQLite`; the default is SQLite). Redis is used when a `Redis` connection string is set; otherwise an in-memory cache is used.
+
+#### Request Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor C as Client
+    participant N as Nginx
+    participant E as Endpoints
+    participant H as Handler
+    participant Rp as Repository
+    participant Sv as Service
+    participant D as SQL / MongoDB
+    participant R as Redis
+
+    C->>N: HTTP /api/todos
+    N->>E: Forward request
+    E->>H: Send command / query
+    H->>H: Validate request
+    H->>Rp: Read / write todos
+    Rp->>D: SQL (commands, get by id) or MongoDB (my todos)
+    D-->>Rp: Data
+    Rp-->>H: Todos
+    opt List my todos
+        H->>Sv: Get users
+        Sv->>R: Read cached users
+        R-->>Sv: Users
+        Sv-->>H: Users
+    end
+    H-->>E: Result
+    E-->>C: JSON response
+```
 
 ### Database Providers
 - SQL Server
 - SQLite
 - Postgres
-- MariaDB
-- [Coming soon] Redis
-- [Coming soon] MongoDB
+- [Coming soon] MariaDB
+- Redis
+- MongoDB
 
 ### Backend Stack
 - [.NET](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) `8.0`
@@ -37,14 +68,14 @@ Table of Contents
 - [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) `9.0.0`
 - [MediatR](https://github.com/jbogard/MediatR) `12.4.1`
 - [FluentValidation](https://docs.fluentvalidation.net/en/latest/) `12.0.0`
+- [Nginx](https://nginx.org/)
 
 ### Patterns
 - Generic Repository Pattern with Unit of Work
-- CQRS Pattern with MediatR
+- CQRS Pattern with [MediatR](https://github.com/jbogard/MediatR)
 - Option pattern
 
 ## Solution Structure
-
 | Project | Responsibility |
 |---------|---------------|
 | FastTodo.API | Main entry point. Handles HTTP requests, configures services, and manages API endpoints using FastEndpoints |
@@ -56,6 +87,8 @@ Table of Contents
 | FastTodo.Persistence.EF | Entity Framework Core implementations for SQL Server |
 | FastTodo.Persistence.SQLite | SQLite specific database context and configurations |
 | FastTodo.Persistence.Postgres | PostgreSQL specific database context and configurations |
+| FastTodo.Persistence.Mongo | MongoDB EF Core provider context, query repository and unit of work |
+| FastTodo.Persistence.Redis | Redis / in-memory distributed cache and `ICacheService` implementation |
 | FastTodo.SeedData | Console application for seeding sample data into the database |
 
 ## Features

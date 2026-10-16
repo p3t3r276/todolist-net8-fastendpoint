@@ -37,7 +37,20 @@ dotnet ef database update `
 ```
 
 ## Deploy database with API
-1. Update .env file
+### 1. Setup hostnames in enviroments
+```bash
+# macOS / Linux
+sudo sh -c 'echo "127.0.0.1 mongo1\n127.0.0.1 mongo2\n127.0.0.1 mongo3" >> /etc/hosts'
+```
+
+On `Windows`, edit C:\Windows\System32\drivers\etc\hosts as Administrator and add:
+```
+127.0.0.1   mongo1
+127.0.0.1   mongo2
+127.0.0.1   mongo3
+```
+
+### 2. Update .env file
 ```env
 DB_CONNECTION_STRING=
 DB_PROJECT=
@@ -47,19 +60,44 @@ IDENTITY_PROJECT=
 IDENTITY_CONTEXT=
 SQLProvider=
 ASPNETCORE_ENVIRONMENT=
+
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DATABSE=
+PGADMIN_DEFAULT_EMAIL=
+PGADMIN_DEFAULT_PASSWORD=
+
+REDIS_PASSWORD=
+REDIS_DATABASES=
+REDIS_PORT=
+
+MONGO_INITDB_ROOT_USERNAME=
+MONGO_INITDB_ROOT_PASSWORD=
+MONGODB_CONNECTION_STRING=
+MONGODB_DATABASE=
+MONGODB_PROJECT=
+MONGODB_CONTEXT=
+
+ME_CONFIG_MONGODB_SERVER=
+ME_CONFIG_MONGODB_ENABLE_ADMIN=
+ME_CONFIG_MONGODB_ADMINUSERNAME=
+ME_CONFIG_MONGODB_ADMINPASSWORD=
+ME_CONFIG_BASICAUTH_USERNAME=
+ME_CONFIG_BASICAUTH_PASSWORD=
+
 ```
 or run docker-compose file based on database
 
-### For MSSQL
+### For local envrironemnt
 ```bash
 docker compose -f dev-mssql.yml up -d --build
 
 docker compose -f dev-mssql.yml down -rmi local --volumes
 ```
 
-### For Postgres
+### For Dev environment
 ```bash
 docker compose -f dev-postgres.yml up -d --build
 
-docker compose -f dev-postgres.yml down -rmi local --volumes
+docker compose -f dev-postgres.yml down --rmi local --volumes
 ```

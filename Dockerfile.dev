@@ -8,6 +8,8 @@ COPY ["src/FastTodo.Domain/FastTodo.Domain.csproj", "FastTodo.Domain/"]
 COPY ["src/Persistence/Postgres/FastTodo.Persistence.Postgres.csproj", "Persistence/Postgres/"]
 COPY ["src/Persistence/SQLite/FastTodo.Persistence.SQLite.csproj", "Persistence/SQLite/"]
 COPY ["src/Persistence/EF/FastTodo.Persistence.EF.csproj", "Persistence/EF/"]
+COPY ["src/Persistence/Redis/FastTodo.Persistence.Redis.csproj", "Persistence/Redis/"]
+COPY ["src/Persistence/Mongo/FastTodo.Persistence.Mongo.csproj", "Persistence/Mongo/"]
 
 COPY ["src/Infrastructure/Services/FastTodo.Infrastructure.csproj", "Infrastructure/Services/"]
 COPY ["src/FastTodo.Application/FastTodo.Application.csproj", "FastTodo.Application/"]
@@ -28,7 +30,7 @@ FROM build AS publish
 RUN dotnet publish "Host/FastTodo.API/FastTodo.API.csproj" -c Release --no-restore -o app/publish
 
 # Stage 3: Final (Runtime)
-FROM build AS runtime
+FROM mcr.microsoft.com/dotnet/runtime:8.0 AS runtime
 WORKDIR /app
 ENV ASPNETCORE_HTTP_PORTS=8080;8081
 EXPOSE 8080 8081

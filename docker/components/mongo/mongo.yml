@@ -1,0 +1,97 @@
+services:
+  mongo-keyfile:
+    image: mongo:7
+    entrypoint: ["bash", "-c"]
+    command: 
+      - |
+        if [ ! -f /keyfile/mongo.key ]; then
+          head -c 756 /dev/urandom | base64 > /keyfile/mongo.key
+        fi
+        chmod 400 /keyfile/mongo.key
+        chown 999:999 /keyfile/mongo.key
+    volumes:
+      - mongo-keyfile:/keyfile
+
+  mongo1:
+    image: mongo:7.0
+    container_name: mongo1
+    hostname: mongo1
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongo1_data:/data/db
+      - mongo-keyfile:/data/keyfile:ro
+    depends_on:
+      mongo-keyfile: { condition: service_completed_successfully }
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/keyfile/mongo.key"]
+    healthcheck: &mongo-health
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      retries: 20
+    networks:
+      - fasttodo_network
+
+  mongo2:
+    image: mongo:7.0
+    container_name: mongo2
+    hostname: mongo2
+    restart: unless-stopped
+    volumes:
+      - mongo2_data:/data/db
+      - mongo-keyfile:/data/keyfile:ro
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/keyfile/mongo.key"]
+    depends_on:
+      mongo-keyfile: { condition: service_completed_successfully }
+    healthcheck: *mongo-health
+    networks:
+      - fasttodo_network
+
+  mongo3:
+    image: mongo:7.0
+    container_name: mongo3
+    hostname: mongo3
+    restart: unless-stopped
+    volumes:
+      - mongo3_data:/data/db
+      - mongo-keyfile:/data/keyfile:ro
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/keyfile/mongo.key"]
+    depends_on:
+      mongo-keyfile: { condition: service_completed_successfully }
+    healthcheck: *mongo-health
+    networks:
+      - fasttodo_network
+
+  mongo-init:
+    image: mongo:7
+    depends_on:
+      mongo1: { condition: service_healthy }
+      mongo2: { condition: service_healthy }
+      mongo3: { condition: service_healthy }
+    restart: "no"
+    entrypoint: ["bash", "-c"]
+    command: 
+      - |
+        mongosh --host mongo1 -u "${MONGO_ROOT_USER}" -p "${MONGO_ROOT_PASSWORD}" --authenticationDatabase admin --quiet --eval '
+          try {
+            rs.status();
+            print("Replica set already initialized, skipping.");
+          } catch (e) {
+            rs.initiate({
+              _id: "rs0",
+              members: [
+                { _id: 0, host: "mongo1:27017", priority: 2 },
+                { _id: 1, host: "mongo2:27017", priority: 1 },
+                { _id: 2, host: "mongo3:27017", priority: 1 },
+              ],
+            });
+            print("Replica set initialized.");
+          }'
+    networks: [fasttodo_network]
+
+volumes:
+  mongo-keyfile:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:

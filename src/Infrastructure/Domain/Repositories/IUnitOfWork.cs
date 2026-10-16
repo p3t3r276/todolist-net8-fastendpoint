@@ -1,5 +1,6 @@
 using FastTodo.Infrastructure.Domain.Entities;
 using FastTodo.Infrastructure.Domain.Repositories.Builder;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
 
 namespace FastTodo.Infrastructure.Domain.Repositories;
@@ -18,7 +19,7 @@ public interface IUnitOfWork
     void UpdateRange<TEntity>(
         IEnumerable<TEntity> entities) where TEntity : class;
 
-    void Remove<TEntity>(TEntity entity) where TEntity : class;
+    EntityEntry<TEntity> Remove<TEntity>(TEntity entity) where TEntity : class;
 
     void RemoveRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class;
 
