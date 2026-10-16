@@ -17,18 +17,15 @@ services:
     container_name: mongo1
     hostname: mongo1
     restart: unless-stopped
-    ports:
-      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
     volumes:
       - mongo1_data:/data/db
       - mongo-keyfile:/data/keyfile:ro
-      # - ./init-replicaset.js:/docker-entrypoint-initdb.d/init-replicaset.js:ro
     depends_on:
       mongo-keyfile: { condition: service_completed_successfully }
-    # command: mongod --replSet rs0 --bind_ip_all --keyFile /data/keyfile --port 27017
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/keyfile/mongo.key"]
     healthcheck: &mongo-health
       test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
       interval: 5s
@@ -41,15 +38,10 @@ services:
     container_name: mongo2
     hostname: mongo2
     restart: unless-stopped
-    ports:
-      - "27018:27018"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
     volumes:
       - mongo2_data:/data/db
       - mongo-keyfile:/data/keyfile:ro
-    # command: mongod --replSet rs0 --bind_ip_all --keyFile /data/keyfile --port 27018
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/keyfile/mongo.key"]
     depends_on:
       mongo-keyfile: { condition: service_completed_successfully }
     healthcheck: *mongo-health
@@ -61,15 +53,10 @@ services:
     container_name: mongo3
     hostname: mongo3
     restart: unless-stopped
-    ports:
-      - "27019:27019"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
     volumes:
       - mongo3_data:/data/db
       - mongo-keyfile:/data/keyfile:ro
-    # command: mongod --replSet rs0 --bind_ip_all --keyFile /data/keyfile --port 27019
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/keyfile/mongo.key"]
     depends_on:
       mongo-keyfile: { condition: service_completed_successfully }
     healthcheck: *mongo-health
@@ -95,8 +82,8 @@ services:
               _id: "rs0",
               members: [
                 { _id: 0, host: "mongo1:27017", priority: 2 },
-                { _id: 1, host: "mongo2:27018", priority: 1 },
-                { _id: 2, host: "mongo3:27019", priority: 1 },
+                { _id: 1, host: "mongo2:27017", priority: 1 },
+                { _id: 2, host: "mongo3:27017", priority: 1 },
               ],
             });
             print("Replica set initialized.");
