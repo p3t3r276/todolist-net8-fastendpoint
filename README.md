@@ -18,6 +18,123 @@ Table of Contents
   <img src='./docs/Architecture.png' />
 </p>
 
+#### Component Diagram
+
+The solution follows Clean Architecture: dependencies point inward, the API host only talks to the Application layer through MediatR, and every storage technology is isolated in its own `Persistence.*` project selected at startup via `FastTodoOption`.
+
+```mermaid
+flowchart TB
+    client([Client / Browser])
+
+    subgraph Gateway["Gateway"]
+        nginx["Nginx reverse proxy<br/>:80 → api:8080<br/>:5050 → pgAdmin"]
+    end
+
+    subgraph Host["Host layer"]
+        api["<b>FastTodo.API</b><br/>FastEndpoints · API Versioning<br/>Swagger · Serilog<br/>RequestLoggerProcessor"]
+        seed["<b>FastTodo.SeedData</b><br/>Console app (Bogus)"]
+    end
+
+    subgraph App["Application layer"]
+        application["<b>FastTodo.Application</b><br/>MediatR commands &amp; queries<br/>FluentValidation · Mapster<br/>UserService · ASP.NET Identity API"]
+    end
+
+    subgraph Infra["Infrastructure layer"]
+        infra["<b>FastTodo.Infrastructure</b><br/>DI wiring · provider switch<br/>EfRepository · EFUnitOfWork<br/>ValidationBehavior · UserContext"]
+        infraDomain["<b>FastTodo.Infrastructure.Domain</b><br/>IRepository · IUnitOfWork<br/>IMongoQueryRepository · ICacheService<br/>BaseDbContext · Options"]
+    end
+
+    subgraph Persistence["Persistence layer"]
+        ef["<b>Persistence.EF</b><br/>SQL Server + Identity"]
+        pg["<b>Persistence.Postgres</b><br/>PostgreSQL + Identity"]
+        sqlite["<b>Persistence.SQLite</b><br/>SQLite"]
+        mongo["<b>Persistence.Mongo</b><br/>MongoQueryRepository<br/>MongoUnitOfWork"]
+        redis["<b>Persistence.Redis</b><br/>CacheService · HybridCache"]
+    end
+
+    subgraph Core["Domain layer"]
+        domain["<b>FastTodo.Domain</b><br/>TodoItem · TodoItemSchema · AppUser"]
+        shared["<b>FastTodo.Domain.Shared</b><br/>Constants · PaginatedList<br/>Extensions"]
+    end
+
+    subgraph Stores["Data stores"]
+        sqlDb[("SQL Server /<br/>PostgreSQL /<br/>SQLite")]
+        mongoDb[("MongoDB<br/>replica set")]
+        redisDb[("Redis /<br/>in-memory cache")]
+    end
+
+    client --> nginx --> api
+    api --> application
+    seed --> infra
+    application --> infra
+    application --> domain
+    infra --> infraDomain
+    infra -- "registers by FastTodoOption" --> Persistence
+    Persistence -- "implements interfaces,<br/>maps entities" --> Core
+    domain --> infraDomain
+    infraDomain --> shared
+
+    ef & pg & sqlite --> sqlDb
+    mongo --> mongoDb
+    redis --> redisDb
+```
+
+> Only one relational provider is registered at runtime (`fastTodoOption:SQLProvider` = `SQLServer`, `Postgres` or `SQLite`, default SQLite). MongoDB is always registered for read models, and Redis is used when a `Redis` connection string is present, otherwise an in-memory distributed cache.
+
+#### Request Flow
+
+Write operations go through EF Core (`IRepository` + `IUnitOfWork`) against the configured relational database, while the "my todos" listing reads from MongoDB and enriches the result with users cached in Redis.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor C as Client
+    participant N as Nginx
+    participant E as FastEndpoints endpoint
+    participant M as MediatR
+    participant V as ValidationBehavior
+    participant H as Handler
+    participant R as EF Repository / UnitOfWork
+    participant Q as MongoQueryRepository
+    participant K as CacheService (Redis)
+
+    C->>N: HTTP /api/todos (Bearer token)
+    N->>E: proxy_pass api:8080
+    E->>E: RequestLoggerProcessor (pre-processor)
+    E->>M: mediator.Send(request)
+    M->>V: pipeline behavior
+    V->>V: FluentValidation validators
+    V->>H: next()
+    alt Command (create / update / status / delete) or GetById
+        H->>R: Add / Update / Delete / FindAsync
+        R-->>H: TodoItem
+        H->>R: SaveChangesAsync
+    else Query GetMyTodos
+        H->>Q: FindAllAsync(createdBy = current user)
+        Q-->>H: PaginatedList of TodoItemDto
+        H->>K: Get users list (cache)
+        K-->>H: UserResponse[]
+    end
+    H-->>E: DTO (Mapster)
+    E-->>C: JSON response
+```
+
+#### Deployment (Docker Compose)
+
+```mermaid
+flowchart LR
+    user([User]) -->|":80"| nginx[nginx<br/>api_gateway]
+    user -->|":5050"| nginx
+    nginx -->|":8080"| api[fasttodo-api]
+    nginx --> admin[pgAdmin / Adminer]
+    migrator[fasttodo-migrator<br/>EF migrations] -->|run once| db[(Postgres / SQL Server)]
+    api -->|depends on migrator| migrator
+    api --> db
+    api --> mongo[(MongoDB replica set)]
+    api --> redis[(Redis)]
+    admin --> db
+```
+
 ### Database Providers
 - SQL Server
 - SQLite
@@ -51,6 +168,8 @@ Table of Contents
 | FastTodo.Persistence.EF | Entity Framework Core implementations for SQL Server |
 | FastTodo.Persistence.SQLite | SQLite specific database context and configurations |
 | FastTodo.Persistence.Postgres | PostgreSQL specific database context and configurations |
+| FastTodo.Persistence.Mongo | MongoDB EF Core provider context, query repository and unit of work |
+| FastTodo.Persistence.Redis | Redis / in-memory distributed cache and `ICacheService` implementation |
 | FastTodo.SeedData | Console application for seeding sample data into the database |
 
 ## Features
