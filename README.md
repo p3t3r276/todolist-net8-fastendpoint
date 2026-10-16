@@ -20,102 +20,43 @@ Table of Contents
 
 #### Component Diagram
 
-The solution follows Clean Architecture: dependencies point inward, the API host only talks to the Application layer through MediatR, and every storage technology is isolated in its own `Persistence.*` project selected at startup via `FastTodoOption`.
+<p align='center'>
+  <img src='./docs/Architecture-Overview.svg' alt='FastTodo high-level architecture' />
+</p>
 
-```mermaid
-flowchart TB
-    client([Client / Browser])
+Requests enter through Nginx and reach the FastTodo.API endpoints. The application layer writes todos to the configured SQL database and reads the user's todo list from MongoDB. Redis caches user data, and Identity stores accounts in the SQL database. The Migrator and SeedData tools prepare the SQL schema and sample data.
 
-    subgraph Gateway["Gateway"]
-        nginx["Nginx reverse proxy<br/>:80 → api:8080<br/>:5050 → pgAdmin"]
-    end
-
-    subgraph Host["Host layer"]
-        api["<b>FastTodo.API</b><br/>FastEndpoints · API Versioning<br/>Swagger · Serilog<br/>RequestLoggerProcessor"]
-        seed["<b>FastTodo.SeedData</b><br/>Console app (Bogus)"]
-    end
-
-    subgraph App["Application layer"]
-        application["<b>FastTodo.Application</b><br/>MediatR commands &amp; queries<br/>FluentValidation · Mapster<br/>UserService · ASP.NET Identity API"]
-    end
-
-    subgraph Infra["Infrastructure layer"]
-        infra["<b>FastTodo.Infrastructure</b><br/>DI wiring · provider switch<br/>EfRepository · EFUnitOfWork<br/>ValidationBehavior · UserContext"]
-        infraDomain["<b>FastTodo.Infrastructure.Domain</b><br/>IRepository · IUnitOfWork<br/>IMongoQueryRepository · ICacheService<br/>BaseDbContext · Options"]
-    end
-
-    subgraph Persistence["Persistence layer"]
-        ef["<b>Persistence.EF</b><br/>SQL Server + Identity"]
-        pg["<b>Persistence.Postgres</b><br/>PostgreSQL + Identity"]
-        sqlite["<b>Persistence.SQLite</b><br/>SQLite"]
-        mongo["<b>Persistence.Mongo</b><br/>MongoQueryRepository<br/>MongoUnitOfWork"]
-        redis["<b>Persistence.Redis</b><br/>CacheService · HybridCache"]
-    end
-
-    subgraph Core["Domain layer"]
-        domain["<b>FastTodo.Domain</b><br/>TodoItem · TodoItemSchema · AppUser"]
-        shared["<b>FastTodo.Domain.Shared</b><br/>Constants · PaginatedList<br/>Extensions"]
-    end
-
-    subgraph Stores["Data stores"]
-        sqlDb[("SQL Server /<br/>PostgreSQL /<br/>SQLite")]
-        mongoDb[("MongoDB<br/>replica set")]
-        redisDb[("Redis /<br/>in-memory cache")]
-    end
-
-    client --> nginx --> api
-    api --> application
-    seed --> infra
-    application --> infra
-    application --> domain
-    infra --> infraDomain
-    infra -- "registers by FastTodoOption" --> Persistence
-    Persistence -- "implements interfaces,<br/>maps entities" --> Core
-    domain --> infraDomain
-    infraDomain --> shared
-
-    ef & pg & sqlite --> sqlDb
-    mongo --> mongoDb
-    redis --> redisDb
-```
-
-> Only one relational provider is registered at runtime (`fastTodoOption:SQLProvider` = `SQLServer`, `Postgres` or `SQLite`, default SQLite). MongoDB is always registered for read models, and Redis is used when a `Redis` connection string is present, otherwise an in-memory distributed cache.
+> Only one SQL provider is active at runtime, chosen by `fastTodoOption:SQLProvider` (`SQLServer`, `Postgres` or `SQLite`; the default is SQLite). Redis is used when a `Redis` connection string is set; otherwise an in-memory cache is used.
 
 #### Request Flow
 
-Write operations go through EF Core (`IRepository` + `IUnitOfWork`) against the configured relational database, while the "my todos" listing reads from MongoDB and enriches the result with users cached in Redis.
+Writes and single-item reads use the SQL database. The "my todos" list is read from MongoDB, and user details come from the Redis cache.
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor C as Client
     participant N as Nginx
-    participant E as FastEndpoints endpoint
-    participant M as MediatR
-    participant V as ValidationBehavior
-    participant H as Handler
-    participant R as EF Repository / UnitOfWork
-    participant Q as MongoQueryRepository
-    participant K as CacheService (Redis)
+    participant E as Endpoints
+    participant A as Application
+    participant S as SQL Database
+    participant M as MongoDB
+    participant R as Redis
 
-    C->>N: HTTP /api/todos (Bearer token)
-    N->>E: proxy_pass api:8080
-    E->>E: RequestLoggerProcessor (pre-processor)
-    E->>M: mediator.Send(request)
-    M->>V: pipeline behavior
-    V->>V: FluentValidation validators
-    V->>H: next()
-    alt Command (create / update / status / delete) or GetById
-        H->>R: Add / Update / Delete / FindAsync
-        R-->>H: TodoItem
-        H->>R: SaveChangesAsync
-    else Query GetMyTodos
-        H->>Q: FindAllAsync(createdBy = current user)
-        Q-->>H: PaginatedList of TodoItemDto
-        H->>K: Get users list (cache)
-        K-->>H: UserResponse[]
+    C->>N: HTTP /api/todos
+    N->>E: Forward request
+    E->>A: Send command / query
+    A->>A: Validate request
+    alt Create, update, delete, get by id
+        A->>S: Read / write todo
+        S-->>A: Todo
+    else List my todos
+        A->>M: Read my todos
+        M-->>A: Todo page
+        A->>R: Get cached users
+        R-->>A: Users
     end
-    H-->>E: DTO (Mapster)
+    A-->>E: Result
     E-->>C: JSON response
 ```
 
@@ -127,7 +68,7 @@ flowchart LR
     user -->|":5050"| nginx
     nginx -->|":8080"| api[fasttodo-api]
     nginx --> admin[pgAdmin / Adminer]
-    migrator[fasttodo-migrator<br/>EF migrations] -->|run once| db[(Postgres / SQL Server)]
+    migrator[fasttodo-migrator<br/>schema setup] -->|run once| db[(Postgres / SQL Server)]
     api -->|depends on migrator| migrator
     api --> db
     api --> mongo[(MongoDB replica set)]

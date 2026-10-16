@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="470" viewBox="0 135 960 470" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="ar-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b85450"/></marker>
+    <marker id="ar-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#82b366"/></marker>
+    <marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6c8ebf"/></marker>
+    <marker id="ar-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d79b00"/></marker>
+    <marker id="ar-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+
+  <rect width="960" height="610" fill="#ffffff"/>
+
+  <!-- Client -->
+  <rect x="30" y="250" width="110" height="50" rx="10" fill="#f5f5f5" stroke="#666"/>
+  <text x="85" y="280" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Client</text>
+
+  <!-- Nginx -->
+  <rect x="180" y="225" width="130" height="100" fill="#fff" stroke="#6c8ebf"/>
+  <rect x="180" y="225" width="130" height="28" fill="#dae8fc" stroke="#6c8ebf"/>
+  <text x="245" y="244" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Nginx</text>
+  <text x="245" y="282" text-anchor="middle" font-size="12" fill="#333">Reverse proxy</text>
+  <text x="245" y="300" text-anchor="middle" font-size="12" fill="#333">API gateway</text>
+
+  <!-- MongoDB -->
+  <rect x="520" y="440" width="130" height="112" fill="#fff" stroke="#b85450"/>
+  <rect x="520" y="440" width="130" height="28" fill="#f8cecc" stroke="#b85450"/>
+  <text x="585" y="459" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">MongoDB</text>
+  <path d="M585,478 C602,494 604,518 587,536 L585,546 L583,536 C566,518 568,494 585,478 Z" fill="#4db33d"/>
+  <path d="M585,482 L585,544" stroke="#3f8f32" stroke-width="1.5"/>
+
+  <!-- Redis -->
+  <rect x="150" y="420" width="130" height="112" fill="#fff" stroke="#b85450"/>
+  <rect x="150" y="420" width="130" height="28" fill="#f8cecc" stroke="#b85450"/>
+  <text x="215" y="439" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Redis</text>
+  <g>
+    <polygon points="185,502 215,510 245,502 245,507 215,515 185,507" fill="#a41e11"/>
+    <polygon points="185,502 215,494 245,502 215,510" fill="#d82c20"/>
+    <polygon points="185,488 215,496 245,488 245,493 215,501 185,493" fill="#a41e11"/>
+    <polygon points="185,488 215,480 245,488 215,496" fill="#d82c20"/>
+    <polygon points="185,474 215,482 245,474 245,479 215,487 185,479" fill="#a41e11"/>
+    <polygon points="185,474 215,466 245,474 215,482" fill="#d82c20"/>
+    <polygon points="215,470 218,474 215,478 212,474" fill="#fff"/>
+  </g>
+
+  <!-- FastTodo.API container -->
+  <rect x="360" y="170" width="300" height="230" fill="#fff" stroke="#d6b656" stroke-width="1.5"/>
+  <rect x="360" y="170" width="300" height="28" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"/>
+  <text x="510" y="189" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">FastTodo.API</text>
+
+  <rect x="380" y="215" width="110" height="48" fill="#fff" stroke="#000"/>
+  <text x="435" y="243" text-anchor="middle" font-size="13" fill="#000">Endpoints</text>
+  <rect x="380" y="320" width="110" height="48" fill="#fff" stroke="#000"/>
+  <text x="435" y="348" text-anchor="middle" font-size="13" fill="#000">Application</text>
+  <rect x="530" y="215" width="110" height="48" fill="#fff" stroke="#000"/>
+  <text x="585" y="243" text-anchor="middle" font-size="13" fill="#000">Identity</text>
+  <rect x="530" y="320" width="110" height="48" fill="#fff" stroke="#000"/>
+  <text x="585" y="348" text-anchor="middle" font-size="13" fill="#000">Persistence</text>
+
+  <!-- SQL database -->
+  <rect x="720" y="150" width="200" height="300" fill="#fff" stroke="#666"/>
+  <rect x="720" y="150" width="200" height="28" fill="#f5f5f5" stroke="#666"/>
+  <text x="820" y="169" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">SQL Database</text>
+  <path d="M770,200 H870 Q860,226 870,252 H770 Q780,226 770,200 Z" fill="#dae8fc" stroke="#6c8ebf"/>
+  <text x="820" y="230" text-anchor="middle" font-size="12" fill="#333">Identity tables</text>
+  <path d="M770,290 H870 Q860,316 870,342 H770 Q780,316 770,290 Z" fill="#d5e8d4" stroke="#82b366"/>
+  <text x="820" y="320" text-anchor="middle" font-size="12" fill="#333">Todo tables</text>
+  <path d="M794,370 V404 A26,8 0 0 0 846,404 V370" fill="#3c78d8" stroke="#2a5aa8"/>
+  <ellipse cx="820" cy="370" rx="26" ry="8" fill="#6aa84f" stroke="#38761d"/>
+  <text x="820" y="396" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">SQL</text>
+  <text x="820" y="434" text-anchor="middle" font-size="11" fill="#555">SQL Server · PostgreSQL · SQLite</text>
+
+  <!-- Tooling -->
+  <rect x="700" y="490" width="110" height="58" fill="#fff" stroke="#d79b00"/>
+  <rect x="700" y="490" width="110" height="24" fill="#ffe6cc" stroke="#d79b00"/>
+  <text x="755" y="507" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">Migrator</text>
+  <text x="755" y="535" text-anchor="middle" font-size="11" fill="#333">Schema setup</text>
+  <rect x="830" y="490" width="110" height="58" fill="#fff" stroke="#d79b00"/>
+  <rect x="830" y="490" width="110" height="24" fill="#ffe6cc" stroke="#d79b00"/>
+  <text x="885" y="507" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">SeedData</text>
+  <text x="885" y="535" text-anchor="middle" font-size="11" fill="#333">Sample data</text>
+
+  <!-- Arrows -->
+  <g fill="none" stroke-width="1.5">
+    <path d="M140,275 H178" stroke="#555" marker-end="url(#ar-gray)"/>
+    <path d="M310,275 H340 V239 H378" stroke="#b85450" marker-end="url(#ar-red)"/>
+    <path d="M435,263 V318" stroke="#b85450" marker-end="url(#ar-red)"/>
+    <path d="M490,239 H528" stroke="#b85450" marker-end="url(#ar-red)"/>
+    <path d="M490,334 H528" stroke="#82b366" marker-end="url(#ar-green)"/>
+    <path d="M490,352 H528" stroke="#6c8ebf" marker-end="url(#ar-blue)"/>
+    <path d="M380,344 H330 V476 H282" stroke="#6c8ebf" marker-start="url(#ar-blue)" marker-end="url(#ar-blue)"/>
+    <path d="M585,368 V438" stroke="#6c8ebf" marker-end="url(#ar-blue)"/>
+    <path d="M640,226 H768" stroke="#82b366" marker-end="url(#ar-green)"/>
+    <path d="M640,244 H768" stroke="#6c8ebf" marker-end="url(#ar-blue)"/>
+    <path d="M640,330 H700 V310 H768" stroke="#82b366" marker-end="url(#ar-green)"/>
+    <path d="M640,346 H712 V326 H768" stroke="#6c8ebf" marker-end="url(#ar-blue)"/>
+    <path d="M755,490 V452" stroke="#d79b00" stroke-dasharray="6 4" marker-end="url(#ar-orange)"/>
+    <path d="M885,490 V452" stroke="#d79b00" stroke-dasharray="6 4" marker-end="url(#ar-orange)"/>
+  </g>
+
+  <!-- Legend -->
+  <g font-size="12" fill="#333" stroke-width="1.5">
+    <path d="M30,585 H60" stroke="#b85450" marker-end="url(#ar-red)"/><text x="68" y="589" stroke="none">Request</text>
+    <path d="M140,585 H170" stroke="#82b366" marker-end="url(#ar-green)"/><text x="178" y="589" stroke="none">Write</text>
+    <path d="M235,585 H265" stroke="#6c8ebf" marker-end="url(#ar-blue)"/><text x="273" y="589" stroke="none">Read / cache</text>
+    <path d="M375,585 H405" stroke="#d79b00" stroke-dasharray="6 4" marker-end="url(#ar-orange)"/><text x="413" y="589" stroke="none">Tooling</text>
+  </g>
+</svg>
