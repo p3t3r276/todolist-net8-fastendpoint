@@ -24,7 +24,7 @@ Table of Contents
   <img src='./docs/Architecture-Overview.svg' alt='FastTodo high-level architecture' />
 </p>
 
-Requests enter through Nginx and reach the FastTodo.API endpoints. The application layer writes todos to the primary tables of the configured SQL database and reads the user's todo list from MongoDB. Redis caches user data. Identity reads users from the master tables and links them to roles, claims and logins through the bridge tables. The Migrator and SeedData tools prepare the SQL schema and sample data.
+Requests enter through Nginx and reach the FastTodo.API endpoints. The Service layer handles each request and uses the Repository, which writes to the primary tables, links records through the bridge tables and reads from the master tables of the configured SQL database. The Repository also works with MongoDB. Redis caches data for the Service, and Identity stores accounts in the Identity tables. The Migrator and SeedData tools prepare the SQL schema and sample data.
 
 The diagram source is [`docs/Architecture-Overview.drawio`](./docs/Architecture-Overview.drawio). Open it in [draw.io](https://app.diagrams.net/) or the VS Code *Draw.io Integration* extension to edit it, then export it over `docs/Architecture-Overview.svg`.
 
@@ -40,7 +40,7 @@ sequenceDiagram
     actor C as Client
     participant N as Nginx
     participant E as Endpoints
-    participant A as Application
+    participant A as Service
     participant S as SQL Database
     participant M as MongoDB
     participant R as Redis
