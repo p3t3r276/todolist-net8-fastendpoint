@@ -24,7 +24,9 @@ Table of Contents
   <img src='./docs/Architecture-Overview.svg' alt='FastTodo high-level architecture' />
 </p>
 
-Requests enter through Nginx and reach the FastTodo.API endpoints. The application layer writes todos to the configured SQL database and reads the user's todo list from MongoDB. Redis caches user data, and Identity stores accounts in the SQL database. The Migrator and SeedData tools prepare the SQL schema and sample data.
+Requests enter through Nginx and reach the FastTodo.API endpoints. The application layer writes todos to the primary tables of the configured SQL database and reads the user's todo list from MongoDB. Redis caches user data. Identity reads users from the master tables and links them to roles, claims and logins through the bridge tables. The Migrator and SeedData tools prepare the SQL schema and sample data.
+
+The diagram source is [`docs/Architecture-Overview.drawio`](./docs/Architecture-Overview.drawio). Open it in [draw.io](https://app.diagrams.net/) or the VS Code *Draw.io Integration* extension to edit it, then export it over `docs/Architecture-Overview.svg`.
 
 > Only one SQL provider is active at runtime, chosen by `fastTodoOption:SQLProvider` (`SQLServer`, `Postgres` or `SQLite`; the default is SQLite). Redis is used when a `Redis` connection string is set; otherwise an in-memory cache is used.
 
