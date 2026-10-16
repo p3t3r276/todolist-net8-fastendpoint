@@ -66,7 +66,7 @@ public class MongoUnitOfWork(
         {
             var rowAffectCount = await _context.SaveChangesAsync(cancellationToken);
 
-            if (rowAffectCount > 0)
+            if (rowAffectCount <= 0)
             {
                 throw new Exception("No Record Save To Db");
             }
@@ -86,7 +86,7 @@ public class MongoUnitOfWork(
         }
     }
 
-    // TODO: Check where to keep this method
+    // TODO: Check whether to keep this method
     private async Task EnsureCreatedIndex<TEntity>()
     {
         var entityType = _context.Model.FindEntityType(typeof(TEntity));

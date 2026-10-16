@@ -37,7 +37,20 @@ dotnet ef database update `
 ```
 
 ## Deploy database with API
-1. Update .env file
+### 1. Setup hostnames in enviroments
+```bash
+# macOS / Linux
+sudo sh -c 'echo "127.0.0.1 mongo1\n127.0.0.1 mongo2\n127.0.0.1 mongo3" >> /etc/hosts'
+```
+
+On `Windows`, edit C:\Windows\System32\drivers\etc\hosts as Administrator and add:
+```
+127.0.0.1   mongo1
+127.0.0.1   mongo2
+127.0.0.1   mongo3
+```
+
+### 2. Update .env file
 ```env
 DB_CONNECTION_STRING=
 DB_PROJECT=
@@ -86,5 +99,5 @@ docker compose -f dev-mssql.yml down -rmi local --volumes
 ```bash
 docker compose -f dev-postgres.yml up -d --build
 
-docker compose -f dev-postgres.yml down -rmi local --volumes
+docker compose -f dev-postgres.yml down --rmi local --volumes
 ```

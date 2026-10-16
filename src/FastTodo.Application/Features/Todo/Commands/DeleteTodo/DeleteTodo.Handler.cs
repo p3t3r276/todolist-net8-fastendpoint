@@ -27,6 +27,7 @@ public class DeleteTodoHandler(
             {
                 return TypedResults.NoContent();
             }
+            await unitOfWork.SaveChangeAsync(cancellationToken);
             return TypedResults.Ok();
         }
         catch(Exception ex)
