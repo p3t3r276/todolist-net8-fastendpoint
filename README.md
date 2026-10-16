@@ -15,8 +15,44 @@ Table of Contents
 ### Architecture
 
 <p align='center'>
-  <img src='./docs/Architecture.png' />
+  <img src='./docs/Architecture-Overview.svg' alt='FastTodo high-level architecture' />
 </p>
+
+The diagram is in [`docs/Architecture-Overview.drawio`](./docs/Architecture-Overview.drawio).
+
+> Only one SQL provider is active at runtime, chosen by `fastTodoOption:SQLProvider` (`SQLServer`, `Postgres` or `SQLite`; the default is SQLite). Redis is used when a `Redis` connection string is set; otherwise an in-memory cache is used.
+
+#### Request Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor C as Client
+    participant N as Nginx
+    participant E as Endpoints
+    participant H as Handler
+    participant Rp as Repository
+    participant Sv as Service
+    participant D as SQL / MongoDB
+    participant R as Redis
+
+    C->>N: HTTP /api/todos
+    N->>E: Forward request
+    E->>H: Send command / query
+    H->>H: Validate request
+    H->>Rp: Read / write todos
+    Rp->>D: SQL (commands, get by id) or MongoDB (my todos)
+    D-->>Rp: Data
+    Rp-->>H: Todos
+    opt List my todos
+        H->>Sv: Get users
+        Sv->>R: Read cached users
+        R-->>Sv: Users
+        Sv-->>H: Users
+    end
+    H-->>E: Result
+    E-->>C: JSON response
+```
 
 ### Database Providers
 - SQL Server
@@ -51,6 +87,8 @@ Table of Contents
 | FastTodo.Persistence.EF | Entity Framework Core implementations for SQL Server |
 | FastTodo.Persistence.SQLite | SQLite specific database context and configurations |
 | FastTodo.Persistence.Postgres | PostgreSQL specific database context and configurations |
+| FastTodo.Persistence.Mongo | MongoDB EF Core provider context, query repository and unit of work |
+| FastTodo.Persistence.Redis | Redis / in-memory distributed cache and `ICacheService` implementation |
 | FastTodo.SeedData | Console application for seeding sample data into the database |
 
 ## Features
