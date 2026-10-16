@@ -24,7 +24,7 @@ Table of Contents
   <img src='./docs/Architecture-Overview.svg' alt='FastTodo high-level architecture' />
 </p>
 
-Requests enter through Nginx and reach the FastTodo.API endpoints. The Service layer handles each request and uses the Repository, which writes to the primary tables, links records through the bridge tables and reads from the master tables of the configured SQL database. The Repository also works with MongoDB. Redis caches data for the Service, and Identity stores accounts in the Identity tables. The Migrator and SeedData tools prepare the SQL schema and sample data.
+Requests enter through Nginx and reach the FastTodo.API endpoints, which send every command and query to a Handler. The Handler is the only path to the Repository. The Repository writes to the primary tables, links records through the bridge tables and reads from the master tables of the configured SQL database, and also works with MongoDB. For user data, the Handler calls the Service, which reads from the Redis cache and the Identity tables. The Migrator and SeedData tools prepare the SQL schema and sample data.
 
 The diagram source is [`docs/Architecture-Overview.drawio`](./docs/Architecture-Overview.drawio). Open it in [draw.io](https://app.diagrams.net/) or the VS Code *Draw.io Integration* extension to edit it, then export it over `docs/Architecture-Overview.svg`.
 
@@ -32,7 +32,7 @@ The diagram source is [`docs/Architecture-Overview.drawio`](./docs/Architecture-
 
 #### Request Flow
 
-Writes and single-item reads use the SQL database. The "my todos" list is read from MongoDB, and user details come from the Redis cache.
+Every request goes through a Handler before it reaches the Repository. Writes and single-item reads use the SQL database. The "my todos" list is read from MongoDB, and the Handler gets user details from the Service, which uses the Redis cache.
 
 ```mermaid
 sequenceDiagram
@@ -40,25 +40,27 @@ sequenceDiagram
     actor C as Client
     participant N as Nginx
     participant E as Endpoints
-    participant A as Service
-    participant S as SQL Database
-    participant M as MongoDB
+    participant H as Handler
+    participant Rp as Repository
+    participant Sv as Service
+    participant D as SQL / MongoDB
     participant R as Redis
 
     C->>N: HTTP /api/todos
     N->>E: Forward request
-    E->>A: Send command / query
-    A->>A: Validate request
-    alt Create, update, delete, get by id
-        A->>S: Read / write todo
-        S-->>A: Todo
-    else List my todos
-        A->>M: Read my todos
-        M-->>A: Todo page
-        A->>R: Get cached users
-        R-->>A: Users
+    E->>H: Send command / query
+    H->>H: Validate request
+    H->>Rp: Read / write todos
+    Rp->>D: SQL (commands, get by id) or MongoDB (my todos)
+    D-->>Rp: Data
+    Rp-->>H: Todos
+    opt List my todos
+        H->>Sv: Get users
+        Sv->>R: Read cached users
+        R-->>Sv: Users
+        Sv-->>H: Users
     end
-    A-->>E: Result
+    H-->>E: Result
     E-->>C: JSON response
 ```
 
