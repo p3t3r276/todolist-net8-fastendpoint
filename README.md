@@ -112,6 +112,8 @@ sequenceDiagram
     - Implement ASP.NET Core Identity login using JWT
     - User Authentication
     - Todo Item Ownership
+13. Caching with Redis
+14. MongoDB Integration
 
 ### 🚧 In Progress 
 1. User Management 
@@ -121,8 +123,6 @@ sequenceDiagram
 1. Options Pattern
     - Swagger vs Scalar
 2. Allow multiple database connection from multiple database providers
-3. Caching with Redis
-4. MongoDB Integration
 5. Integrate CAP
 6. RabbitMQ Integration
 6. Unit Test
