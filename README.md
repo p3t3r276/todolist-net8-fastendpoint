@@ -15,24 +15,14 @@ Table of Contents
 ### Architecture
 
 <p align='center'>
-  <img src='./docs/Architecture.png' />
-</p>
-
-#### Component Diagram
-
-<p align='center'>
   <img src='./docs/Architecture-Overview.svg' alt='FastTodo high-level architecture' />
 </p>
 
-Requests enter through Nginx and reach the FastTodo.API endpoints, which send every command and query to a Handler. The Handler is the only path to the Repository. The Repository writes to the primary tables, links records through the bridge tables and reads from the master tables of the configured SQL database, and also works with MongoDB. For user data, the Handler calls the Service, which reads from the Redis cache and the Identity tables. The Migrator and SeedData tools prepare the SQL schema and sample data.
-
-The diagram source is [`docs/Architecture-Overview.drawio`](./docs/Architecture-Overview.drawio). Open it in [draw.io](https://app.diagrams.net/) or the VS Code *Draw.io Integration* extension to edit it, then export it over `docs/Architecture-Overview.svg`.
+The diagram is in [`docs/Architecture-Overview.drawio`](./docs/Architecture-Overview.drawio).
 
 > Only one SQL provider is active at runtime, chosen by `fastTodoOption:SQLProvider` (`SQLServer`, `Postgres` or `SQLite`; the default is SQLite). Redis is used when a `Redis` connection string is set; otherwise an in-memory cache is used.
 
 #### Request Flow
-
-Every request goes through a Handler before it reaches the Repository. Writes and single-item reads use the SQL database. The "my todos" list is read from MongoDB, and the Handler gets user details from the Service, which uses the Redis cache.
 
 ```mermaid
 sequenceDiagram
@@ -62,22 +52,6 @@ sequenceDiagram
     end
     H-->>E: Result
     E-->>C: JSON response
-```
-
-#### Deployment (Docker Compose)
-
-```mermaid
-flowchart LR
-    user([User]) -->|":80"| nginx[nginx<br/>api_gateway]
-    user -->|":5050"| nginx
-    nginx -->|":8080"| api[fasttodo-api]
-    nginx --> admin[pgAdmin / Adminer]
-    migrator[fasttodo-migrator<br/>schema setup] -->|run once| db[(Postgres / SQL Server)]
-    api -->|depends on migrator| migrator
-    api --> db
-    api --> mongo[(MongoDB replica set)]
-    api --> redis[(Redis)]
-    admin --> db
 ```
 
 ### Database Providers
