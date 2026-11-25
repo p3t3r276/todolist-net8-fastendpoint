@@ -59,14 +59,19 @@ On `Windows`, edit C:\Windows\System32\drivers\etc\hosts as Administrator and ad
 | mongo2 | 27018 | `mongo2:27018`     | 1 |
 | mongo3 | 27019 | `mongo3:27019`     | 1 |
 
-The `mongo-init` service waits for all three nodes to pass their healthchecks, then runs `rs.initiate` once. If the replica set already exists, it skips this step.
+The `mongo-init` service waits for all three nodes to pass their healthchecks, then:
+- runs `rs.initiate` only if the set reports `NotYetInitialized`, and fails on any other error;
+- if the set already exists, checks that its members match the expected hosts, and **exits with an error** if they don't;
+- waits up to 60s for a primary to be elected, so services that depend on `mongo-init` (`service_completed_successfully`) can write right away.
+
+Ports are bound to `127.0.0.1` only, so the replica set can't be reached from other machines on your network.
 
 Connection string (same for the API container and for local tools):
 ```
 mongodb://<MONGO_ROOT_USER>:<MONGO_ROOT_PASSWORD>@mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=rs0&authSource=admin
 ```
 
-> If you previously ran the replica set with all members on `27017`, `mongo-init` will keep the old config. Recreate the Mongo volumes (`docker compose -f <file> down -v`), which **deletes Mongo data**, or reconfigure the members with `rs.reconfig(cfg, { force: true })`.
+> If you previously ran the replica set with all members on `27017`, `mongo-init` will fail with a "members do not match" error. Recreate the Mongo volumes (`docker compose -f <file> down -v`), which **deletes Mongo data**, or reconfigure the members with `rs.reconfig(cfg, { force: true })`.
 
 ### 2. Update .env file
 ```env
