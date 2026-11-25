@@ -25,9 +25,11 @@ services:
       - mongo-keyfile:/data/keyfile:ro
     depends_on:
       mongo-keyfile: { condition: service_completed_successfully }
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/keyfile/mongo.key"]
-    healthcheck: &mongo-health
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--port", "27017", "--keyFile", "/data/keyfile/mongo.key"]
+    ports:
+      - "127.0.0.1:27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27017", "--quiet", "--eval", "db.adminCommand('ping')"]
       interval: 5s
       retries: 20
     networks:
@@ -41,10 +43,15 @@ services:
     volumes:
       - mongo2_data:/data/db
       - mongo-keyfile:/data/keyfile:ro
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/keyfile/mongo.key"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--port", "27018", "--keyFile", "/data/keyfile/mongo.key"]
+    ports:
+      - "127.0.0.1:27018:27018"
     depends_on:
       mongo-keyfile: { condition: service_completed_successfully }
-    healthcheck: *mongo-health
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27018", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      retries: 20
     networks:
       - fasttodo_network
 
@@ -56,10 +63,15 @@ services:
     volumes:
       - mongo3_data:/data/db
       - mongo-keyfile:/data/keyfile:ro
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/keyfile/mongo.key"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--port", "27019", "--keyFile", "/data/keyfile/mongo.key"]
+    ports:
+      - "127.0.0.1:27019:27019"
     depends_on:
       mongo-keyfile: { condition: service_completed_successfully }
-    healthcheck: *mongo-health
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27019", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      retries: 20
     networks:
       - fasttodo_network
 
@@ -73,20 +85,48 @@ services:
     entrypoint: ["bash", "-c"]
     command: 
       - |
-        mongosh --host mongo1 -u "${MONGO_ROOT_USER}" -p "${MONGO_ROOT_PASSWORD}" --authenticationDatabase admin --quiet --eval '
+        mongosh --host mongo1:27017 -u "${MONGO_ROOT_USER}" -p "${MONGO_ROOT_PASSWORD}" --authenticationDatabase admin --quiet --eval '
+          const config = {
+            _id: "rs0",
+            members: [
+              { _id: 0, host: "mongo1:27017", priority: 2 },
+              { _id: 1, host: "mongo2:27018", priority: 1 },
+              { _id: 2, host: "mongo3:27019", priority: 1 },
+            ],
+          };
+          const expectedHosts = config.members.map(m => m.host).sort();
+
+          // 1. Initiate only when the set truly is not initialized; rethrow anything else.
+          let initialized = true;
           try {
             rs.status();
-            print("Replica set already initialized, skipping.");
           } catch (e) {
-            rs.initiate({
-              _id: "rs0",
-              members: [
-                { _id: 0, host: "mongo1:27017", priority: 2 },
-                { _id: 1, host: "mongo2:27017", priority: 1 },
-                { _id: 2, host: "mongo3:27017", priority: 1 },
-              ],
-            });
-            print("Replica set initialized.");
+            if (e.codeName !== "NotYetInitialized") throw e;
+            initialized = false;
+          }
+
+          if (!initialized) {
+            rs.initiate(config);
+            print("Replica set initiated.");
+          } else {
+            // 2. Fail loudly on config drift instead of silently skipping.
+            const actualHosts = rs.conf().members.map(m => m.host).sort();
+            if (JSON.stringify(actualHosts) !== JSON.stringify(expectedHosts)) {
+              print("ERROR: replica set members " + JSON.stringify(actualHosts) +
+                    " do not match expected " + JSON.stringify(expectedHosts) + ".");
+              print("Recreate the mongo volumes (docker compose down -v) or run rs.reconfig manually.");
+              quit(1);
+            }
+            print("Replica set already initialized with expected members.");
+          }
+
+          // 3. Wait until a primary is elected so dependants can write immediately.
+          const deadline = Date.now() + 60000;
+          while (true) {
+            const primary = rs.status().members.find(m => m.stateStr === "PRIMARY");
+            if (primary) { print("Primary is " + primary.name + "."); break; }
+            if (Date.now() > deadline) { print("ERROR: no primary elected within 60s."); quit(1); }
+            sleep(1000);
           }'
     networks: [fasttodo_network]
 

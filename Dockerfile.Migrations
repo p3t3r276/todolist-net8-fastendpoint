@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS migrator
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS migrator
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ RUN dotnet restore --disable-parallel "Host/FastTodo.API/FastTodo.API.csproj"
 
 COPY ./src .
 
-RUN dotnet tool install --global dotnet-ef --version 9.0.4 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json || dotnet tool update --global dotnet-ef --version 9.0.4 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+RUN dotnet tool install --global dotnet-ef --version 10.0.15 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json || dotnet tool update --global dotnet-ef --version 10.0.15 --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
 
 COPY ./entrypoint.sh .
 

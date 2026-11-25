@@ -27,7 +27,7 @@ try
         options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
 
         // Clear all known networks and proxies to trust the Docker network's internal proxy
-        options.KnownNetworks.Clear();
+        options.KnownIPNetworks.Clear();
         options.KnownProxies.Clear(); 
     });
 
@@ -96,7 +96,7 @@ try
 
         c.Endpoints.Configurator = ep =>
         {
-           ep.PreProcessor<RequestLoggerProcessor>(Order.Before);
+            ep.PreProcessor<RequestLoggerProcessor>(Order.Before);
         };
     });
 
