@@ -15,3 +15,4 @@ public sealed record FastTodoOption
 
     public string? RedisConnectionString { get; set; } = string.Empty;
 }
+
