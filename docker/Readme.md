@@ -40,7 +40,7 @@ dotnet ef database update `
 ### 1. Setup hostnames in enviroments
 ```bash
 # macOS / Linux
-sudo sh -c 'echo "127.0.0.1 mongo1\n127.0.0.1 mongo2\n127.0.0.1 mongo3" >> /etc/hosts'
+sudo sh -c 'printf "127.0.0.1 mongo1\n127.0.0.1 mongo2\n127.0.0.1 mongo3\n" >> /etc/hosts'
 ```
 
 On `Windows`, edit C:\Windows\System32\drivers\etc\hosts as Administrator and add:
@@ -49,6 +49,24 @@ On `Windows`, edit C:\Windows\System32\drivers\etc\hosts as Administrator and ad
 127.0.0.1   mongo2
 127.0.0.1   mongo3
 ```
+
+#### MongoDB replica set
+`components/mongo/mongo.yml` runs a 3-node replica set (`rs0`). Each node listens on its own port, and that port is published on the host with the same number. This means the member addresses work both inside the Docker network and from your machine through the hosts entries above:
+
+| Node   | Port  | Replica set member | Priority |
+|--------|-------|--------------------|----------|
+| mongo1 | 27017 | `mongo1:27017`     | 2 (preferred primary) |
+| mongo2 | 27018 | `mongo2:27018`     | 1 |
+| mongo3 | 27019 | `mongo3:27019`     | 1 |
+
+The `mongo-init` service waits for all three nodes to pass their healthchecks, then runs `rs.initiate` once. If the replica set already exists, it skips this step.
+
+Connection string (same for the API container and for local tools):
+```
+mongodb://<MONGO_ROOT_USER>:<MONGO_ROOT_PASSWORD>@mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=rs0&authSource=admin
+```
+
+> If you previously ran the replica set with all members on `27017`, `mongo-init` will keep the old config. Recreate the Mongo volumes (`docker compose -f <file> down -v`), which **deletes Mongo data**, or reconfigure the members with `rs.reconfig(cfg, { force: true })`.
 
 ### 2. Update .env file
 ```env
@@ -71,8 +89,9 @@ REDIS_PASSWORD=
 REDIS_DATABASES=
 REDIS_PORT=
 
-MONGO_INITDB_ROOT_USERNAME=
-MONGO_INITDB_ROOT_PASSWORD=
+MONGO_ROOT_USER=
+MONGO_ROOT_PASSWORD=
+# mongodb://<user>:<password>@mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=rs0&authSource=admin
 MONGODB_CONNECTION_STRING=
 MONGODB_DATABASE=
 MONGODB_PROJECT=
