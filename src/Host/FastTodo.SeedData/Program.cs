@@ -23,7 +23,10 @@ Console.WriteLine("Finish generating.");
 Console.WriteLine($"Generated {totalCount} items in {watch.ElapsedMilliseconds} ms.");
 watch.Stop();
 var configuration = new ConfigurationBuilder()  
-    .AddJsonFile("appsettings.json").Build();
+    .AddJsonFile("appsettings.json")
+    .AddUserSecrets<Program>()
+    .AddEnvironmentVariables()
+    .Build();
 var services = new ServiceCollection();
 services.AddSingleton<IConfiguration>(configuration);
 
